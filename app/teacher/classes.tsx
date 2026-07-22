@@ -1,99 +1,39 @@
 "use client";
-import { useState } from "react";
+import Link from "next/link";
+import { useI18n } from "@/lib/i18n";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-interface Student {
-  name: string;
-}
+export default function TeacherPage() {
+  const { t } = useI18n("teacher");
 
-interface Class {
-  name: string;
-  students: Student[];
-}
-
-export default function ClassesPage() {
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [newClass, setNewClass] = useState("");
-
-  const addClass = () => {
-    if (newClass.trim() !== "") {
-      setClasses([...classes, { name: newClass, students: [] }]);
-      setNewClass("");
-    }
-  };
-
-  const addStudent = (classIndex: number, studentName: string) => {
-    if (studentName.trim() !== "") {
-      const updatedClasses = [...classes];
-      updatedClasses[classIndex].students.push({ name: studentName });
-      setClasses(updatedClasses);
-    }
-  };
+  const navItems = [
+    { href: "/teacher/classes", label: t("classes"), color: "bg-blue-500" },
+    { href: "/teacher/progress", label: t("progress"), color: "bg-green-500" },
+    { href: "/teacher/evaluation", label: t("evaluation"), color: "bg-yellow-500" },
+    { href: "/teacher/assignments", label: t("assignments"), color: "bg-purple-500" },
+  ];
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>班级管理</h1>
-      <p>老师可以创建班级并添加学生。</p>
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-10">
+      <h1 className="text-3xl font-bold text-center mb-6">{t("welcome")}</h1>
+      <p className="text-center text-gray-600 mb-10">{t("dashboardDescription")}</p>
 
-      {/* 创建班级 */}
-      <div style={{ marginTop: "20px" }}>
-        <input
-          type="text"
-          placeholder="输入班级名称"
-          value={newClass}
-          onChange={(e) => setNewClass(e.target.value)}
-          style={{ padding: "8px", marginRight: "10px" }}
-        />
-        <button onClick={addClass} style={{ padding: "8px 12px" }}>
-          创建班级
-        </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        {navItems.map((item, index) => (
+          <Link key={index} href={item.href}>
+            <Card
+              className={`cursor-pointer hover:scale-105 transition rounded-xl shadow-lg text-white ${item.color}`}
+            >
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">{item.label}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm opacity-80">{t("clickToOpen")}</p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </div>
-
-      {/* 班级列表 */}
-      <div style={{ marginTop: "30px" }}>
-        <h2>已创建的班级</h2>
-        {classes.length === 0 ? (
-          <p>目前还没有班级。</p>
-        ) : (
-          <ul>
-            {classes.map((cls, index) => (
-              <li key={index} style={{ marginBottom: "20px" }}>
-                <strong>{cls.name}</strong>
-
-                {/* 添加学生 */}
-                <div style={{ marginTop: "10px" }}>
-                  <input
-                    type="text"
-                    placeholder="输入学生姓名"
-                    id={`student-${index}`}
-                    style={{ padding: "6px", marginRight: "10px" }}
-                  />
-                  <button
-                    onClick={() => {
-                      const input = document.getElementById(
-                        `student-${index}`
-                      ) as HTMLInputElement;
-                      addStudent(index, input.value);
-                      input.value = "";
-                    }}
-                    style={{ padding: "6px 10px" }}
-                  >
-                    添加学生
-                  </button>
-                </div>
-
-                {/* 学生列表 */}
-                {cls.students.length > 0 && (
-                  <ul style={{ marginTop: "10px" }}>
-                    {cls.students.map((student, sIndex) => (
-                      <li key={sIndex}>{student.name}</li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
+    </main>
   );
 }
