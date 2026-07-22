@@ -1,14 +1,31 @@
 "use client";
 import { useState } from "react";
 
+interface Student {
+  name: string;
+}
+
+interface Class {
+  name: string;
+  students: Student[];
+}
+
 export default function ClassesPage() {
-  const [classes, setClasses] = useState<string[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
   const [newClass, setNewClass] = useState("");
 
   const addClass = () => {
     if (newClass.trim() !== "") {
-      setClasses([...classes, newClass]);
+      setClasses([...classes, { name: newClass, students: [] }]);
       setNewClass("");
+    }
+  };
+
+  const addStudent = (classIndex: number, studentName: string) => {
+    if (studentName.trim() !== "") {
+      const updatedClasses = [...classes];
+      updatedClasses[classIndex].students.push({ name: studentName });
+      setClasses(updatedClasses);
     }
   };
 
@@ -39,9 +56,39 @@ export default function ClassesPage() {
         ) : (
           <ul>
             {classes.map((cls, index) => (
-              <li key={index} style={{ marginBottom: "10px" }}>
-                {cls} 
-                <button style={{ marginLeft: "10px" }}>添加学生</button>
+              <li key={index} style={{ marginBottom: "20px" }}>
+                <strong>{cls.name}</strong>
+
+                {/* 添加学生 */}
+                <div style={{ marginTop: "10px" }}>
+                  <input
+                    type="text"
+                    placeholder="输入学生姓名"
+                    id={`student-${index}`}
+                    style={{ padding: "6px", marginRight: "10px" }}
+                  />
+                  <button
+                    onClick={() => {
+                      const input = document.getElementById(
+                        `student-${index}`
+                      ) as HTMLInputElement;
+                      addStudent(index, input.value);
+                      input.value = "";
+                    }}
+                    style={{ padding: "6px 10px" }}
+                  >
+                    添加学生
+                  </button>
+                </div>
+
+                {/* 学生列表 */}
+                {cls.students.length > 0 && (
+                  <ul style={{ marginTop: "10px" }}>
+                    {cls.students.map((student, sIndex) => (
+                      <li key={sIndex}>{student.name}</li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
