@@ -30,7 +30,6 @@ export function AuthShell({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           <CardContent>
             <AuthForm mode={mode} />
 
-            {/* 统一管理提示：只在 sign-up 页面显示 */}
             {mode === 'sign-up' && (
               <div className="mt-4 text-center">
                 <Link href="/sign-in" className="text-sm text-indigo-600 hover:text-indigo-800">
