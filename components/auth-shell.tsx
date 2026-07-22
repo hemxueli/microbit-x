@@ -29,7 +29,8 @@ export function AuthShell({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           </CardHeader>
           <CardContent>
             <AuthForm mode={mode} />
-            
+
+            {/* 只在 sign-up 模式下显示 Sign in 链接 */}
             {mode === 'sign-up' && (
               <div className="mt-4 text-center">
                 <Link href="/sign-in" className="text-sm text-indigo-600 hover:text-indigo-800">
