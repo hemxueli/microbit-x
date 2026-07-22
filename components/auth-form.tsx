@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { GraduationCap, School } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { useI18n } from '@/lib/i18n'
@@ -129,24 +128,6 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             ? t('auth.signUp')
             : t('auth.signIn')}
       </Button>
-
-      <p className="text-center text-sm text-muted-foreground">
-        {mode === 'sign-up' ? (
-          <>
-            {t('auth.haveAccount')}{' '}
-            <Link href="/sign-in" className="font-semibold text-primary hover:underline">
-              {t('auth.signIn')}
-            </Link>
-          </>
-        ) : (
-          <>
-            {t('auth.noAccount')}{' '}
-            <Link href="/sign-up" className="font-semibold text-primary hover:underline">
-              {t('auth.signUp')}
-            </Link>
-          </>
-        )}
-      </p>
     </form>
   )
 }
