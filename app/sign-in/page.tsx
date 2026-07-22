@@ -30,23 +30,7 @@ export default function SignInPage() {
     <div style={{ padding: "20px" }}>
       <AuthShell mode="sign-in" />
 
-      {/* Forgot Password 链接 */}
-      <div style={{ marginTop: "15px", textAlign: "center" }}>
-        <Link
-          href="/forgot-password"
-          style={{
-            backgroundColor: "transparent",
-            border: "none",
-            color: "blue",
-            textDecoration: "underline",
-            cursor: "pointer",
-          }}
-        >
-          Forgot Password?
-        </Link>
-      </div>
-
-      {/* Sign up 链接（可选） */}
+      {/* Sign up 链接 */}
       <div style={{ marginTop: "10px", textAlign: "center" }}>
         <Link
           href="/sign-up"
