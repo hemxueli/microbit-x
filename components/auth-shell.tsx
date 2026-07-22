@@ -30,16 +30,7 @@ export function AuthShell({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           <CardContent>
             <AuthForm mode={mode} />
 
-            {/* 在 sign-in 模式下显示 Forgot Password */}
-            {mode === 'sign-in' && (
-              <div className="mt-4 text-center">
-                <Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-800">
-                  Forgot your password?
-                </Link>
-              </div>
-            )}
-
-            {/* 在 sign-up 模式下显示 Sign in 链接 */}
+            {/* 只在 sign-up 模式下显示 Sign in 链接 */}
             {mode === 'sign-up' && (
               <div className="mt-4 text-center">
                 <Link href="/sign-in" className="text-sm text-indigo-600 hover:text-indigo-800">
