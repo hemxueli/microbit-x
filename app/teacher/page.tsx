@@ -1,58 +1,98 @@
 "use client";
-import Link from "next/link";
+import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-export default function TeacherPage() {
+interface Student {
+  name: string;
+}
+
+interface Class {
+  name: string;
+  students: Student[];
+}
+
+export default function ClassesPage() {
   const { t } = useI18n();
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [newClass, setNewClass] = useState("");
 
-  const navItems = [
-    {
-      href: "/teacher/classes",
-      label: t("teacher.classes"),
-      description: t("teacher.classesDesc"),
-      color: "bg-blue-100 text-blue-900",
-    },
-    {
-      href: "/teacher/progress",
-      label: t("teacher.progress"),
-      description: t("teacher.progressDesc"),
-      color: "bg-green-100 text-green-900",
-    },
-    {
-      href: "/teacher/evaluation",
-      label: t("teacher.evaluation"),
-      description: t("teacher.evaluationDesc"),
-      color: "bg-yellow-100 text-yellow-900",
-    },
-    {
-      href: "/teacher/assignments",
-      label: t("teacher.assignments"),
-      description: t("teacher.assignmentsDesc"),
-      color: "bg-purple-100 text-purple-900",
-    },
-  ];
+  const addClass = () => {
+    if (newClass.trim() !== "") {
+      setClasses([...classes, { name: newClass, students: [] }]);
+      setNewClass("");
+    }
+  };
+
+  const addStudent = (classIndex: number, studentName: string) => {
+    if (studentName.trim() !== "") {
+      const updatedClasses = [...classes];
+      updatedClasses[classIndex].students.push({ name: studentName });
+      setClasses(updatedClasses);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-r from-sky-50 via-indigo-50 to-purple-50 p-10">
-      <h1 className="text-3xl font-bold text-center mb-6">{t("teacher.welcome")}</h1>
-      <p className="text-center text-gray-600 mb-10">{t("teacher.dashboardDescription")}</p>
+      <h1 className="text-3xl font-bold text-center mb-6">{t("teacher.classesTitle")}</h1>
+      <p className="text-center text-gray-600 mb-10">{t("teacher.classesDescription")}</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {navItems.map((item, index) => (
-          <Link key={index} href={item.href}>
-            <Card
-              className={`cursor-pointer hover:scale-105 transition rounded-xl shadow-md ${item.color}`}
-            >
+      {/* 创建班级 */}
+      <Card className="max-w-lg mx-auto mb-8 bg-white shadow-md rounded-xl">
+        <CardHeader>
+          <CardTitle>{t("teacher.createClass")}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex gap-2">
+          <Input
+            placeholder={t("teacher.enterClassName")}
+            value={newClass}
+            onChange={(e) => setNewClass(e.target.value)}
+          />
+          <Button onClick={addClass}>{t("teacher.createClass")}</Button>
+        </CardContent>
+      </Card>
+
+      {/* 班级列表 */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {classes.length === 0 ? (
+          <p className="text-center text-gray-500">{t("teacher.noClasses")}</p>
+        ) : (
+          classes.map((cls, index) => (
+            <Card key={index} className="rounded-xl shadow-md bg-white">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">{item.label}</CardTitle>
+                <CardTitle>{cls.name}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm">{item.description}</p>
+                <div className="flex gap-2 mb-4">
+                  <Input
+                    placeholder={t("teacher.enterStudentName")}
+                    id={`student-${index}`}
+                  />
+                  <Button
+                    onClick={() => {
+                      const input = document.getElementById(
+                        `student-${index}`
+                      ) as HTMLInputElement;
+                      addStudent(index, input.value);
+                      input.value = "";
+                    }}
+                  >
+                    {t("teacher.addStudent")}
+                  </Button>
+                </div>
+                {cls.students.length > 0 && (
+                  <ul className="list-disc pl-5">
+                    {cls.students.map((student, sIndex) => (
+                      <li key={sIndex}>{student.name}</li>
+                    ))}
+                  </ul>
+                )}
               </CardContent>
             </Card>
-          </Link>
-        ))}
+          ))
+        )}
       </div>
     </main>
   );
