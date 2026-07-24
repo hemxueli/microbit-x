@@ -9,13 +9,20 @@ export default function ChatBox() {
     if (!input.trim()) return;
     setMessages([...messages, { role: "student", text: input }]);
 
-    const res = await fetch("/api/student/chat", {
-      method: "POST",
-      body: JSON.stringify({ message: input }),
-    });
-    const data = await res.json();
+    try {
+      const res = await fetch("/api/student/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // ✅ 必须加
+        body: JSON.stringify({ message: input }),
+      });
 
-    setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
+      const data = await res.json();
+
+      setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
+    } catch (err) {
+      setMessages((prev) => [...prev, { role: "ai", text: "⚠️ AI 服务调用失败" }]);
+    }
+
     setInput("");
   };
 
