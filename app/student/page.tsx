@@ -1,13 +1,12 @@
 "use client";
 import { useI18n } from "@/lib/i18n";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import dynamic from "next/dynamic";
 
-// 动态加载 MakeCode iframe
+// 定义 MakeCodeEmbed 组件
 const MakeCodeEmbed = ({ url }: { url: string }) => (
   <iframe
     src={url}
-    style={{ width: "100%", height: "500px", border: "1px solid #ccc", borderRadius: "8px" }}
+    style={{ width: "100%", height: "400px", border: "1px solid #ccc", borderRadius: "8px" }}
     allow="fullscreen"
   />
 );
@@ -16,7 +15,7 @@ export default function StudentPage() {
   const { t } = useI18n();
 
   return (
-    <main className="min-h-screen bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 p-10">
+    <main className="min-h-screen bg-gradient-to-r from-green-50 to-purple-50 p-10">
       <h1 className="text-3xl font-bold text-center mb-6">{t("student.welcome")}</h1>
       <p className="text-center text-gray-600 mb-10">{t("student.description")}</p>
 
@@ -29,7 +28,7 @@ export default function StudentPage() {
             </CardHeader>
             <CardContent>
               <p className="mb-4">{t(`student.${topic}Desc`)}</p>
-              <MakeCodeEmbed url={`https://makecode.microbit.org/---run?id=${topic}`} />
+              <MakeCodeEmbed url="https://makecode.microbit.org/" />
             </CardContent>
           </Card>
         ))}
@@ -45,7 +44,7 @@ export default function StudentPage() {
             </CardHeader>
             <CardContent>
               <p className="mb-4">{t(`student.${level}Desc`)}</p>
-              <MakeCodeEmbed url={`https://makecode.microbit.org/---run?id=${level}`} />
+              <MakeCodeEmbed url="https://makecode.microbit.org/" />
             </CardContent>
           </Card>
         ))}
@@ -58,7 +57,6 @@ export default function StudentPage() {
         </CardHeader>
         <CardContent>
           <p className="mb-4">{t("student.aiAssistantDesc")}</p>
-          {/* TODO: 接入 AI 聊天组件 */}
           <div className="border p-4 rounded-md bg-gray-50">
             <p className="text-gray-500">[AI Chat Assistant Placeholder]</p>
           </div>
