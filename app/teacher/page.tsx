@@ -150,20 +150,21 @@ export default function TeacherPage({ user }: { user?: any }) {
                   className="border rounded px-2 py-1"
                 />
               </label>
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-600">{t('auth.avatar') ?? 'Avatar'}</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) {
-                      const url = URL.createObjectURL(file)
-                      setAvatar(url)
-                    }
-                  }}
-                />
-              </label>
+              <label className="cursor-pointer px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200">
+              {t('auth.chooseFile')} {/* 三语字典：Choose File / 选择文件 / Pilih Fail */}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    const url = URL.createObjectURL(file)
+                    setAvatar(url)
+                  }
+                }}
+              />
+            </label>
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" onClick={() => setEditing(false)}>
                   {t('common.cancel')}
