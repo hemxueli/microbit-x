@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useTranslation } from "react-i18next";
+import { LANGS, useI18n } from '@/lib/i18n'
 
 export default function TeacherPage() {
   const { t, i18n } = useTranslation();
