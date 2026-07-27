@@ -216,7 +216,9 @@ export const dict: Dict = {
   'common.editProfile': { en: 'Edit Profile', zh: '编辑资料', ms: 'Sunting Profil' },
 
   // 头像
-  'auth.avatar': { en: 'Avatar', zh: '头像', ms: 'Avatar' },
+  'auth.chooseFile': { en: 'Choose File', zh: '选择文件', ms: 'Pilih Fail' },
+  'auth.avatar': { en: 'Avatar', zh: '头像', ms: 'Gambar Profil' },
+
   'teacher.dashboard': { en: 'Learning Management Hub', zh: '学习管理中心', ms: 'Hab Pengurusan Pembelajaran' },
   'teacher.classes': { en: 'Classes', zh: '班级', ms: 'Kelas' },
   'teacher.students': { en: 'Students', zh: '学生', ms: 'Pelajar' },
