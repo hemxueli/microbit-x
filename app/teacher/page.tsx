@@ -137,55 +137,53 @@ export default function TeacherPage({ user }: { user?: any }) {
 
       {/* 编辑弹窗 */}
       {editing && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50">                <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-          <div className="bg-white p-6 rounded shadow-md w-96">
-            <h2 className="text-lg font-bold mb-4">
-              {t('common.editProfile') ?? 'Edit Profile'}
-            </h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+            <div className="bg-white p-6 rounded shadow-md w-96">
+              <h2 className="text-lg font-bold mb-4">
+                {t('common.editProfile') ?? 'Edit Profile'}
+              </h2>
 
-            {/* 表单容器 */}
-            <div className="flex flex-col gap-4">
-              
-              {/* 姓名输入 */}
-              <label className="flex flex-col gap-1">
-                <span className="text-sm text-gray-600">{t('auth.name')}</span>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="border rounded px-2 py-1"
-                />
-              </label>
-
-              {/* 头像上传 */}
-              <label className="flex flex-col gap-1">
-                <span className="text-sm text-gray-600">{t('auth.avatar')}</span>
-                <div className="cursor-pointer px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200">
-                  {t('auth.chooseFile')} {/* 三语字典：Choose File / 选择文件 / Pilih Fail */}
+              {/* 表单容器 */}
+              <div className="flex flex-col gap-4">
+                
+                {/* 姓名输入 */}
+                <label className="flex flex-col gap-1">
+                  <span className="text-sm text-gray-600">{t('auth.name')}</span>
                   <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) {
-                        const url = URL.createObjectURL(file)
-                        setAvatar(url)
-                      }
-                    }}
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="border rounded px-2 py-1"
                   />
+                </label>
+
+                {/* 头像上传 */}
+                <label className="flex flex-col gap-1">
+                  <span className="text-sm text-gray-600">{t('auth.avatar')}</span>
+                  <div className="cursor-pointer px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200">
+                    {t('auth.chooseFile')} {/* 三语字典：Choose File / 选择文件 / Pilih Fail */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          const url = URL.createObjectURL(file)
+                          setAvatar(url)
+                        }
+                      }}
+                    />
+                  </div>
+                </label>
+                <div className="flex justify-end gap-2">
+                  <Button variant="ghost" onClick={() => setEditing(false)}>
+                    {t('common.cancel')}
+                  </Button>
+                  <Button onClick={handleSave}>{t('common.save')}</Button>
                 </div>
-              </label>
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" onClick={() => setEditing(false)}>
-                  {t('common.cancel')}
-                </Button>
-                <Button onClick={handleSave}>{t('common.save')}</Button>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  )
-}
+        )}
