@@ -1,126 +1,129 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useI18n } from "@/lib/i18n";
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Logo } from '@/components/logo'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { useI18n } from '@/lib/i18n'
 
 export default function TeacherPage() {
-  const { t } = useI18n();
-  const [classes, setClasses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("teacher.classes");
+  const { t } = useI18n()
+  const [classes, setClasses] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchClasses() {
       try {
-        const res = await fetch("/api/classes");
-        const data = await res.json();
-        setClasses(data);
+        const res = await fetch('/api/classes')
+        const data = await res.json()
+        setClasses(data)
       } catch (err) {
-        console.error("加载班级失败:", err);
+        console.error('加载班级失败:', err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
-    fetchClasses();
-  }, []);
+    fetchClasses()
+  }, [])
 
-  if (loading) return <p className="text-gray-500">{t("common.loading")}</p>;
+  if (loading) return <p className="text-gray-500">{t('common.loading')}</p>
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex min-h-screen flex-col">
       {/* 顶部导航栏 */}
-      <header className="flex justify-between items-center px-8 py-4 bg-white shadow">
-        <h1 className="text-2xl font-bold">{t("teacher.dashboard")}</h1>
-        <div className="flex items-center gap-4">
-          {/* 老师头像和名字（从 session 获取） */}
-          <div className="flex items-center gap-2">
-            <img
-              src="/default-avatar.png"
-              alt="avatar"
-              className="w-10 h-10 rounded-full border"
-            />
-            <span className="font-medium">张老师</span>
+      <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
+          <Logo />
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <div className="flex items-center gap-2">
+              <Image
+                src="/default-avatar.png"
+                alt="avatar"
+                width={36}
+                height={36}
+                className="rounded-full border"
+              />
+              <span className="font-medium">张老师</span>
+            </div>
+            <Button variant="ghost" size="sm">
+              {t('nav.logout')}
+            </Button>
           </div>
-          <button className="text-red-600">{t("nav.logout")}</button>
         </div>
       </header>
 
       {/* 页面主体 */}
-      <main className="p-6 max-w-5xl mx-auto">
-        {/* Tab 切换 */}
-        <div className="flex gap-4 border-b mb-6">
-          {["teacher.classes", "teacher.progress", "teacher.reviewMarks", "teacher.students"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`pb-2 ${activeTab === tab
-                ? "border-b-2 border-blue-600 text-blue-600 font-semibold"
-                : "text-gray-600"
-                }`}
-            >
-              {t(tab)}
-            </button>
-          ))}
-        </div>
+      <main className="flex-1">
+        <section className="mx-auto w-full max-w-6xl px-6 py-12 md:py-20">
+          <h1 className="mb-8 text-3xl font-extrabold tracking-tight">
+            {t('teacher.dashboard')}
+          </h1>
 
-        {/* 班级管理 */}
-        {activeTab === "teacher.classes" && (
-          <div>
-            <Link href="/teacher/classes/new">
-              <button className="mb-4 px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700">
-                {t("teacher.createClass")}
-              </button>
-            </Link>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {/* 班级管理 */}
+            <Card className="h-full transition-shadow hover:shadow-md">
+              <CardContent className="flex flex-col gap-3 p-6">
+                <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">📘</span>
+                <h3 className="text-lg font-bold">{t('teacher.classes')}</h3>
+                <p className="leading-relaxed text-muted-foreground">{t('teacher.noClasses')}</p>
+                <Link href="/teacher/classes/new">
+                  <Button size="sm" className="mt-2">{t('teacher.createClass')}</Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-            {classes.length === 0 ? (
-              <p className="text-gray-500">{t("teacher.noClasses")}</p>
-            ) : (
-              <ul className="space-y-4">
-                {classes.map((cls) => (
-                  <li
-                    key={cls.id}
-                    className="p-4 border rounded shadow-sm hover:shadow-md"
-                  >
-                    <h3 className="text-lg font-bold">{cls.name}</h3>
-                    <p className="text-gray-600">{cls.description ?? "—"}</p>
-                    <p className="mt-2">
-                      {t("teacher.shareCode")}:{" "}
-                      <span className="font-mono bg-gray-100 px-2 py-1 rounded">
-                        {cls.joinCode}
-                      </span>
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            )}
+            {/* 学生进度 */}
+            <Card className="h-full transition-shadow hover:shadow-md">
+              <CardContent className="flex flex-col gap-3 p-6">
+                <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">📊</span>
+                <h3 className="text-lg font-bold">{t('teacher.progress')}</h3>
+                <p className="leading-relaxed text-muted-foreground">
+                  {t('teacher.avgScore')} / {t('teacher.attempts')}
+                </p>
+                <Link href="/teacher/progress">
+                  <Button size="sm" className="mt-2">{t('common.view')}</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* 成绩审阅 */}
+            <Card className="h-full transition-shadow hover:shadow-md">
+              <CardContent className="flex flex-col gap-3 p-6">
+                <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">📝</span>
+                <h3 className="text-lg font-bold">{t('teacher.reviewMarks')}</h3>
+                <p className="leading-relaxed text-muted-foreground">{t('teacher.noAttempts')}</p>
+                <Link href="/teacher/review">
+                  <Button size="sm" className="mt-2">{t('common.view')}</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* 学生名单 */}
+            <Card className="h-full transition-shadow hover:shadow-md">
+              <CardContent className="flex flex-col gap-3 p-6">
+                <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">👥</span>
+                <h3 className="text-lg font-bold">{t('teacher.students')}</h3>
+                <p className="leading-relaxed text-muted-foreground">{t('teacher.noStudents')}</p>
+                <Link href="/teacher/students">
+                  <Button size="sm" className="mt-2">{t('common.view')}</Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
-        )}
-
-        {/* 学生进度 */}
-        {activeTab === "teacher.progress" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2">{t("teacher.progress")}</h2>
-            <p className="text-gray-600">{t("teacher.avgScore")}, {t("teacher.attempts")}</p>
-          </div>
-        )}
-
-        {/* 成绩审阅 */}
-        {activeTab === "teacher.reviewMarks" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2">{t("teacher.reviewMarks")}</h2>
-            <p className="text-gray-600">{t("teacher.noAttempts")}</p>
-          </div>
-        )}
-
-        {/* 学生名单 */}
-        {activeTab === "teacher.students" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2">{t("teacher.students")}</h2>
-            <p className="text-gray-600">{t("teacher.noStudents")}</p>
-          </div>
-        )}
+        </section>
       </main>
+
+      {/* 底部版权栏 */}
+      <footer className="border-t border-border py-6">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
+          <Logo showText={false} />
+          <span>{'\u00A9'} 2026 MicroBit-X</span>
+        </div>
+      </footer>
     </div>
-  );
+  )
 }
