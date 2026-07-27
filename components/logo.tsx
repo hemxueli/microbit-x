@@ -28,7 +28,7 @@ export function Logo({
       </span>
       {showText && (
         <span className="text-lg font-extrabold tracking-tight">
-          MicroBit<span className="text-primary">-X</span>
+          MicroBOT<span className="text-primary">-X</span>
         </span>
       )}
     </span>

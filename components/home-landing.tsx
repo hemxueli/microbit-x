@@ -36,17 +36,17 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             {isAuthed ? (
-              <Button asChild size="sm">
-                <Link href="/">{t('nav.dashboard')}</Link>
-              </Button>
+              <Link href="/">
+                <Button size="sm">{t('nav.dashboard')}</Button>
+              </Link>
             ) : (
               <>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/sign-in">{t('nav.login')}</Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link href="/sign-up">{t('nav.getStarted')}</Link>
-                </Button>
+                <Link href="/sign-in">
+                  <Button variant="ghost" size="sm">{t('nav.login')}</Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button size="sm">{t('nav.getStarted')}</Button>
+                </Link>
               </>
             )}
           </div>
@@ -68,12 +68,12 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
               {t('home.heroSubtitle')}
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg">
-                <Link href="/sign-up">{t('home.ctaStudent')}</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/sign-up">{t('home.ctaTeacher')}</Link>
-              </Button>
+              <Link href="/sign-up">
+                <Button size="lg">{t('home.ctaStudent')}</Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button size="lg" variant="outline">{t('home.ctaTeacher')}</Button>
+              </Link>
             </div>
           </div>
           <div className="relative">
