@@ -150,9 +150,9 @@ export default function TeacherPage({ user }: { user?: any }) {
                   className="border rounded px-2 py-1"
                 />
               </label>
+              <label>{t('auth.avatar')}</label>
               <label className="cursor-pointer px-3 py-2 border rounded bg-gray-100 hover:bg-gray-200">
               {t('auth.chooseFile')} {/* 三语字典：Choose File / 选择文件 / Pilih Fail */}
-              <label>{t('auth.avatar')}</label>
               <input
                 type="file"
                 accept="image/*"
