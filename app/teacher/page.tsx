@@ -5,7 +5,7 @@ import Link from "next/link";
 import { LANGS, useI18n } from "@/lib/i18n";
 
 export default function TeacherPage() {
-  const { t, i18n } = useI18n(); // 使用你自己的 i18n hook
+  const { t, setLang } = useI18n();
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("classes");
@@ -25,11 +25,11 @@ export default function TeacherPage() {
     fetchClasses();
   }, []);
 
-  if (loading) return <p className="text-gray-500">{t("loading")}</p>;
+  if (loading) return <p className="text-gray-500">{t("common.loading")}</p>;
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      {/* 顶部语言切换，使用 LANGS 自动生成按钮 */}
+      {/* 顶部语言切换 */}
       <div className="flex gap-3 mb-6">
         {LANGS.map((lang) => (
           <button
@@ -38,12 +38,12 @@ export default function TeacherPage() {
             style={{
               backgroundColor:
                 lang.code === "en"
-                  ? "#2563eb" // 蓝色
+                  ? "#2563eb"
                   : lang.code === "ms"
-                  ? "#16a34a" // 绿色
-                  : "#dc2626", // 红色
+                  ? "#16a34a"
+                  : "#dc2626",
             }}
-            onClick={() => i18n.changeLanguage(lang.code)}
+            onClick={() => setLang(lang.code)}
           >
             {lang.label}
           </button>
@@ -52,7 +52,7 @@ export default function TeacherPage() {
 
       {/* Tab 切换 */}
       <div className="flex gap-4 border-b mb-6">
-        {["classes", "assignments", "quiz", "students"].map((tab) => (
+        {["teacher.classes", "teacher.assignments", "teacher.quiz", "teacher.students"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -68,16 +68,16 @@ export default function TeacherPage() {
       </div>
 
       {/* 班级管理 */}
-      {activeTab === "classes" && (
+      {activeTab === "teacher.classes" && (
         <div>
           <Link href="/teacher/classes/new">
             <button className="mb-4 px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700">
-              {t("createClass")}
+              {t("teacher.createClass")}
             </button>
           </Link>
 
           {classes.length === 0 ? (
-            <p className="text-gray-500">{t("noClasses")}</p>
+            <p className="text-gray-500">{t("teacher.noClasses")}</p>
           ) : (
             <ul className="space-y-4">
               {classes.map((cls) => (
@@ -88,7 +88,7 @@ export default function TeacherPage() {
                   <h3 className="text-lg font-bold">{cls.name}</h3>
                   <p className="text-gray-600">{cls.description ?? "—"}</p>
                   <p className="mt-2">
-                    {t("joinCode")}:{" "}
+                    {t("teacher.shareCode")}:{" "}
                     <span className="font-mono bg-gray-100 px-2 py-1 rounded">
                       {cls.joinCode}
                     </span>
@@ -101,26 +101,26 @@ export default function TeacherPage() {
       )}
 
       {/* 作业布置 */}
-      {activeTab === "assignments" && (
+      {activeTab === "teacher.assignments" && (
         <div>
-          <h2 className="text-xl font-semibold mb-2">{t("assignments")}</h2>
-          <p className="text-gray-600">{t("assignmentsDesc")}</p>
+          <h2 className="text-xl font-semibold mb-2">{t("teacher.assignments")}</h2>
+          <p className="text-gray-600">{t("teacher.assignmentsDesc")}</p>
         </div>
       )}
 
       {/* 测验查看 */}
-      {activeTab === "quiz" && (
+      {activeTab === "teacher.quiz" && (
         <div>
-          <h2 className="text-xl font-semibold mb-2">{t("quiz")}</h2>
-          <p className="text-gray-600">{t("quizDesc")}</p>
+          <h2 className="text-xl font-semibold mb-2">{t("teacher.quiz")}</h2>
+          <p className="text-gray-600">{t("teacher.quizDesc")}</p>
         </div>
       )}
 
       {/* 学生名单 */}
-      {activeTab === "students" && (
+      {activeTab === "teacher.students" && (
         <div>
-          <h2 className="text-xl font-semibold mb-2">{t("students")}</h2>
-          <p className="text-gray-600">{t("studentsDesc")}</p>
+          <h2 className="text-xl font-semibold mb-2">{t("teacher.students")}</h2>
+          <p className="text-gray-600">{t("teacher.studentsDesc")}</p>
         </div>
       )}
     </div>
