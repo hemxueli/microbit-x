@@ -33,7 +33,7 @@ export function AuthShell({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             {/* 在 sign-in 模式下显示 Forgot Password */}
             {mode === 'sign-in' && (
               <div className="mt-4 text-center">
-                <Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-800">
+                <Link href="/forgot-password" className="text-sm text-gray-500 hover:text-gray-700">
                 {t('auth.forgotPassword')}
                 </Link>
               </div>
