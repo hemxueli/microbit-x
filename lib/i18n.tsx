@@ -225,42 +225,72 @@ export const dict: Dict = {
   en: 'Class Management',
   zh: '班级管理',
   ms: 'Pengurusan Kelas',
-},
-'teacher.enterStudent': {
-  en: 'Enter student account or code',
-  zh: '输入学生账号或邀请码',
-  ms: 'Masukkan akaun pelajar atau kod',
-},
-'teacher.addStudent': {
-  en: 'Add Student',
-  zh: '添加学生',
-  ms: 'Tambah Pelajar',
-},
-'teacher.studentName': {
-  en: 'Student Name',
-  zh: '学生姓名',
-  ms: 'Nama Pelajar',
-},
-'teacher.quizScore': {
-  en: 'Quiz Score',
-  zh: '测验成绩',
-  ms: 'Markah Kuiz',
-},
-'teacher.evaluation': {
-  en: 'Evaluation',
-  zh: '评估',
-  ms: 'Penilaian',
-},
-'teacher.writeEvaluation': {
-  en: 'Write evaluation',
-  zh: '填写评语',
-  ms: 'Tulis penilaian',
-},
-'teacher.noStudents': {
-  en: 'No students yet',
-  zh: '暂无学生',
-  ms: 'Belum ada pelajar',
-},
+  },
+  'teacher.enterStudent': {
+    en: 'Enter student account or code',
+    zh: '输入学生账号或邀请码',
+    ms: 'Masukkan akaun pelajar atau kod',
+  },
+  'teacher.addStudent': {
+    en: 'Add Student',
+    zh: '添加学生',
+    ms: 'Tambah Pelajar',
+  },
+  'teacher.studentName': {
+    en: 'Student Name',
+    zh: '学生姓名',
+    ms: 'Nama Pelajar',
+  },
+  'teacher.quizScore': {
+    en: 'Quiz Score',
+    zh: '测验成绩',
+    ms: 'Markah Kuiz',
+  },
+  'teacher.evaluation': {
+    en: 'Evaluation',
+    zh: '评估',
+    ms: 'Penilaian',
+  },
+  'teacher.writeEvaluation': {
+    en: 'Write evaluation',
+    zh: '填写评语',
+    ms: 'Tulis penilaian',
+  },
+  'teacher.noStudents': {
+    en: 'No students yet',
+    zh: '暂无学生',
+    ms: 'Belum ada pelajar',
+  },
+  'teacher.classCode': {
+  en: 'Class Code',
+  zh: '班级邀请码',
+  ms: 'Kod Kelas',
+  },
+  'teacher.shareCode': {
+    en: 'Share Code',
+    zh: '分享邀请码',
+    ms: 'Kongsi Kod',
+  },
+  'teacher.joinClass': {
+    en: 'Join Class',
+    zh: '加入班级',
+    ms: 'Sertai Kelas',
+  },
+  'teacher.enterCode': {
+    en: 'Enter Class Code',
+    zh: '输入班级邀请码',
+    ms: 'Masukkan Kod Kelas',
+  },
+  'teacher.codeCopied': {
+    en: 'Class code copied to clipboard.',
+    zh: '班级邀请码已复制到剪贴板。',
+    ms: 'Kod kelas disalin ke papan klip.',
+  },
+  'teacher.invalidCode': {
+    en: 'Invalid class code.',
+    zh: '邀请码无效。',
+    ms: 'Kod kelas tidak sah.',
+  },
 }
 
 type I18nContextValue = {
