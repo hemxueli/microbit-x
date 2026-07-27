@@ -9,10 +9,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useI18n } from '@/lib/i18n'
 
-export default function TeacherPage() {
+export default function TeacherPage({ user }: { user?: any }) {
   const { t } = useI18n()
   const [classes, setClasses] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState(false)
+  const [name, setName] = useState(user?.name ?? 'Teacher')
+  const [avatar, setAvatar] = useState(user?.image ?? '/default-avatar.png')
 
   useEffect(() => {
     async function fetchClasses() {
@@ -29,6 +32,11 @@ export default function TeacherPage() {
     fetchClasses()
   }, [])
 
+  const handleSave = () => {
+    // TODO: 调用 API 保存头像和名字
+    setEditing(false)
+  }
+
   if (loading) return <p className="text-gray-500">{t('common.loading')}</p>
 
   return (
@@ -39,15 +47,15 @@ export default function TeacherPage() {
           <Logo />
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setEditing(true)}>
               <Image
-                src="/default-avatar.png"
+                src={avatar}
                 alt="avatar"
                 width={36}
                 height={36}
                 className="rounded-full border"
               />
-              <span className="font-medium">张老师</span>
+              <span className="font-medium">{name}</span>
             </div>
             <Button variant="ghost" size="sm">
               {t('nav.logout')}
@@ -124,6 +132,46 @@ export default function TeacherPage() {
           <span>{'\u00A9'} 2026 MicroBit-X</span>
         </div>
       </footer>
+
+      {/* 编辑弹窗 */}
+      {editing && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+          <div className="bg-white p-6 rounded shadow-md w-96">
+            <h2 className="text-lg font-bold mb-4">{t('common.editProfile') ?? 'Edit Profile'}</h2>
+            <div className="flex flex-col gap-4">
+              <label className="flex flex-col">
+                <span className="text-sm text-gray-600">{t('auth.name')}</span>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="border rounded px-2 py-1"
+                />
+              </label>
+              <label className="flex flex-col">
+                <span className="text-sm text-gray-600">{t('auth.avatar') ?? 'Avatar'}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      const url = URL.createObjectURL(file)
+                      setAvatar(url)
+                    }
+                  }}
+                />
+              </label>
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" onClick={() => setEditing(false)}>
+                  {t('common.cancel')}
+                </Button>
+                <Button onClick={handleSave}>{t('common.save')}</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
