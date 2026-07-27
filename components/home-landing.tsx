@@ -80,7 +80,7 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
             <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
               <Image
                 src="/images/hero-microbit.png"
-                alt={t('home.heroTitle')}
+                alt={t('home.heroTitle') ?? 'MicroBOT-X'}
                 width={720}
                 height={540}
                 className="h-auto w-full object-cover"
@@ -116,7 +116,7 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
       <footer className="border-t border-border py-6">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
           <Logo showText={false} />
-          <span>{'\u00A9'} 2026 MicroBit-X</span>
+          <span>{'\u00A9'} 2026 MicroBOT-X</span>
         </div>
       </footer>
     </div>
