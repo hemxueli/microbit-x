@@ -218,8 +218,8 @@ export const dict: Dict = {
   // 头像
   'auth.chooseFile': { en: 'Choose File', zh: '选择文件', ms: 'Pilih Fail' },
   'auth.avatar': { en: 'Avatar', zh: '头像', ms: 'Gambar Profil' }, 
-  'auth.selectedFile': { en: 'Selected File', zh: '已选择文件', ms: 'Fail Dipilih' }
-
+  'auth.selectedFile': { en: 'Selected File', zh: '已选择文件', ms: 'Fail Dipilih' },
+  
   'teacher.dashboard': { en: 'Learning Management Hub', zh: '学习管理中心', ms: 'Hab Pengurusan Pembelajaran' },
   'teacher.classes': { en: 'Classes', zh: '班级', ms: 'Kelas' },
   'teacher.students': { en: 'Students', zh: '学生', ms: 'Pelajar' },
