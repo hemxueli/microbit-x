@@ -39,14 +39,6 @@ export function AuthShell({ mode }: { mode: 'sign-in' | 'sign-up' }) {
               </div>
             )}
 
-            {/* 在 sign-up 模式下显示 Sign in 链接 */}
-            {mode === 'sign-up' && (
-              <div className="mt-4 text-center">
-                <Link href="/sign-in" className="text-sm text-indigo-600 hover:text-indigo-800">
-                  Already have an account? Sign in
-                </Link>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
