@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LANGS, useI18n } from '@/lib/i18n'
+import { LANGS, useI18n } from "@/lib/i18n";
 
 export default function TeacherPage() {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useI18n(); // 使用你自己的 i18n hook
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("classes");
@@ -29,26 +29,25 @@ export default function TeacherPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      {/* 顶部语言切换 */}
+      {/* 顶部语言切换，使用 LANGS 自动生成按钮 */}
       <div className="flex gap-3 mb-6">
-        <button
-          className="px-3 py-1 bg-blue-500 text-white rounded"
-          onClick={() => i18n.changeLanguage("en")}
-        >
-          English
-        </button>
-        <button
-          className="px-3 py-1 bg-green-500 text-white rounded"
-          onClick={() => i18n.changeLanguage("ms")}
-        >
-          Bahasa Melayu
-        </button>
-        <button
-          className="px-3 py-1 bg-red-500 text-white rounded"
-          onClick={() => i18n.changeLanguage("zh")}
-        >
-          中文
-        </button>
+        {LANGS.map((lang) => (
+          <button
+            key={lang.code}
+            className="px-3 py-1 rounded text-white shadow"
+            style={{
+              backgroundColor:
+                lang.code === "en"
+                  ? "#2563eb" // 蓝色
+                  : lang.code === "ms"
+                  ? "#16a34a" // 绿色
+                  : "#dc2626", // 红色
+            }}
+            onClick={() => i18n.changeLanguage(lang.code)}
+          >
+            {lang.label}
+          </button>
+        ))}
       </div>
 
       {/* Tab 切换 */}
