@@ -16,7 +16,7 @@ export default function TeacherPage({ user }: { user?: any }) {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState(user?.name ?? 'Teacher')
-  const [avatar, setAvatar] = useState(user?.image ?? '/default-avatar.png')
+  const [avatar, setAvatar] = useState(user?.image ?? '/images/default-avatar.png')
 
   useEffect(() => {
     async function fetchClasses() {
