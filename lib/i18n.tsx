@@ -213,7 +213,7 @@ export const dict: Dict = {
   // Teacher
   // 通用
   'common.view': { en: 'View', zh: '查看', ms: 'Lihat' },
-  'common.editProfile': { en: 'Edit Profile', zh: '编辑资料', ms: 'Edit Profil' },
+  'common.editProfile': { en: 'Edit Profile', zh: '编辑资料', ms: 'Sunting Profil' },
 
   // 头像
   'auth.avatar': { en: 'Avatar', zh: '头像', ms: 'Avatar' },
