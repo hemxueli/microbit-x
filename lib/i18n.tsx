@@ -20,7 +20,7 @@ type Dict = Record<string, { en: string; zh: string; ms: string }>
 
 // Central dictionary. Add keys here; components read via t('key').
 export const dict: Dict = {
-  'app.name': { en: 'MicroBit-X', zh: 'MicroBit-X', ms: 'MicroBit-X' },
+  'app.name': { en: 'MicroBOT-X', zh: 'MicroBOT-X', ms: 'MicroBOT-X' },
   'app.tagline': {
     en: 'Learn micro:bit the interactive way',
     zh: '以互动方式学习 micro:bit',
