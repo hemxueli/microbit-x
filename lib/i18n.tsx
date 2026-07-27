@@ -211,6 +211,13 @@ export const dict: Dict = {
   'chat.send': { en: 'Send', zh: '发送', ms: 'Hantar' },
 
   // Teacher
+  // 通用
+  'common.view': { en: 'View', zh: '查看', ms: 'Lihat' },
+  'common.editProfile': { en: 'Edit Profile', zh: '编辑资料', ms: 'Edit Profil' },
+
+  // 头像
+  'auth.avatar': { en: 'Avatar', zh: '头像', ms: 'Avatar' },
+
   'teacher.dashboard': { en: 'Learning Management Hub', zh: '学习管理中心', ms: 'Hab Pengurusan Pembelajaran' },
   'teacher.classes': { en: 'Classes', zh: '班级', ms: 'Kelas' },
   'teacher.students': { en: 'Students', zh: '学生', ms: 'Pelajar' },
