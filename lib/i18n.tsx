@@ -211,7 +211,7 @@ export const dict: Dict = {
   'chat.send': { en: 'Send', zh: '发送', ms: 'Hantar' },
 
   // Teacher
-  'teacher.dashboard': { en: 'Teacher dashboard', zh: '教师仪表盘', ms: 'Papan pemuka guru' },
+  'teacher.dashboard': { en: 'Learning Management Hub', zh: '学习管理中心',  ms: 'Hab pengurusan pembelajaran' },
   'teacher.classes': { en: 'Classes', zh: '班级', ms: 'Kelas' },
   'teacher.students': { en: 'Students', zh: '学生', ms: 'Pelajar' },
   'teacher.createClass': { en: 'Create class', zh: '创建班级', ms: 'Cipta kelas' },
