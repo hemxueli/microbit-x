@@ -9,7 +9,7 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("emailVerified").notNull().default(false),
   image: text("image"),
-  // Custom field: "student" | "teacher". Managed via Better Auth additionalFields.
+  // App-specific: "teacher" | "student"
   role: text("role").notNull().default("student"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
@@ -56,20 +56,20 @@ export const verification = pgTable("verification", {
 })
 
 // --- App tables ------------------------------------------------------------
-// No foreign keys on app tables (per stack conventions). Ownership/relations
-// are represented by plain id columns and enforced in server actions.
+// No foreign keys by default; scope queries by the relevant owner id column.
 
-// A class created by a teacher. Students join with joinCode.
+// A class created by a teacher. `teacherId` is the owning user.
 export const classes = pgTable("classes", {
   id: serial("id").primaryKey(),
   teacherId: text("teacherId").notNull(),
   name: text("name").notNull(),
   description: text("description"),
+  // Short human-friendly code students can use to join.
   joinCode: text("joinCode").notNull().unique(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 })
 
-// Membership of a student in a class.
+// Links a student user to a class.
 export const enrollments = pgTable("enrollments", {
   id: serial("id").primaryKey(),
   classId: integer("classId").notNull(),
@@ -77,67 +77,39 @@ export const enrollments = pgTable("enrollments", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 })
 
-// A learning topic (unit). Content is markdown notes + optional media.
-export const topics = pgTable("topics", {
+// Homework/assignments a teacher gives to a class.
+export const assignments = pgTable("assignments", {
   id: serial("id").primaryKey(),
+  classId: integer("classId").notNull(),
+  teacherId: text("teacherId").notNull(),
   title: text("title").notNull(),
-  slug: text("slug").notNull().unique(),
-  summary: text("summary"),
-  // Ordered index for display.
-  orderIndex: integer("orderIndex").notNull().default(0),
-  // Markdown notes body (teacher-editable).
-  notes: text("notes"),
-  // Media items: [{ type: "image"|"video", url, caption }]
-  media: jsonb("media").$type<{ type: string; url: string; caption?: string }[]>().default([]),
-  // Optional MakeCode share/project url to embed for this topic.
-  makecodeUrl: text("makecodeUrl"),
+  description: text("description"),
+  dueDate: timestamp("dueDate"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 })
 
-// A quiz belongs to a topic and has a difficulty level (1=basic,2=intermediate,3=advanced).
-export const quizzes = pgTable("quizzes", {
-  id: serial("id").primaryKey(),
-  topicId: integer("topicId").notNull(),
-  level: integer("level").notNull(), // 1 | 2 | 3
-  title: text("title").notNull(),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-})
-
-// A multiple-choice question. options is an array of strings; correctIndex is
-// the index of the correct option.
-export const questions = pgTable("questions", {
-  id: serial("id").primaryKey(),
-  quizId: integer("quizId").notNull(),
-  prompt: text("prompt").notNull(),
-  options: jsonb("options").$type<string[]>().notNull().default([]),
-  correctIndex: integer("correctIndex").notNull().default(0),
-  explanation: text("explanation"),
-  orderIndex: integer("orderIndex").notNull().default(0),
-})
-
-// A student's attempt at a quiz.
-export const attempts = pgTable("attempts", {
+// A student's attempt at one of the three quiz levels.
+// level: "1" | "2" | "3" (stored as text for flexibility).
+export const quizAttempts = pgTable("quiz_attempts", {
   id: serial("id").primaryKey(),
   studentId: text("studentId").notNull(),
-  quizId: integer("quizId").notNull(),
-  topicId: integer("topicId").notNull(),
-  level: integer("level").notNull(),
-  score: integer("score").notNull(), // number correct
-  total: integer("total").notNull(), // number of questions
-  // Per-question answers: [{ questionId, selectedIndex, correct }]
-  answers: jsonb("answers")
-    .$type<{ questionId: number; selectedIndex: number; correct: boolean }[]>()
-    .notNull()
-    .default([]),
-  // AI-generated personalized feedback (structured).
-  aiFeedback: jsonb("aiFeedback").$type<{
-    summary: string
-    strengths: string[]
-    weaknesses: string[]
-    suggestions: string[]
-  } | null>(),
-  // Optional manual override / comment by a teacher.
-  teacherComment: text("teacherComment"),
-  teacherMark: integer("teacherMark"),
+  classId: integer("classId"),
+  level: text("level").notNull(),
+  score: integer("score").notNull().default(0),
+  maxScore: integer("maxScore").notNull().default(0),
+  // Raw answers payload, left flexible for later quiz content.
+  answers: jsonb("answers"),
+  // AI generated evaluation of this attempt (nullable until generated).
+  aiEvaluation: text("aiEvaluation"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+})
+
+// Teacher feedback/comments on a student's quiz attempt.
+export const feedback = pgTable("feedback", {
+  id: serial("id").primaryKey(),
+  teacherId: text("teacherId").notNull(),
+  studentId: text("studentId").notNull(),
+  attemptId: integer("attemptId"),
+  message: text("message").notNull(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 })

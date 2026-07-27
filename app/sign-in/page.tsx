@@ -37,7 +37,7 @@ export default function SignInPage() {
           style={{
             backgroundColor: "transparent",
             border: "none",
-            color: "blue",
+            color: "black",
             textDecoration: "underline",
             cursor: "pointer",
           }}

@@ -211,7 +211,16 @@ export const dict: Dict = {
   'chat.send': { en: 'Send', zh: '发送', ms: 'Hantar' },
 
   // Teacher
-  'teacher.dashboard': { en: 'Teacher dashboard', zh: '教师仪表盘', ms: 'Papan pemuka guru' },
+  // 通用
+  'common.view': { en: 'View', zh: '查看', ms: 'Lihat' },
+  'common.editProfile': { en: 'Edit Profile', zh: '编辑资料', ms: 'Sunting Profil' },
+
+  // 头像
+  'auth.chooseFile': { en: 'Choose File', zh: '选择文件', ms: 'Pilih Fail' },
+  'auth.avatar': { en: 'Avatar', zh: '头像', ms: 'Gambar Profil' }, 
+  'auth.selectedFile': { en: 'Selected File', zh: '已选择文件', ms: 'Fail Dipilih' },
+  
+  'teacher.dashboard': { en: 'Learning Management Hub', zh: '学习管理中心', ms: 'Hab Pengurusan Pembelajaran' },
   'teacher.classes': { en: 'Classes', zh: '班级', ms: 'Kelas' },
   'teacher.students': { en: 'Students', zh: '学生', ms: 'Pelajar' },
   'teacher.createClass': { en: 'Create class', zh: '创建班级', ms: 'Cipta kelas' },
