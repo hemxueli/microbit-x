@@ -217,7 +217,6 @@ export const dict: Dict = {
 
   // 头像
   'auth.avatar': { en: 'Avatar', zh: '头像', ms: 'Avatar' },
-
   'teacher.dashboard': { en: 'Learning Management Hub', zh: '学习管理中心', ms: 'Hab Pengurusan Pembelajaran' },
   'teacher.classes': { en: 'Classes', zh: '班级', ms: 'Kelas' },
   'teacher.students': { en: 'Students', zh: '学生', ms: 'Pelajar' },

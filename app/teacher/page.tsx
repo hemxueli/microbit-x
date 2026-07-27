@@ -8,6 +8,7 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useI18n } from '@/lib/i18n'
+import { ChevronDown } from 'lucide-react'
 
 export default function TeacherPage({ user }: { user?: any }) {
   const { t } = useI18n()
@@ -56,6 +57,7 @@ export default function TeacherPage({ user }: { user?: any }) {
                 className="rounded-full border"
               />
               <span className="font-medium">{name}</span>
+               <ChevronDown className="w-4 h-4 text-gray-500" />
             </div>
             <Button variant="ghost" size="sm">
               {t('nav.logout')}
