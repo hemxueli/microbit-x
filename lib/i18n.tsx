@@ -20,7 +20,7 @@ type Dict = Record<string, { en: string; zh: string; ms: string }>
 
 // Central dictionary. Add keys here; components read via t('key').
 export const dict: Dict = {
-  'app.name': { en: 'MicroBit-X', zh: 'MicroBit-X', ms: 'MicroBit-X' },
+  'app.name': { en: 'MicroBOT-X', zh: 'MicroBOT-X', ms: 'MicroBOT-X' },
   'app.tagline': {
     en: 'Learn micro:bit the interactive way',
     zh: '以互动方式学习 micro:bit',
@@ -140,6 +140,11 @@ export const dict: Dict = {
     zh: '创建你的账号',
     ms: 'Cipta akaun anda',
   },
+  'auth.forgotPassword': {
+  en: 'Forgot your password?',
+  zh: '忘记密码？',
+  ms: 'Lupa kata laluan?',
+  },
   'auth.processing': { en: 'Please wait...', zh: '请稍候……', ms: 'Sila tunggu...' },
 
   // Common
@@ -221,37 +226,75 @@ export const dict: Dict = {
   'auth.selectedFile': { en: 'Selected File', zh: '已选择文件', ms: 'Fail Dipilih' },
   
   'teacher.dashboard': { en: 'Learning Management Hub', zh: '学习管理中心', ms: 'Hab Pengurusan Pembelajaran' },
-  'teacher.classes': { en: 'Classes', zh: '班级', ms: 'Kelas' },
-  'teacher.students': { en: 'Students', zh: '学生', ms: 'Pelajar' },
-  'teacher.createClass': { en: 'Create class', zh: '创建班级', ms: 'Cipta kelas' },
-  'teacher.className': { en: 'Class name', zh: '班级名称', ms: 'Nama kelas' },
-  'teacher.classDesc': { en: 'Description', zh: '描述', ms: 'Keterangan' },
-  'teacher.noClasses': {
-    en: 'No classes yet. Create your first class to get started.',
-    zh: '还没有班级。创建第一个班级开始吧。',
-    ms: 'Tiada kelas lagi. Cipta kelas pertama anda.',
+  'teacher.classesTable': {
+  en: 'Class Management',
+  zh: '班级管理',
+  ms: 'Pengurusan Kelas',
+  },
+  'teacher.enterStudent': {
+    en: 'Enter student account or code',
+    zh: '输入学生账号或邀请码',
+    ms: 'Masukkan akaun pelajar atau kod',
+  },
+  'teacher.addStudent': {
+    en: 'Add Student',
+    zh: '添加学生',
+    ms: 'Tambah Pelajar',
+  },
+  'teacher.studentName': {
+    en: 'Student Name',
+    zh: '学生姓名',
+    ms: 'Nama Pelajar',
+  },
+  'teacher.quizScore': {
+    en: 'Quiz Score',
+    zh: '测验成绩',
+    ms: 'Markah Kuiz',
+  },
+  'teacher.evaluation': {
+    en: 'Evaluation',
+    zh: '评估',
+    ms: 'Penilaian',
+  },
+  'teacher.writeEvaluation': {
+    en: 'Write evaluation',
+    zh: '填写评语',
+    ms: 'Tulis penilaian',
+  },
+  'teacher.noStudents': {
+    en: 'No students yet',
+    zh: '暂无学生',
+    ms: 'Belum ada pelajar',
+  },
+  'teacher.classCode': {
+  en: 'Class Code',
+  zh: '班级邀请码',
+  ms: 'Kod Kelas',
   },
   'teacher.shareCode': {
-    en: 'Share this code with students',
-    zh: '把此代码分享给学生',
-    ms: 'Kongsi kod ini dengan pelajar',
+    en: 'Share Code',
+    zh: '分享邀请码',
+    ms: 'Kongsi Kod',
   },
-  'teacher.progress': { en: 'Student progress', zh: '学生进度', ms: 'Kemajuan pelajar' },
-  'teacher.reviewMarks': { en: 'Review marks', zh: '审阅成绩', ms: 'Semak markah' },
-  'teacher.avgScore': { en: 'Avg. score', zh: '平均分', ms: 'Purata markah' },
-  'teacher.attempts': { en: 'Attempts', zh: '尝试次数', ms: 'Percubaan' },
-  'teacher.comment': { en: 'Teacher comment', zh: '教师评语', ms: 'Komen guru' },
-  'teacher.manualMark': { en: 'Manual mark', zh: '手动评分', ms: 'Markah manual' },
-  'teacher.saveReview': { en: 'Save review', zh: '保存评价', ms: 'Simpan semakan' },
-  'teacher.noStudents': {
-    en: 'No students have joined yet.',
-    zh: '还没有学生加入。',
-    ms: 'Tiada pelajar menyertai lagi.',
+  'teacher.joinClass': {
+    en: 'Join Class',
+    zh: '加入班级',
+    ms: 'Sertai Kelas',
   },
-  'teacher.noAttempts': {
-    en: 'No quiz attempts to review yet.',
-    zh: '还没有可审阅的测验记录。',
-    ms: 'Tiada percubaan kuiz untuk disemak.',
+  'teacher.enterCode': {
+    en: 'Enter Class Code',
+    zh: '输入班级邀请码',
+    ms: 'Masukkan Kod Kelas',
+  },
+  'teacher.codeCopied': {
+    en: 'Class code copied to clipboard.',
+    zh: '班级邀请码已复制到剪贴板。',
+    ms: 'Kod kelas disalin ke papan klip.',
+  },
+  'teacher.invalidCode': {
+    en: 'Invalid class code.',
+    zh: '邀请码无效。',
+    ms: 'Kod kelas tidak sah.',
   },
 }
 
