@@ -29,6 +29,6 @@ export default function SignInPage() {
   return (
     <div style={{ padding: "20px" }}>
       <AuthShell mode="sign-in" />
-    </div>
+
   );
 }
