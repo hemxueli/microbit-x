@@ -140,6 +140,11 @@ export const dict: Dict = {
     zh: '创建你的账号',
     ms: 'Cipta akaun anda',
   },
+  'auth.forgotPassword': {
+  en: 'Forgot your password?',
+  zh: '忘记密码？',
+  ms: 'Lupa kata laluan?',
+  },
   'auth.processing': { en: 'Please wait...', zh: '请稍候……', ms: 'Sila tunggu...' },
 
   // Common

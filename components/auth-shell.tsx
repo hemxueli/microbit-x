@@ -34,7 +34,7 @@ export function AuthShell({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             {mode === 'sign-in' && (
               <div className="mt-4 text-center">
                 <Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-800">
-                  Forgot your password?
+                {t('auth.forgotPassword')}
                 </Link>
               </div>
             )}
