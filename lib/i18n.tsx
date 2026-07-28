@@ -380,6 +380,12 @@ export const UI: Record<Lang, UIStrings> = {
   },
 }
 
+export const LANGUAGE_NAMES: Record<Lang, string> = {
+  en: "English",
+  zh: "Simplified Chinese",
+  ms: "Malay (Bahasa Melayu)",
+}
+
 type I18nContextValue = {
   lang: Lang
   setLang: (l: Lang) => void
