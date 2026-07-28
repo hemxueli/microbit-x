@@ -10,12 +10,6 @@ import {
 
 export type Lang = 'en' | 'zh' | 'ms'
 
-export const LANGS: { code: Lang; label: string }[] = [
-  { code: 'en', label: 'English' },
-  { code: 'zh', label: '中文' },
-  { code: 'ms', label: 'Bahasa Melayu' },
-]
-
 export const LANGS: { code: Lang; label: string; short: string }[] = [
   { code: "en", label: "English", short: "EN" },
   { code: "zh", label: "中文", short: "中" },
