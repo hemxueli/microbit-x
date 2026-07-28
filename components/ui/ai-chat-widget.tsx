@@ -5,7 +5,7 @@ import { DefaultChatTransport } from "ai"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { MessageCircle, X, Send, Square, Bot, ClipboardCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { UI, LANGUAGES, type Language } from "@/lib/i18n"
+import { UI, LANGS, type Lang } from "@/lib/i18n"
 import type { QuizData } from "@/lib/quiz"
 
 type AiChatWidgetProps = {
