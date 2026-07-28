@@ -79,27 +79,27 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
               <Bot className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <h2 className="truncate text-sm font-semibold leading-tight">{t.widgetTitle}</h2>
-              <p className="truncate text-xs text-teal-100">{t.widgetSubtitle}</p>
+              <h2 className="truncate text-sm font-semibold leading-tight">
+                {UI[language].widgetTitle}
+              </h2>
+              {/* 只显示当前语言的副标题 */}
+              <p className="truncate text-xs text-teal-100">
+                {UI[language].widgetSubtitle}
+              </p>
             </div>
-            {/* Language switch */}
-            <div role="group" aria-label={t.langLabel} className="flex shrink-0 items-center gap-1">
-              {LANGS.map((l) => (
-                <button
-                  key={l.code}
-                  type="button"
-                  onClick={() => setLanguage(l.code)}
-                  aria-pressed={language === l.code}
-                  className={cn(
-                    "px-3 py-1 rounded-md text-xs font-medium",
-                    language === l.code
-                      ? "bg-white text-teal-600"
-                      : "bg-teal-500/30 text-white hover:bg-teal-500/50"
-                  )}
-                >
-                  {l.short}
-                </button>
-              ))}
+            {/* Language switch - 下拉菜单 */}
+            <div className="flex shrink-0 items-center">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Lang)}
+                className="px-2 py-1 rounded-md text-xs font-medium bg-white text-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              >
+                {LANGS.map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {l.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </header>
 
