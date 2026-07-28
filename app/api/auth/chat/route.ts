@@ -6,12 +6,12 @@ import {
   type UIMessage,
 } from "ai"
 import { google } from "@ai-sdk/google"
-import { LANGUAGE_NAMES, type Language } from "@/lib/i18n"
+import { LANGUAGE_NAMES, type Lang } from "@/lib/i18n"
 import type { QuizData } from "@/lib/quiz"
 
 export const maxDuration = 30
 
-function buildSystemPrompt(language: Language, quizData?: QuizData) {
+function buildSystemPrompt(language: Lang, quizData?: QuizData) {
   const languageName = LANGUAGE_NAMES[language] ?? LANGUAGE_NAMES.en
 
   let prompt = `You are a friendly, patient tutor embedded in a BBC micro:bit learning website for school students.
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
     messages,
     language = "en",
     quizData,
-  }: { messages: UIMessage[]; language?: Language; quizData?: QuizData } = await req.json()
+  }: { messages: UIMessage[]; language?: Lang; quizData?: QuizData } = await req.json()
 
   const result = streamText({
     model: google("gemini-flash-latest"),

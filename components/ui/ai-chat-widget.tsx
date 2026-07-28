@@ -10,12 +10,12 @@ import type { QuizData } from "@/lib/quiz"
 
 type AiChatWidgetProps = {
   quizData?: QuizData
-  defaultLanguage?: Language
+  defaultLanguage?: Lang
 }
 
 export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetProps) {
   const [open, setOpen] = useState(false)
-  const [language, setLanguage] = useState<Language>(defaultLanguage)
+  const [language, setLanguage] = useState<Lang>(defaultLanguage)
   const [input, setInput] = useState("")
 
   // Keep latest values available to the transport body function.
@@ -94,7 +94,7 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
               aria-label={t.langLabel}
               className="flex shrink-0 items-center gap-0.5 rounded-full bg-primary-foreground/15 p-0.5"
             >
-              {LANGUAGES.map((l) => (
+              {LANGS.map((l) => (
                 <button
                   key={l.code}
                   type="button"
