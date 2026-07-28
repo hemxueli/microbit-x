@@ -92,7 +92,8 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as Lang)}
-                className="px-2 py-1 rounded-md text-xs font-medium bg-white text-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="px-2 py-1 rounded-md text-xs font-medium bg-white text-teal-600 
+                          focus:outline-none focus:ring-2 focus:ring-teal-500 w-auto max-w[6rem]"
               >
                 {LANGS.map((l) => (
                   <option key={l.code} value={l.code}>
@@ -100,6 +101,7 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
                   </option>
                 ))}
               </select>
+
             </div>
           </header>
 
