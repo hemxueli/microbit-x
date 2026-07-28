@@ -6,7 +6,7 @@ import {
   type UIMessage,
 } from "ai"
 import { google } from "@ai-sdk/google"
-import { LANGS, type Lang } from "@/lib/i18n"
+import { LANGUAGE_NAMES, type Lang } from "@/lib/i18n"
 import type { QuizData } from "@/lib/quiz"
 
 export const maxDuration = 30
