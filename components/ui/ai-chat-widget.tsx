@@ -61,9 +61,10 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
         aria-label={open ? t.closeLabel : t.openLabel}
         title="micro:bit helper"
         className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full 
-                   bg-teal-600 text-white shadow-lg hover:bg-teal-700 transition-transform hover:scale-105"
+                  bg-teal-600 text-white shadow-lg hover:bg-teal-700 transition-transform hover:scale-105"
       >
-        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        {/* 使用 Bot 图标替代原来的 MessageCircle/X */}
+        <Bot className="h-6 w-6" />
       </button>
 
       {/* Chat panel */}
