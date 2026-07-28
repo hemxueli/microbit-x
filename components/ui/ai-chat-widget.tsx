@@ -59,7 +59,9 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? t.closeLabel : t.openLabel}
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-transform hover:scale-105"
+        title="micro:bit helper"
+        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full 
+                   bg-teal-600 text-white shadow-lg hover:bg-teal-700 transition-transform hover:scale-105"
       >
         {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </button>
@@ -72,13 +74,13 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
           className="fixed bottom-24 right-5 z-50 flex w-[calc(100vw-2.5rem)] max-w-sm flex-col overflow-hidden h-[32rem] max-h-[calc(100vh-8rem)] rounded-2xl border border-gray-300 bg-white shadow-2xl"
         >
           {/* Header */}
-          <header className="flex items-center gap-3 border-b border-gray-200 bg-blue-600 px-4 py-3 text-white">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/30">
+          <header className="flex items-center gap-3 border-b border-gray-200 bg-teal-600 px-4 py-3 text-white">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-500/30">
               <Bot className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
               <h2 className="truncate text-sm font-semibold leading-tight">{t.widgetTitle}</h2>
-              <p className="truncate text-xs text-blue-100">{t.widgetSubtitle}</p>
+              <p className="truncate text-xs text-teal-100">{t.widgetSubtitle}</p>
             </div>
             {/* Language switch */}
             <div role="group" aria-label={t.langLabel} className="flex shrink-0 items-center gap-1">
@@ -91,8 +93,8 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
                   className={cn(
                     "px-3 py-1 rounded-md text-xs font-medium",
                     language === l.code
-                      ? "bg-white text-blue-600"
-                      : "bg-blue-500/30 text-white hover:bg-blue-500/50"
+                      ? "bg-white text-teal-600"
+                      : "bg-teal-500/30 text-white hover:bg-teal-500/50"
                   )}
                 >
                   {l.short}
@@ -104,8 +106,8 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
             {quizData && quizData.questions.length > 0 && (
-              <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-blue-50 px-3 py-2 text-xs text-blue-700">
-                <ClipboardCheck className="h-4 w-4 shrink-0 text-blue-600" />
+              <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-teal-50 px-3 py-2 text-xs text-teal-700">
+                <ClipboardCheck className="h-4 w-4 shrink-0 text-teal-600" />
                 <span className="font-medium">{t.quizAttached}</span>
                 {typeof quizData.score === "number" && (
                   <span className="ml-auto tabular-nums">
@@ -127,7 +129,7 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
                       key={s}
                       type="button"
                       onClick={() => submit(s)}
-                      className="rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                      className="rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 hover:bg-teal-50 hover:text-teal-700"
                     >
                       {s}
                     </button>
@@ -145,7 +147,7 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
                     className={cn(
                       "max-w-[85%] whitespace-pre-wrap rounded-xl px-3.5 py-2.5 text-sm leading-relaxed",
                       isUser
-                        ? "bg-blue-600 text-white rounded-tr-sm"
+                        ? "bg-teal-600 text-white rounded-tr-sm"
                         : "bg-gray-100 text-gray-800 rounded-tl-sm"
                     )}
                   >
@@ -199,9 +201,9 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
                 }}
                 rows={1}
                 placeholder={t.inputPlaceholder}
-                className="max-h-28 min-h-[2.5rem] flex-1 resize-none rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="max-h-28 min-h-[2.5rem] flex-1 resize-none rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-teal-500"
               />
-              {busy ? (
+               {busy ? (
                 <button
                   type="button"
                   onClick={() => stop()}
@@ -215,7 +217,7 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
                   type="submit"
                   disabled={!input.trim()}
                   aria-label={t.send}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-40"
                 >
                   <Send className="h-4 w-4" />
                 </button>

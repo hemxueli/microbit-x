@@ -16,6 +16,12 @@ export const LANGS: { code: Lang; label: string }[] = [
   { code: 'ms', label: 'Bahasa Melayu' },
 ]
 
+export const LANGS: { code: Lang; label: string; short: string }[] = [
+  { code: "en", label: "English", short: "EN" },
+  { code: "zh", label: "中文", short: "中" },
+  { code: "ms", label: "Bahasa Melayu", short: "MS" },
+]
+
 type Dict = Record<string, { en: string; zh: string; ms: string }>
 
 // Central dictionary. Add keys here; components read via t('key').
