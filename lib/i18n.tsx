@@ -10,10 +10,10 @@ import {
 
 export type Lang = 'en' | 'zh' | 'ms'
 
-export const LANGS: { code: Lang; label: string }[] = [
-  { code: 'en', label: 'English' },
-  { code: 'zh', label: '中文' },
-  { code: 'ms', label: 'Bahasa Melayu' },
+export const LANGS: { code: Lang; label: string; short: string }[] = [
+  { code: "en", label: "English", short: "EN" },
+  { code: "zh", label: "中文", short: "中" },
+  { code: "ms", label: "Bahasa Melayu", short: "MS" },
 ]
 
 type Dict = Record<string, { en: string; zh: string; ms: string }>
@@ -225,21 +225,45 @@ export const dict: Dict = {
   'auth.avatar': { en: 'Avatar', zh: '头像', ms: 'Gambar Profil' }, 
   'auth.selectedFile': { en: 'Selected File', zh: '已选择文件', ms: 'Fail Dipilih' },
   
-  'teacher.dashboard': { en: 'Learning Management Hub', zh: '学习管理中心', ms: 'Hab Pengurusan Pembelajaran' },
-  'teacher.classesTable': {
-  en: 'Class Management',
-  zh: '班级管理',
-  ms: 'Pengurusan Kelas',
+  'teacher.welcomeTitle': {
+  en: 'Welcome back, Teacher!',
+  zh: '欢迎回来，老师！',
+  ms: 'Selamat kembali, Cikgu!',
   },
-  'teacher.enterStudent': {
-    en: 'Enter student account or code',
-    zh: '输入学生账号或邀请码',
-    ms: 'Masukkan akaun pelajar atau kod',
+  'teacher.welcomeSubtitle': {
+    en: 'Welcome, respected teacher! This is your space to manage classes and students.',
+    zh: '欢迎您，尊敬的老师！这里是您管理班级与学生的空间',
+    ms: 'Selamat datang, cikgu yang dihormati! Inilah ruang anda untuk mengurus kelas dan pelajar.',
+  },
+  'teacher.enterClass': {
+    en: 'Enter class name',
+    zh: '请输入班级名称',
+    ms: 'Masukkan nama kelas',
+  },
+  'teacher.createClass': {
+    en: 'Create Class',
+    zh: '创建班级',
+    ms: 'Cipta Kelas',
+  },
+  'teacher.noClasses': {
+    en: "You don't have any classes yet, please create one",
+    zh: '您还没有班级，请先创建一个',
+    ms: 'Anda belum mempunyai kelas, sila cipta dahulu',
+  },
+  'teacher.classesTable': {
+    en: 'Class Management',
+    zh: '班级管理',
+    ms: 'Pengurusan Kelas',
   },
   'teacher.addStudent': {
     en: 'Add Student',
     zh: '添加学生',
     ms: 'Tambah Pelajar',
+  },
+  'teacher.enterStudent': {
+    en: 'Enter student account or invitation code',
+    zh: '输入学生账号或邀请码',
+    ms: 'Masukkan akaun atau kod jemputan pelajar',
   },
   'teacher.studentName': {
     en: 'Student Name',
@@ -253,7 +277,7 @@ export const dict: Dict = {
   },
   'teacher.evaluation': {
     en: 'Evaluation',
-    zh: '评估',
+    zh: '评语',
     ms: 'Penilaian',
   },
   'teacher.writeEvaluation': {
@@ -262,40 +286,97 @@ export const dict: Dict = {
     ms: 'Tulis penilaian',
   },
   'teacher.noStudents': {
-    en: 'No students yet',
-    zh: '暂无学生',
-    ms: 'Belum ada pelajar',
+    en: 'No students in this class yet',
+    zh: '当前班级还没有学生',
+    ms: 'Tiada pelajar dalam kelas ini lagi',
   },
-  'teacher.classCode': {
-  en: 'Class Code',
-  zh: '班级邀请码',
-  ms: 'Kod Kelas',
+}
+
+
+type UIStrings = {
+  widgetTitle: string
+  widgetSubtitle: string
+  openLabel: string
+  closeLabel: string
+  inputPlaceholder: string
+  send: string
+  stop: string
+  thinking: string
+  emptyTitle: string
+  emptyBody: string
+  quizAttached: string
+  evaluateQuiz: string
+  langLabel: string
+  errorMessage: string
+  billingMessage: string
+  suggestions: string[]
+}
+
+export const UI: Record<Lang, UIStrings> = {
+  en: {
+    widgetTitle: "micro:bit Helper",
+    widgetSubtitle: "Ask questions & get quiz feedback",
+    openLabel: "Open chat assistant",
+    closeLabel: "Close chat",
+    inputPlaceholder: "Ask me anything about micro:bit...",
+    send: "Send",
+    stop: "Stop",
+    thinking: "Thinking...",
+    emptyTitle: "Hi! I'm your micro:bit helper.",
+    emptyBody: "Ask me about coding, sensors, buttons, or send your quiz results and I'll help you review them.",
+    quizAttached: "Quiz results loaded",
+    evaluateQuiz: "Evaluate my quiz results",
+    langLabel: "Language",
+    errorMessage: "Something went wrong. Please try again.",
+    billingMessage:
+      "The AI service isn't active yet. The site owner needs to add a free Google Gemini API key (GOOGLE_GENERATIVE_AI_API_KEY) to the project. Once that's done, I'll be able to reply.",
+    suggestions: ["How do I use the button?", "What is an accelerometer?", "Evaluate my quiz results"],
   },
-  'teacher.shareCode': {
-    en: 'Share Code',
-    zh: '分享邀请码',
-    ms: 'Kongsi Kod',
+  ms: {
+    widgetTitle: "Pembantu micro:bit",
+    widgetSubtitle: "Tanya soalan & dapat maklum balas kuiz",
+    openLabel: "Buka pembantu sembang",
+    closeLabel: "Tutup sembang",
+    inputPlaceholder: "Tanya apa sahaja tentang micro:bit...",
+    send: "Hantar",
+    stop: "Berhenti",
+    thinking: "Sedang berfikir...",
+    emptyTitle: "Hai! Saya pembantu micro:bit anda.",
+    emptyBody:
+      "Tanya saya tentang pengekodan, penderia, butang, atau hantar keputusan kuiz anda dan saya akan bantu semak.",
+    quizAttached: "Keputusan kuiz dimuatkan",
+    evaluateQuiz: "Nilai keputusan kuiz saya",
+    langLabel: "Bahasa",
+    errorMessage: "Sesuatu tidak kena. Sila cuba lagi.",
+    billingMessage:
+      "Perkhidmatan AI belum aktif. Pemilik laman perlu menambah kunci API Google Gemini percuma (GOOGLE_GENERATIVE_AI_API_KEY) pada projek. Selepas itu, saya boleh menjawab.",
+    suggestions: ["Bagaimana guna butang?", "Apa itu akselerometer?", "Nilai keputusan kuiz saya"],
   },
-  'teacher.joinClass': {
-    en: 'Join Class',
-    zh: '加入班级',
-    ms: 'Sertai Kelas',
+  zh: {
+    widgetTitle: "micro:bit 助手",
+    widgetSubtitle: "提问问题 & 获取测验反馈",
+    openLabel: "打开聊天助手",
+    closeLabel: "关闭聊天",
+    inputPlaceholder: "问我任何关于 micro:bit 的问题...",
+    send: "发送",
+    stop: "停止",
+    thinking: "思考中...",
+    emptyTitle: "你好！我是你的 micro:bit 助手。",
+    emptyBody: "问我关于编程、传感器、按钮的问题，或把你的测验结果发给我，我会帮你评估。",
+    quizAttached: "已加载测验结果",
+    evaluateQuiz: "评估我的测验结果",
+    langLabel: "语言",
+    errorMessage: "出错了，请再试一次。",
+    billingMessage:
+      "AI 服务尚未启用。网站管理员需要在项目中添加一个免费的 Google Gemini API 密钥（GOOGLE_GENERATIVE_AI_API_KEY）。完成后我就能回复你了。",
+    suggestions: ["按钮怎么用？", "什么是加速度传感器？", "评估我的测验结果"],
   },
-  'teacher.enterCode': {
-    en: 'Enter Class Code',
-    zh: '输入班级邀请码',
-    ms: 'Masukkan Kod Kelas',
-  },
-  'teacher.codeCopied': {
-    en: 'Class code copied to clipboard.',
-    zh: '班级邀请码已复制到剪贴板。',
-    ms: 'Kod kelas disalin ke papan klip.',
-  },
-  'teacher.invalidCode': {
-    en: 'Invalid class code.',
-    zh: '邀请码无效。',
-    ms: 'Kod kelas tidak sah.',
-  },
+}
+
+export const LANGUAGE_NAMES: Record<Lang, string> = {
+  en: "English",
+  ms: "Malay (Bahasa Melayu)",
+  zh: "Chinese (中文)",
 }
 
 type I18nContextValue = {
