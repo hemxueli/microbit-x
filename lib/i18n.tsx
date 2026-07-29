@@ -229,67 +229,67 @@ export const dict: Dict = {
   en: 'Welcome back, Teacher!',
   zh: '欢迎回来，老师！',
   ms: 'Selamat kembali, Cikgu!',
-},
-'teacher.welcomeSubtitle': {
-  en: 'Welcome, respected teacher! This is your space to manage classes and students.',
-  zh: '欢迎您，尊敬的老师！这里是您管理班级与学生的空间',
-  ms: 'Selamat datang, cikgu yang dihormati! Inilah ruang anda untuk mengurus kelas dan pelajar.',
-},
-'teacher.enterClass': {
-  en: 'Enter class name',
-  zh: '请输入班级名称',
-  ms: 'Masukkan nama kelas',
-},
-'teacher.createClass': {
-  en: 'Create Class',
-  zh: '创建班级',
-  ms: 'Cipta Kelas',
-},
-'teacher.noClasses': {
-  en: "You don't have any classes yet, please create one",
-  zh: '您还没有班级，请先创建一个',
-  ms: 'Anda belum mempunyai kelas, sila cipta dahulu',
-},
-'teacher.classesTable': {
-  en: 'Class Management',
-  zh: '班级管理',
-  ms: 'Pengurusan Kelas',
-},
-'teacher.addStudent': {
-  en: 'Add Student',
-  zh: '添加学生',
-  ms: 'Tambah Pelajar',
-},
-'teacher.enterStudent': {
-  en: 'Enter student account or invitation code',
-  zh: '输入学生账号或邀请码',
-  ms: 'Masukkan akaun atau kod jemputan pelajar',
-},
-'teacher.studentName': {
-  en: 'Student Name',
-  zh: '学生姓名',
-  ms: 'Nama Pelajar',
-},
-'teacher.quizScore': {
-  en: 'Quiz Score',
-  zh: '测验成绩',
-  ms: 'Markah Kuiz',
-},
-'teacher.evaluation': {
-  en: 'Evaluation',
-  zh: '评语',
-  ms: 'Penilaian',
-},
-'teacher.writeEvaluation': {
-  en: 'Write evaluation',
-  zh: '填写评语',
-  ms: 'Tulis penilaian',
-},
-'teacher.noStudents': {
-  en: 'No students in this class yet',
-  zh: '当前班级还没有学生',
-  ms: 'Tiada pelajar dalam kelas ini lagi',
-},
+  },
+  'teacher.welcomeSubtitle': {
+    en: 'Welcome, respected teacher! This is your space to manage classes and students.',
+    zh: '欢迎您，尊敬的老师！这里是您管理班级与学生的空间',
+    ms: 'Selamat datang, cikgu yang dihormati! Inilah ruang anda untuk mengurus kelas dan pelajar.',
+  },
+  'teacher.enterClass': {
+    en: 'Enter class name',
+    zh: '请输入班级名称',
+    ms: 'Masukkan nama kelas',
+  },
+  'teacher.createClass': {
+    en: 'Create Class',
+    zh: '创建班级',
+    ms: 'Cipta Kelas',
+  },
+  'teacher.noClasses': {
+    en: "You don't have any classes yet, please create one",
+    zh: '您还没有班级，请先创建一个',
+    ms: 'Anda belum mempunyai kelas, sila cipta dahulu',
+  },
+  'teacher.classesTable': {
+    en: 'Class Management',
+    zh: '班级管理',
+    ms: 'Pengurusan Kelas',
+  },
+  'teacher.addStudent': {
+    en: 'Add Student',
+    zh: '添加学生',
+    ms: 'Tambah Pelajar',
+  },
+  'teacher.enterStudent': {
+    en: 'Enter student account or invitation code',
+    zh: '输入学生账号或邀请码',
+    ms: 'Masukkan akaun atau kod jemputan pelajar',
+  },
+  'teacher.studentName': {
+    en: 'Student Name',
+    zh: '学生姓名',
+    ms: 'Nama Pelajar',
+  },
+  'teacher.quizScore': {
+    en: 'Quiz Score',
+    zh: '测验成绩',
+    ms: 'Markah Kuiz',
+  },
+  'teacher.evaluation': {
+    en: 'Evaluation',
+    zh: '评语',
+    ms: 'Penilaian',
+  },
+  'teacher.writeEvaluation': {
+    en: 'Write evaluation',
+    zh: '填写评语',
+    ms: 'Tulis penilaian',
+  },
+  'teacher.noStudents': {
+    en: 'No students in this class yet',
+    zh: '当前班级还没有学生',
+    ms: 'Tiada pelajar dalam kelas ini lagi',
+  },
 }
 
 
