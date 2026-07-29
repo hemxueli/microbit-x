@@ -26,7 +26,6 @@ export default function StudentPage({ user }: { user?: any }) {
     }
   }, [showJoin, showLangModal])
 
-
   return (
     <div className="flex min-h-screen flex-col">
       {/* 顶部导航栏 */}
@@ -62,7 +61,7 @@ export default function StudentPage({ user }: { user?: any }) {
               {t('student.welcomeSubtitle')}
             </p>
 
-            {/* 按钮固定在右下角 */}
+            {/* 加入班级按钮 */}
             <div className="absolute bottom-4 right-4">
               <Button variant="default" size="sm" onClick={() => setShowJoin(true)}>
                 {t('student.joinClass')}
@@ -99,49 +98,6 @@ export default function StudentPage({ user }: { user?: any }) {
               </div>
             ))}
           </div>
-          
-          {/* 语言选择弹窗 */}
-          {showLangModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-              <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
-                {/* 右上角关闭按钮 */}
-                <button
-                  onClick={() => setShowLangModal(false)}
-                  className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-                >
-                  ✕
-                </button>
-
-                <h2 className="text-lg font-bold mb-4">{t('student.chooseLanguage')}</h2>
-                <div className="flex flex-col gap-3">
-                  <Button
-                    variant="default"
-                    onClick={() => {
-                      window.location.href = `/student/${selectedTopic}/en`
-                    }}
-                  >
-                    English
-                  </Button>
-                  <Button
-                    variant="default"
-                    onClick={() => {
-                      window.location.href = `/student/${selectedTopic}/ms`
-                    }}
-                  >
-                    Bahasa Melayu
-                  </Button>
-                  <Button
-                    variant="default"
-                    onClick={() => {
-                      window.location.href = `/student/${selectedTopic}/zh`
-                    }}
-                  >
-                    中文
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Quiz 卡片区 */}
           <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.myQuiz')}</h2>
@@ -190,18 +146,16 @@ export default function StudentPage({ user }: { user?: any }) {
         } as QuizData}
       />
 
-      {/* 弹出输入框小页面 */}
+      {/* 加入班级弹窗 */}
       {showJoin && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
-            {/* 右上角关闭按钮 */}
             <button
               onClick={() => setShowJoin(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
             >
               ✕
             </button>
-
             <h2 className="text-lg font-bold mb-4">{t('student.joinClass')}</h2>
             <input
               type="text"
@@ -226,6 +180,47 @@ export default function StudentPage({ user }: { user?: any }) {
                 }}
               >
                 {t('student.confirm')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 语言选择弹窗 */}
+      {showLangModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
+            <button
+              onClick={() => setShowLangModal(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+            <h2 className="text-lg font-bold mb-4">{t('student.chooseLanguage')}</h2>
+            <div className="flex flex-col gap-3">
+              <Button
+                variant="default"
+                onClick={() => {
+                  window.location.href = `/student/${selectedTopic}/en`
+                }}
+              >
+                English
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  window.location.href = `/student/${selectedTopic}/ms`
+                }}
+              >
+                Bahasa Melayu
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  window.location.href = `/student/${selectedTopic}/zh`
+                }}
+              >
+                中文
               </Button>
             </div>
           </div>
