@@ -8,11 +8,12 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
+import type { QuizData } from '@/lib/quiz'
 
 export default function StudentPage({ user }: { user?: any }) {
-  const { t } = useI18n()
+  const { t } = useI18n() // i18n hook
+  const [showJoin, setShowJoin] = useState(false)
   const [classCode, setClassCode] = useState('')
-  const [showLanguageSelect, setShowLanguageSelect] = useState(false)
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -21,7 +22,7 @@ export default function StudentPage({ user }: { user?: any }) {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-4">
-            <LanguageSwitcher />
+            <LanguageSwitcher /> {/* 切换 en/zh/ms */}
             <Image
               src={user?.image ?? '/images/default-avatar.png'}
               alt="avatar"
@@ -29,7 +30,7 @@ export default function StudentPage({ user }: { user?: any }) {
               height={36}
               className="rounded-full border"
             />
-            <span className="font-medium">{user?.name ?? 'Student'}</span>
+            <span className="font-medium">{user?.name ?? t('student.defaultName')}</span>
             <Button variant="ghost" size="sm">
               {t('nav.logout')}
             </Button>
@@ -40,63 +41,83 @@ export default function StudentPage({ user }: { user?: any }) {
       {/* 页面主体 */}
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 py-12 md:py-20">
-          <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-center">
-            欢迎来到学习之旅 🌟
-          </h1>
-          <p className="text-center text-gray-600 mb-8">
-            学习是一段美丽的旅程，每一步都让你更接近智慧的光芒。
-          </p>
-
-          {/* 加入班级按钮 */}
-          <div className="flex justify-center mb-8">
-            <input
-              type="text"
-              placeholder="输入班级代码"
-              value={classCode}
-              onChange={(e) => setClassCode(e.target.value)}
-              className="border px-3 py-2 rounded-l"
-            />
-            <Button
-              variant="default"
-              size="sm"
-              onClick={() => alert(`已加入班级: ${classCode}`)}
-            >
-              加入班级
-            </Button>
-          </div>
-
-          {/* 学习内容入口 */}
-          <div className="text-center mb-12">
-            <Button
-              variant="default"
-              size="lg"
-              onClick={() => setShowLanguageSelect(true)}
-            >
-              进入学习内容
-            </Button>
-          </div>
-
-          {/* 语言选择 */}
-          {showLanguageSelect && (
-            <div className="flex justify-center gap-4 mb-12">
-              <Link href="/learn/en">
-                <Button variant="outline" size="sm">English</Button>
-              </Link>
-              <Link href="/learn/ms">
-                <Button variant="outline" size="sm">Bahasa Melayu</Button>
-              </Link>
-              <Link href="/learn/zh">
-                <Button variant="outline" size="sm">中文</Button>
-              </Link>
+          {/* 欢迎语 + 加入班级按钮 */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight">
+                {t('student.welcomeTitle')}
+              </h1>
+              <p className="text-gray-600">
+                {t('student.welcomeSubtitle')}
+              </p>
             </div>
-          )}
+            <div>
+              {!showJoin ? (
+                <Button variant="default" size="sm" onClick={() => setShowJoin(true)}>
+                  {t('student.joinClass')}
+                </Button>
+              ) : (
+                <div className="flex">
+                  <input
+                    type="text"
+                    placeholder={t('student.enterCode')}
+                    value={classCode}
+                    onChange={(e) => setClassCode(e.target.value)}
+                    className="border px-3 py-2 rounded-l"
+                  />
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => alert(`${t('student.joinedClass')}: ${classCode}`)}
+                  >
+                    {t('student.confirm')}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
 
-          {/* Quiz 独立区块 */}
+          {/* 学习卡片区 */}
+          <h2 className="text-2xl font-bold mb-6">{t('student.learningContent')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {['Basic', 'Input', 'Music'].map((topic) => (
+              <div
+                key={topic}
+                className="relative h-40 rounded-lg shadow-md overflow-hidden cursor-pointer group"
+                style={{
+                  backgroundImage: `url(/images/${topic.toLowerCase()}-bg.jpg)`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
+                    {t(`student.${topic.toLowerCase()}`)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Quiz 卡片区 */}
+          <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.myQuiz')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {['beginner', 'intermediate', 'advanced'].map((level, i) => (
+              <Link key={i} href={`/quiz/level${i + 1}`}>
+                <div className="border rounded-lg p-6 shadow-md text-center hover:bg-gray-50 cursor-pointer">
+                  <h3 className="text-lg font-semibold">{t(`student.${level}Quiz`)}</h3>
+                  <p className="text-gray-600 mt-2">{t('student.startQuiz')}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Quiz 成果查看 */}
           <div className="mt-12 text-center">
-            <h2 className="text-2xl font-bold mb-4">Quiz 挑战</h2>
-            <Link href="/quiz">
-              <Button variant="default" size="sm">进入 Quiz</Button>
-            </Link>
+            <h2 className="text-2xl font-bold mb-4">{t('student.myResults')}</h2>
+            <Button variant="default" size="sm" onClick={() => alert(t('student.showResults'))}>
+              {t('student.openResults')}
+            </Button>
           </div>
         </section>
       </main>
@@ -114,7 +135,7 @@ export default function StudentPage({ user }: { user?: any }) {
         defaultLanguage="en"
         quizData={{
           title: 'Sample Quiz',
-          studentName: user?.name ?? 'Student',
+          studentName: user?.name ?? t('student.defaultName'),
           score: 2,
           total: 3,
           questions: [
@@ -122,7 +143,7 @@ export default function StudentPage({ user }: { user?: any }) {
             { question: 'LED stands for?', studentAnswer: 'Light Emitting Diode', correctAnswer: 'Light Emitting Diode', isCorrect: true },
             { question: 'Which sensor detects motion?', studentAnswer: 'Accelerometer', correctAnswer: 'Accelerometer', isCorrect: true },
           ],
-        }}
+        } as QuizData}
       />
     </div>
   )

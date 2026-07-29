@@ -115,6 +115,86 @@ export const dict: Dict = {
     ms: 'Urus kelas, pantau kemajuan dan semak markah dengan mudah.',
   },
 
+  // student.i18n.ts
+export const studentTexts = {
+  'student.welcomeTitle': {
+    en: 'Welcome to your learning journey 🌟',
+    zh: '欢迎来到学习之旅 🌟',
+    ms: 'Selamat datang ke perjalanan pembelajaran 🌟',
+  },
+  'student.welcomeSubtitle': {
+    en: 'Learning is a beautiful journey, each step brings you closer to the light of wisdom.',
+    zh: '学习是一段美丽的旅程，每一步都让你更接近智慧的光芒。',
+    ms: 'Pembelajaran adalah perjalanan yang indah, setiap langkah membawa anda lebih dekat kepada cahaya kebijaksanaan.',
+  },
+  'student.joinClass': {
+    en: 'Join Class',
+    zh: '加入班级',
+    ms: 'Sertai Kelas',
+  },
+  'student.enterCode': {
+    en: 'Enter class code',
+    zh: '输入班级代码',
+    ms: 'Masukkan kod kelas',
+  },
+  'student.confirm': {
+    en: 'Confirm',
+    zh: '确认',
+    ms: 'Sahkan',
+  },
+  'student.learningContent': {
+    en: 'Learning Content',
+    zh: '学习内容',
+    ms: 'Kandungan Pembelajaran',
+  },
+  'student.basic': {
+    en: 'Basic',
+    zh: '基础',
+    ms: 'Asas',
+  },
+  'student.input': {
+    en: 'Input',
+    zh: '输入',
+    ms: 'Input',
+  },
+  'student.music': {
+    en: 'Music',
+    zh: '音乐',
+    ms: 'Muzik',
+  },
+  'student.myQuiz': {
+    en: 'My Quiz',
+    zh: '我的测验',
+    ms: 'Kuiz Saya',
+  },
+  'student.beginnerQuiz': {
+    en: 'Beginner Quiz',
+    zh: '初级测验',
+    ms: 'Kuiz Permulaan',
+  },
+  'student.intermediateQuiz': {
+    en: 'Intermediate Quiz',
+    zh: '中级测验',
+    ms: 'Kuiz Pertengahan',
+  },
+  'student.advancedQuiz': {
+    en: 'Advanced Quiz',
+    zh: '高级测验',
+    ms: 'Kuiz Lanjutan',
+  },
+  'student.myResults': {
+    en: 'My Quiz Results',
+    zh: '我的测验成果',
+    ms: 'Keputusan Kuiz Saya',
+  },
+  'student.openResults': {
+    en: 'Open Results',
+    zh: '打开成果',
+    ms: 'Buka Keputusan',
+  },
+}
+
+
   // Auth
   'auth.signIn': { en: 'Sign in', zh: '登录', ms: 'Log masuk' },
   'auth.signUp': { en: 'Sign up', zh: '注册', ms: 'Daftar' },
