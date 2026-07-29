@@ -12,18 +12,16 @@ export default function BasicEnPage() {
         <p className="text-sm">English Version</p>
       </header>
 
-      {/* 主体内容 */}
+      {/* 主体内容：PDF */}
       <main className="flex-1 p-6">
-        {/* Canva Slide 学习内容 */}
         <iframe
-          src="https://addjkahub.my.canva.site/makecode-micro-bit-basics-preview"
+          src="/docs/microbit-bm.pdf"   
           className="w-full h-[600px] rounded-lg shadow-md"
-          allow="fullscreen"
         />
       </main>
 
-      {/* 悬浮球容器：右下角堆叠 */}
-      <div className="fixed bottom-6 right-6 flex flex-col items-end gap-20 z-50">
+      {/* 悬浮球容器：右下角堆叠，间距加大 */}
+      <div className="fixed bottom-6 right-6 flex flex-col items-end gap-12 z-50">
         {/* 上面：MakeCode 悬浮球 */}
         <MakeCodeWidget />
 
