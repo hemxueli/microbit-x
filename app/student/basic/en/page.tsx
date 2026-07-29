@@ -21,7 +21,7 @@ export default function BasicEnPage() {
       </main>
 
       {/* 悬浮球容器：右下角堆叠，间距加大 */}
-      <div className="fixed bottom-6 right-6 flex flex-col items-end gap-12 z-50">
+      <div className="fixed bottom-22 right-5.5 flex flex-col items-end gap-12 z-50">
         {/* 上面：MakeCode 悬浮球 */}
         <MakeCodeWidget />
 
