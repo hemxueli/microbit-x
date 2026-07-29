@@ -163,3 +163,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+html {
+  overflow-y: scroll; /* 始终显示滚动条，避免页面抖动 */
+}
+
+
+body.modal-open {
+  overflow: hidden;
+  position: fixed;   /* 防止移动端还能滑动 */
+  width: 100%;       /* 保持页面宽度不变，避免左右抖动 */
+}
