@@ -42,12 +42,12 @@ export default function StudentPage({ user }: { user?: any }) {
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 py-12 md:py-20">
           {/* 欢迎语 + 加入班级按钮 */}
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-8 bg-green-100 rounded-lg p-6">
             <div>
               <h1 className="text-3xl font-extrabold tracking-tight">
                 {t('student.welcomeTitle')}
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-700 mt-2">
                 {t('student.welcomeSubtitle')}
               </p>
             </div>
