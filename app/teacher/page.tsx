@@ -7,59 +7,16 @@ import { Logo } from '@/components/logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
-
-// 三语言翻译对象
-const translations: Record<string, { en: string; zh: string; ms: string }> = {
-  'teacher.welcomeTitle': {
-    en: 'Welcome back, Teacher!',
-    zh: '欢迎回来，老师！',
-    ms: 'Selamat kembali, Cikgu!',
-  },
-  'teacher.welcomeSubtitle': {
-    en: 'Welcome, respected teacher! This is your space to manage classes and students.',
-    zh: '欢迎您，尊敬的老师！这里是您管理班级与学生的空间',
-    ms: 'Selamat datang, cikgu yang dihormati! Inilah ruang anda untuk mengurus kelas dan pelajar.',
-  },
-  'teacher.enterClass': {
-    en: 'Enter class name',
-    zh: '请输入班级名称',
-    ms: 'Masukkan nama kelas',
-  },
-  'teacher.createClass': {
-    en: 'Create Class',
-    zh: '创建班级',
-    ms: 'Cipta Kelas',
-  },
-  'teacher.noClasses': {
-    en: "You don't have any classes yet, please create one",
-    zh: '您还没有班级，请先创建一个',
-    ms: 'Anda belum mempunyai kelas, sila cipta dahulu',
-  },
-  'nav.logout': {
-    en: 'Log out',
-    zh: '退出登录',
-    ms: 'Log keluar',
-  },
-  'common.loading': {
-    en: 'Loading...',
-    zh: '加载中...',
-    ms: 'Sedang dimuatkan...',
-  },
-  'common.view': {
-    en: 'View Details',
-    zh: '查看详情',
-    ms: 'Lihat Butiran',
-  },
-}
+import { useI18n } from '@/lib/i18n'
 
 export default function TeacherPage({ user }: { user?: any }) {
+  const { t } = useI18n()   // ✅ 使用全局的 t
   const [classes, setClasses] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState(user?.name ?? 'Teacher')
   const [avatar, setAvatar] = useState(user?.image ?? '/images/default-avatar.png')
   const [newClass, setNewClass] = useState('')
-  const [lang, setLang] = useState<'en' | 'zh' | 'ms'>('zh') // 默认中文
 
   useEffect(() => {
     async function fetchClasses() {
@@ -75,8 +32,6 @@ export default function TeacherPage({ user }: { user?: any }) {
     }
     fetchClasses()
   }, [])
-
-  const t = (key: string) => translations[key]?.[lang] ?? key
 
   const addClass = () => {
     if (!newClass.trim()) return
@@ -95,7 +50,7 @@ export default function TeacherPage({ user }: { user?: any }) {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-4">
-            <LanguageSwitcher />
+            <LanguageSwitcher /> {/* ✅ 切换语言 */}
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => setEditing(true)}>
               <Image src={avatar} alt="avatar" width={36} height={36} className="rounded-full border" />
               <span className="font-medium">{name}</span>
