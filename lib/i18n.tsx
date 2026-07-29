@@ -257,6 +257,11 @@ export const dict: Dict = {
     ms: 'Belum dicuba',
   },
   'student.joinCode': { en: 'Class join code', zh: '班级加入码', ms: 'Kod kelas' },
+  'student.chooseLanguage': {
+  en: 'Choose learning language',
+  zh: '选择学习语言',
+  ms: 'Pilih bahasa pembelajaran',
+  },
 
   // Quiz
   'quiz.question': { en: 'Question', zh: '题目', ms: 'Soalan' },
