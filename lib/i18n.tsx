@@ -115,8 +115,6 @@ export const dict: Dict = {
     ms: 'Urus kelas, pantau kemajuan dan semak markah dengan mudah.',
   },
 
-  // student.i18n.ts
-export const studentTexts = {
   'student.welcomeTitle': {
     en: 'Welcome to your learning journey 🌟',
     zh: '欢迎来到学习之旅 🌟',
@@ -192,8 +190,6 @@ export const studentTexts = {
     zh: '打开成果',
     ms: 'Buka Keputusan',
   },
-}
-
 
   // Auth
   'auth.signIn': { en: 'Sign in', zh: '登录', ms: 'Log masuk' },
@@ -260,7 +256,6 @@ export const studentTexts = {
     zh: '尚未尝试',
     ms: 'Belum dicuba',
   },
-  'student.joinClass': { en: 'Join a class', zh: '加入班级', ms: 'Sertai kelas' },
   'student.joinCode': { en: 'Class join code', zh: '班级加入码', ms: 'Kod kelas' },
 
   // Quiz
