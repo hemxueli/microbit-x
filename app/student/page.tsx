@@ -98,27 +98,6 @@ export default function StudentPage({ user }: { user?: any }) {
               </div>
             ))}
           </div>
-
-          {/* Quiz 卡片区 */}
-          <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.myQuiz')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {['beginnerQuiz', 'intermediateQuiz', 'advancedQuiz'].map((level, i) => (
-              <Link key={i} href={`/quiz/level${i + 1}`}>
-                <div className="border rounded-lg p-6 shadow-md text-center hover:bg-gray-50 cursor-pointer">
-                  <h3 className="text-lg font-semibold">{t(`student.${level}`)}</h3>
-                  <p className="text-gray-600 mt-2">{t('student.startQuiz')}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Quiz 成果查看 */}
-          <div className="mt-12 text-center">
-            <h2 className="text-2xl font-bold mb-4">{t('student.myResults')}</h2>
-            <Button variant="default" size="sm" onClick={() => alert(t('student.showResults'))}>
-              {t('student.openResults')}
-            </Button>
-          </div>
         </section>
       </main>
 
