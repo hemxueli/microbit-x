@@ -18,12 +18,12 @@ export default function BasicEnPage() {
         <iframe
           src="https://addjkahub.my.canva.site/makecode-micro-bit-basics-preview"
           className="w-full h-[600px] rounded-lg shadow-md"
-          allowFullScreen
+          allow="fullscreen"
         />
       </main>
 
       {/* 悬浮球容器：右下角堆叠 */}
-      <div className="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-50">
+      <div className="fixed bottom-6 right-6 flex flex-col items-end gap-20 z-50">
         {/* 上面：MakeCode 悬浮球 */}
         <MakeCodeWidget />
 
