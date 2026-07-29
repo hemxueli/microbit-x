@@ -99,7 +99,7 @@ export default function StudentPage({ user }: { user?: any }) {
               </div>
             ))}
           </div>
-
+          
           {/* 语言选择弹窗 */}
           {showLangModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -117,7 +117,7 @@ export default function StudentPage({ user }: { user?: any }) {
                   <Button
                     variant="default"
                     onClick={() => {
-                      window.location.href = `/${selectedTopic}/en`
+                      window.location.href = `/student/${selectedTopic}/en`
                     }}
                   >
                     English
@@ -125,7 +125,7 @@ export default function StudentPage({ user }: { user?: any }) {
                   <Button
                     variant="default"
                     onClick={() => {
-                      window.location.href = `/${selectedTopic}/ms`
+                      window.location.href = `/student/${selectedTopic}/ms`
                     }}
                   >
                     Bahasa Melayu
@@ -133,7 +133,7 @@ export default function StudentPage({ user }: { user?: any }) {
                   <Button
                     variant="default"
                     onClick={() => {
-                      window.location.href = `/${selectedTopic}/zh`
+                      window.location.href = `/student/${selectedTopic}/zh`
                     }}
                   >
                     中文
