@@ -13,29 +13,18 @@ export default function MakeCodeWidget() {
         className="w-14 h-14 rounded-full bg-green-500 shadow-lg flex items-center justify-center hover:bg-green-600 transition-transform hover:scale-105"
         title="Open MakeCode"
       >
-        {/* 更精致的 micro:bit 图案 */}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-9 h-9">
-          {/* 主板 */}
-          <rect x="8" y="12" width="48" height="32" rx="6" fill="black" stroke="white" strokeWidth="2"/>
-          
-          {/* LED 心形 */}
-          <circle cx="24" cy="22" r="2" fill="red"/>
-          <circle cx="28" cy="26" r="2" fill="red"/>
-          <circle cx="32" cy="22" r="2" fill="red"/>
-          <circle cx="36" cy="26" r="2" fill="red"/>
-          <circle cx="28" cy="30" r="2" fill="red"/>
-          <circle cx="32" cy="30" r="2" fill="red"/>
+        {/* 黑色长方形 + 黄色双点 + 灰色按钮 */}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-10 h-10">
+          {/* 主板：更大黑色长方形，轻微圆角 */}
+          <rect x="10" y="16" width="44" height="28" rx="6" fill="black" />
 
-          {/* 按钮 A/B */}
-          <circle cx="14" cy="28" r="3" fill="gray" stroke="white" strokeWidth="1"/>
-          <circle cx="50" cy="28" r="3" fill="gray" stroke="white" strokeWidth="1"/>
+          {/* 黄色 LED 双点（紧贴在一起） */}
+          <circle cx="30" cy="22" r="2" fill="#FFD700" />
+          <circle cx="32.5" cy="22" r="2" fill="#FFD700" />
 
-          {/* 底部引脚 */}
-          <rect x="12" y="44" width="6" height="6" fill="gold"/>
-          <rect x="22" y="44" width="6" height="6" fill="gold"/>
-          <rect x="32" y="44" width="6" height="6" fill="gold"/>
-          <rect x="42" y="44" width="6" height="6" fill="gold"/>
-          <rect x="52" y="44" width="6" height="6" fill="gold"/>
+          {/* 左右按钮 A/B（缩小版） */}
+          <circle cx="16" cy="30" r="2" fill="#cccccc" />
+          <circle cx="48" cy="30" r="2" fill="#cccccc" />
         </svg>
       </button>
 
