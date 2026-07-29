@@ -163,3 +163,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+html {
+  overflow-y: scroll; /* 始终显示滚动条，避免页面抖动 */
+}
+

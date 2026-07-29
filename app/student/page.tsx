@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Logo } from '@/components/logo'
@@ -14,6 +14,15 @@ export default function StudentPage({ user }: { user?: any }) {
   const { t } = useI18n()
   const [showJoin, setShowJoin] = useState(false)
   const [classCode, setClassCode] = useState('')
+
+  // 禁止背景滚动
+  useEffect(() => {
+    if (showJoin) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+  }, [showJoin])
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -41,39 +50,20 @@ export default function StudentPage({ user }: { user?: any }) {
       {/* 页面主体 */}
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 py-12 md:py-20">
-          {/* 欢迎语 + 加入班级按钮 */}
-          <div className="flex justify-between items-center mb-8 bg-green-100 rounded-lg p-6">
-            <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
-                {t('student.welcomeTitle')}
-              </h1>
-              <p className="text-gray-700 mt-2">
-                {t('student.welcomeSubtitle')}
-              </p>
-            </div>
-            <div>
-              {!showJoin ? (
-                <Button variant="default" size="sm" onClick={() => setShowJoin(true)}>
-                  {t('student.joinClass')}
-                </Button>
-              ) : (
-                <div className="flex">
-                  <input
-                    type="text"
-                    placeholder={t('student.enterCode')}
-                    value={classCode}
-                    onChange={(e) => setClassCode(e.target.value)}
-                    className="border px-3 py-2 rounded-l"
-                  />
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={() => alert(`${t('student.joinedClass')}: ${classCode}`)}
-                  >
-                    {t('student.confirm')}
-                  </Button>
-                </div>
-              )}
+          {/* 欢迎语区 */}
+          <div className="relative mb-8 bg-green-100 rounded-lg p-6">
+            <h1 className="text-4xl font-extrabold tracking-tight">
+              {t('student.welcomeTitle')}
+            </h1>
+            <p className="text-gray-700 mt-2">
+              {t('student.welcomeSubtitle')}
+            </p>
+
+            {/* 按钮固定在右下角 */}
+            <div className="absolute bottom-4 right-4">
+              <Button variant="default" size="sm" onClick={() => setShowJoin(true)}>
+                {t('student.joinClass')}
+              </Button>
             </div>
           </div>
 
@@ -87,7 +77,7 @@ export default function StudentPage({ user }: { user?: any }) {
             ].map(({ key, image }) => (
               <div
                 key={key}
-                className="relative h-40 rounded-lg shadow-md overflow-hidden cursor-pointer group"
+                className="relative h-70 rounded-lg shadow-md overflow-hidden cursor-pointer group"
                 style={{
                   backgroundImage: `url(${image})`,
                   backgroundSize: 'cover',
@@ -149,6 +139,48 @@ export default function StudentPage({ user }: { user?: any }) {
           ],
         } as QuizData}
       />
+
+      {/* 弹出输入框小页面 */}
+      {showJoin && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
+            {/* 右上角关闭按钮 */}
+            <button
+              onClick={() => setShowJoin(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-lg font-bold mb-4">{t('student.joinClass')}</h2>
+            <input
+              type="text"
+              placeholder={t('student.enterCode')}
+              value={classCode}
+              onChange={(e) => setClassCode(e.target.value)}
+              className="border rounded px-2 py-1 w-full mb-4"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  alert(`${t('student.joinedClass')}: ${classCode}`)
+                  setShowJoin(false)
+                }
+              }}
+            />
+            <div className="flex justify-end">
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => {
+                  alert(`${t('student.joinedClass')}: ${classCode}`)
+                  setShowJoin(false)
+                }}
+              >
+                {t('student.confirm')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
