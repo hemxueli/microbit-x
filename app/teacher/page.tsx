@@ -108,20 +108,14 @@ export default function TeacherPage({ user }: { user?: any }) {
                   key={cls.id}
                   className={`border rounded-lg p-6 shadow transition-colors duration-300 ${color.bg} relative`}
                 >
-                  {/* 标题 + 彩色圆点 */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`w-3 h-3 rounded-full ${color.dot}`}></span>
-                    <h3 className="text-lg font-bold">{cls.name}</h3>
-                  </div>
+                  {/* 标题 + 彩色圆点 + 右上角菜单 */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-3 h-3 rounded-full ${color.dot}`}></span>
+                      <h3 className="text-lg font-bold">{cls.name}</h3>
+                    </div>
 
-                  {/* 学生人数统计 */}
-                  <p className="text-sm text-gray-700 mb-6">
-                    👥 {cls.students?.length ?? 0} students
-                  </p>
-
-                  {/* 底部操作区 */}
-                  <div className="flex justify-between items-center">
-                    {/* 左下角三个点 */}
+                    {/* 右上角三个点 */}
                     <div className="relative">
                       <button
                         onClick={() => setMenuOpenId(menuOpenId === cls.id ? null : cls.id)}
@@ -131,7 +125,7 @@ export default function TeacherPage({ user }: { user?: any }) {
                       </button>
 
                       {menuOpenId === cls.id && (
-                        <div className="absolute bottom-8 left-0 bg-white border rounded shadow-lg w-36">
+                        <div className="absolute right-0 mt-2 bg-white border rounded shadow-lg w-36">
                           <button
                             className="block w-full text-left px-3 py-2 hover:bg-gray-100"
                             onClick={() => {
@@ -154,10 +148,18 @@ export default function TeacherPage({ user }: { user?: any }) {
                         </div>
                       )}
                     </div>
+                  </div>
 
-                    {/* 右下角管理班级按钮 */}
+                  {/* 学生人数统计 */}
+                  <p className="text-sm text-gray-700 mb-6">
+                    👥 {cls.students?.length ?? 0} students
+                  </p>
+
+                  {/* 底部右下角管理班级按钮 */}
+                  <div className="flex justify-end">
                     <Button size="sm">{t('teacher.classesTable')}</Button>
                   </div>
+
 
                   {/* 编辑班级名称窗口 */}
                   {editOpenId === cls.id && (
