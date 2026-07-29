@@ -17,6 +17,12 @@ export default function TeacherPage({ user }: { user?: any }) {
   const [avatar] = useState(user?.image ?? '/images/default-avatar.png')
   const [newClass, setNewClass] = useState('')
 
+  // 控制菜单、编辑、删除的状态
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null)
+  const [editOpenId, setEditOpenId] = useState<string | null>(null)
+  const [deleteOpenId, setDeleteOpenId] = useState<string | null>(null)
+  const [editName, setEditName] = useState("")
+
   useEffect(() => {
     async function fetchClasses() {
       try {
@@ -39,6 +45,16 @@ export default function TeacherPage({ user }: { user?: any }) {
     setNewClass('')
     setEditing(false)
     // TODO: 调用 API 保存班级
+  }
+
+  const saveClassName = (id: string) => {
+    setClasses(classes.map(c => c.id === id ? { ...c, name: editName } : c))
+    setEditOpenId(null)
+  }
+
+  const deleteClass = (id: string) => {
+    setClasses(classes.filter(c => c.id !== id))
+    setDeleteOpenId(null)
   }
 
   if (loading) return <p className="text-gray-500">{t('common.loading')}</p>
@@ -87,11 +103,6 @@ export default function TeacherPage({ user }: { user?: any }) {
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 mt-6">
             {classes.map((cls, index) => {
               const color = colors[index % colors.length]
-              const [menuOpen, setMenuOpen] = useState(false)
-              const [editOpen, setEditOpen] = useState(false)
-              const [deleteOpen, setDeleteOpen] = useState(false)
-              const [editName, setEditName] = useState(cls.name)
-
               return (
                 <div
                   key={cls.id}
@@ -113,19 +124,20 @@ export default function TeacherPage({ user }: { user?: any }) {
                     {/* 左下角三个点 */}
                     <div className="relative">
                       <button
-                        onClick={() => setMenuOpen(!menuOpen)}
+                        onClick={() => setMenuOpenId(menuOpenId === cls.id ? null : cls.id)}
                         className="p-1 rounded hover:bg-gray-300 transition-colors"
                       >
                         <MoreVertical className="w-5 h-5 text-gray-600" />
                       </button>
 
-                      {menuOpen && (
+                      {menuOpenId === cls.id && (
                         <div className="absolute bottom-8 left-0 bg-white border rounded shadow-lg w-36">
                           <button
                             className="block w-full text-left px-3 py-2 hover:bg-gray-100"
                             onClick={() => {
-                              setEditOpen(true)
-                              setMenuOpen(false)
+                              setEditOpenId(cls.id)
+                              setEditName(cls.name)
+                              setMenuOpenId(null)
                             }}
                           >
                             Edit class name
@@ -133,8 +145,8 @@ export default function TeacherPage({ user }: { user?: any }) {
                           <button
                             className="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-600"
                             onClick={() => {
-                              setDeleteOpen(true)
-                              setMenuOpen(false)
+                              setDeleteOpenId(cls.id)
+                              setMenuOpenId(null)
                             }}
                           >
                             Delete class
@@ -148,11 +160,11 @@ export default function TeacherPage({ user }: { user?: any }) {
                   </div>
 
                   {/* 编辑班级名称窗口 */}
-                  {editOpen && (
+                  {editOpenId === cls.id && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black/50 animate-fadeIn">
                       <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative animate-scaleIn">
                         <button
-                          onClick={() => setEditOpen(false)}
+                          onClick={() => setEditOpenId(null)}
                           className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                         >
                           <X className="w-5 h-5" />
@@ -165,25 +177,18 @@ export default function TeacherPage({ user }: { user?: any }) {
                           className="border rounded px-2 py-1 w-full mb-4"
                         />
                         <div className="flex justify-end">
-                          <Button
-                            onClick={() => {
-                              // TODO: Save new class name logic
-                              setEditOpen(false)
-                            }}
-                          >
-                            Save
-                          </Button>
+                          <Button onClick={() => saveClassName(cls.id)}>Save</Button>
                         </div>
                       </div>
                     </div>
                   )}
 
                   {/* 删除确认窗口 */}
-                  {deleteOpen && (
+                  {deleteOpenId && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black/50 animate-fadeIn">
                       <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative animate-scaleIn">
                         <button
-                          onClick={() => setDeleteOpen(false)}
+                          onClick={() => setDeleteOpenId(null)}
                           className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                         >
                           <X className="w-5 h-5" />
@@ -195,7 +200,7 @@ export default function TeacherPage({ user }: { user?: any }) {
                             className="bg-red-600 hover:bg-red-700 text-white"
                             onClick={() => {
                               // TODO: Delete class logic
-                              setDeleteOpen(false)
+                              setDeleteOpenId(null)
                             }}
                           >
                             Confirm Delete
