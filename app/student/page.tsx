@@ -42,7 +42,7 @@ export default function StudentPage({ user }: { user?: any }) {
               height={36}
               className="rounded-full border"
             />
-            <span className="font-medium">{user?.name ?? t('student')}</span>
+            <span className="font-medium">{user?.name ?? t('student.defaultName')}</span>
             <Button variant="ghost" size="sm">
               {t('nav.logout')}
             </Button>
