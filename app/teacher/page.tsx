@@ -59,7 +59,7 @@ export default function TeacherPage({ user }: { user?: any }) {
   const [name, setName] = useState(user?.name ?? 'Teacher')
   const [avatar, setAvatar] = useState(user?.image ?? '/images/default-avatar.png')
   const [newClass, setNewClass] = useState('')
-  const [lang, setLang] = useState<'en' | 'zh' | 'ms'>('zh') // 默认中文，可切换
+  const [lang, setLang] = useState<'en' | 'zh' | 'ms'>('zh') // 默认中文
 
   useEffect(() => {
     async function fetchClasses() {
@@ -95,7 +95,8 @@ export default function TeacherPage({ user }: { user?: any }) {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-4">
-            <LanguageSwitcher onChange={(val: 'en' | 'zh' | 'ms') => setLang(val)} />
+            {/* LanguageSwitcher 自己管理语言，不需要传 onChange */}
+            <LanguageSwitcher />
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => setEditing(true)}>
               <Image src={avatar} alt="avatar" width={36} height={36} className="rounded-full border" />
               <span className="font-medium">{name}</span>
