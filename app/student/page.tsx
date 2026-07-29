@@ -19,12 +19,12 @@ export default function StudentPage({ user }: { user?: any }) {
 
   // 禁止背景滚动
   useEffect(() => {
-    if (showJoin) {
+    if (showJoin || showLangModal) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = 'auto'
     }
-  }, [showJoin])
+  }, [showJoin, showLangModal])
 
   return (
     <div className="flex min-h-screen flex-col">
