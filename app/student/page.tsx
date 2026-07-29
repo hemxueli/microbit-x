@@ -8,29 +8,11 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
-import type { QuizData } from '@/lib/quiz'
-
-const quizzes: Record<string, { level: string; link: string }[]> = {
-  Basic: [
-    { level: '初级 Quiz', link: '/quiz/basic/level1' },
-    { level: '中级 Quiz', link: '/quiz/basic/level2' },
-    { level: '高级 Quiz', link: '/quiz/basic/level3' },
-  ],
-  Input: [
-    { level: '初级 Quiz', link: '/quiz/input/level1' },
-    { level: '中级 Quiz', link: '/quiz/input/level2' },
-    { level: '高级 Quiz', link: '/quiz/input/level3' },
-  ],
-  Music: [
-    { level: '初级 Quiz', link: '/quiz/music/level1' },
-    { level: '中级 Quiz', link: '/quiz/music/level2' },
-    { level: '高级 Quiz', link: '/quiz/music/level3' },
-  ],
-}
 
 export default function StudentPage({ user }: { user?: any }) {
   const { t } = useI18n()
   const [classCode, setClassCode] = useState('')
+  const [showLanguageSelect, setShowLanguageSelect] = useState(false)
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -58,7 +40,6 @@ export default function StudentPage({ user }: { user?: any }) {
       {/* 页面主体 */}
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 py-12 md:py-20">
-          {/* 欢迎语 */}
           <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-center">
             欢迎来到学习之旅 🌟
           </h1>
@@ -84,32 +65,38 @@ export default function StudentPage({ user }: { user?: any }) {
             </Button>
           </div>
 
-          {/* 学习卡片 */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.keys(quizzes).map((topic) => (
-              <div key={topic} className="border rounded-lg p-6 shadow-md">
-                <h2 className="text-xl font-bold mb-4">{topic}</h2>
-                <p className="text-gray-600 mb-4">点击进入 {topic} 学习内容</p>
-                <div className="space-y-2">
-                  {Array.isArray(quizzes[topic]) &&
-                    quizzes[topic].map((quiz, i) => (
-                      <Link key={i} href={quiz.link}>
-                        <Button variant="outline" size="sm" className="w-full">
-                          {quiz.level}
-                        </Button>
-                      </Link>
-                    ))}
-                </div>
-              </div>
-            ))}
+          {/* 学习内容入口 */}
+          <div className="text-center mb-12">
+            <Button
+              variant="default"
+              size="lg"
+              onClick={() => setShowLanguageSelect(true)}
+            >
+              进入学习内容
+            </Button>
           </div>
 
-          {/* Quiz 成果查看 */}
+          {/* 语言选择 */}
+          {showLanguageSelect && (
+            <div className="flex justify-center gap-4 mb-12">
+              <Link href="/learn/en">
+                <Button variant="outline" size="sm">English</Button>
+              </Link>
+              <Link href="/learn/ms">
+                <Button variant="outline" size="sm">Bahasa Melayu</Button>
+              </Link>
+              <Link href="/learn/zh">
+                <Button variant="outline" size="sm">中文</Button>
+              </Link>
+            </div>
+          )}
+
+          {/* Quiz 独立区块 */}
           <div className="mt-12 text-center">
-            <h2 className="text-2xl font-bold mb-4">我的 Quiz 成果</h2>
-            <Button variant="default" size="sm" onClick={() => alert('显示 Quiz 成果')}>
-              打开成果
-            </Button>
+            <h2 className="text-2xl font-bold mb-4">Quiz 挑战</h2>
+            <Link href="/quiz">
+              <Button variant="default" size="sm">进入 Quiz</Button>
+            </Link>
           </div>
         </section>
       </main>
@@ -135,7 +122,7 @@ export default function StudentPage({ user }: { user?: any }) {
             { question: 'LED stands for?', studentAnswer: 'Light Emitting Diode', correctAnswer: 'Light Emitting Diode', isCorrect: true },
             { question: 'Which sensor detects motion?', studentAnswer: 'Accelerometer', correctAnswer: 'Accelerometer', isCorrect: true },
           ],
-        } as QuizData}
+        }}
       />
     </div>
   )
