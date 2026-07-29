@@ -77,7 +77,7 @@ export default function StudentPage({ user }: { user?: any }) {
             ].map(({ key, image }) => (
               <div
                 key={key}
-                className="relative h-70 rounded-lg shadow-md overflow-hidden cursor-pointer group"
+                className="relative h-[280px] rounded-lg shadow-md overflow-hidden cursor-pointer group"
                 style={{
                   backgroundImage: `url(${image})`,
                   backgroundSize: 'cover',
