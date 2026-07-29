@@ -14,7 +14,9 @@ export default function StudentPage({ user }: { user?: any }) {
   const { t } = useI18n()
   const [showJoin, setShowJoin] = useState(false)
   const [classCode, setClassCode] = useState('')
-
+  const [showLangModal, setShowLangModal] = useState(false)
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
+  
   // 禁止背景滚动
   useEffect(() => {
     if (showJoin) {
