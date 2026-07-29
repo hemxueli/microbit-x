@@ -11,7 +11,7 @@ import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 import type { QuizData } from '@/lib/quiz'
 
 export default function StudentPage({ user }: { user?: any }) {
-  const { t } = useI18n() // i18n hook
+  const { t } = useI18n()
   const [showJoin, setShowJoin] = useState(false)
   const [classCode, setClassCode] = useState('')
 
@@ -22,7 +22,7 @@ export default function StudentPage({ user }: { user?: any }) {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-4">
-            <LanguageSwitcher /> {/* 切换 en/zh/ms */}
+            <LanguageSwitcher />
             <Image
               src={user?.image ?? '/images/default-avatar.png'}
               alt="avatar"
@@ -80,19 +80,23 @@ export default function StudentPage({ user }: { user?: any }) {
           {/* 学习卡片区 */}
           <h2 className="text-2xl font-bold mb-6">{t('student.learningContent')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {['Basic', 'Input', 'Music'].map((topic) => (
+            {[
+              { key: 'basic', image: '/images/basic.png' },
+              { key: 'input', image: '/images/input.png' },
+              { key: 'music', image: '/images/music.png' },
+            ].map(({ key, image }) => (
               <div
-                key={topic}
+                key={key}
                 className="relative h-40 rounded-lg shadow-md overflow-hidden cursor-pointer group"
                 style={{
-                  backgroundImage: `url(/images/${topic.toLowerCase()}-bg.jpg)`,
+                  backgroundImage: `url(${image})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
               >
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
-                    {t(`student.${topic.toLowerCase()}`)}
+                    {t(`student.${key}`)}
                   </span>
                 </div>
               </div>
@@ -102,10 +106,10 @@ export default function StudentPage({ user }: { user?: any }) {
           {/* Quiz 卡片区 */}
           <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.myQuiz')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {['beginner', 'intermediate', 'advanced'].map((level, i) => (
+            {['beginnerQuiz', 'intermediateQuiz', 'advancedQuiz'].map((level, i) => (
               <Link key={i} href={`/quiz/level${i + 1}`}>
                 <div className="border rounded-lg p-6 shadow-md text-center hover:bg-gray-50 cursor-pointer">
-                  <h3 className="text-lg font-semibold">{t(`student.${level}Quiz`)}</h3>
+                  <h3 className="text-lg font-semibold">{t(`student.${level}`)}</h3>
                   <p className="text-gray-600 mt-2">{t('student.startQuiz')}</p>
                 </div>
               </Link>
