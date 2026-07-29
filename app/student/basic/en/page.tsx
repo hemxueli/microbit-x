@@ -14,10 +14,14 @@ export default function BasicEnPage() {
 
       {/* 主体内容：PDF */}
       <main className="flex-1 p-6">
-        <iframe
-          src="/docs/microbit-bm.pdf"   
-          className="w-full h-[600px] rounded-lg shadow-md"
-        />
+        <object
+          data="/docs/microbit-bm.pdf"
+          type="application/pdf"
+          width="100%"
+          height="600"
+        >
+          <p>无法显示 PDF，请 <a href="/docs/microbit-bm.pdf" target="_blank">点击这里下载</a></p>
+        </object>
       </main>
 
       {/* 悬浮球容器：右下角堆叠，间距加大 */}
