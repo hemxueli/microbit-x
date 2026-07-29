@@ -16,7 +16,7 @@ export default function StudentPage({ user }: { user?: any }) {
   const [classCode, setClassCode] = useState('')
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
-  
+
   // 禁止背景滚动
   useEffect(() => {
     if (showJoin) {
@@ -85,6 +85,10 @@ export default function StudentPage({ user }: { user?: any }) {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
+                onClick={() => {
+                  setSelectedTopic(key)
+                  setShowLangModal(true)
+                }}
               >
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
@@ -94,6 +98,49 @@ export default function StudentPage({ user }: { user?: any }) {
               </div>
             ))}
           </div>
+
+          {/* 语言选择弹窗 */}
+          {showLangModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+              <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
+                {/* 右上角关闭按钮 */}
+                <button
+                  onClick={() => setShowLangModal(false)}
+                  className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+
+                <h2 className="text-lg font-bold mb-4">{t('student.chooseLanguage')}</h2>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      window.location.href = `/${selectedTopic}/en`
+                    }}
+                  >
+                    English
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      window.location.href = `/${selectedTopic}/ms`
+                    }}
+                  >
+                    Bahasa Melayu
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      window.location.href = `/${selectedTopic}/zh`
+                    }}
+                  >
+                    中文
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Quiz 卡片区 */}
           <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.myQuiz')}</h2>
