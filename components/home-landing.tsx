@@ -113,25 +113,90 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
                 />
               </div>
             </div>
+          {/* 功能 1：学习材料 */}
+          <FadeInSection>
+            <div className="flex flex-col md:flex-row-reverse items-center gap-10">
+              <div className="flex-1">
+                <img 
+                  src="/images/feature-learning.png" 
+                  alt={t('feature.materials.title')} 
+                  className="rounded-2xl opacity-90 shadow-md transition-transform duration-700 ease-out hover:scale-105" 
+                />
+              </div>
+              <div className="flex-1 text-right">
+                <h3 className="text-4xl font-extrabold text-teal-700 mb-4">{t('feature.materials.title')}</h3>
+                <p className="text-lg text-gray-700 opacity-90">{t('feature.materials.desc')}</p>
+              </div>
+            </div>
+          </FadeInSection>
 
-            {/* 功能介绍区块：第一个从右边开始，之后左右交替 */}
-            {features.map((f, i) => (
-              <FadeInSection key={f.title}>
-                <div
-                  className={`flex flex-col ${i % 2 === 0 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-10`}
-                >
-                  {/* 图片 */}
-                  <div className="flex-1">
-                    <img src={f.img} alt={f.title} className="rounded-2xl opacity-90 shadow-md transition-transform duration-700 ease-out hover:scale-105" />
-                  </div>
-                  {/* 文字 */}
-                  <div className="flex-1 text-right">
-                    <h3 className="text-4xl font-extrabold text-teal-700 mb-4">{f.title}</h3>
-                    <p className="text-lg text-gray-700 opacity-90">{f.desc}</p>
-                  </div>
-                </div>
-              </FadeInSection>
-            ))}
+          {/* 功能 2：学生测验 */}
+          <FadeInSection>
+            <div className="flex flex-col md:flex-row items-center gap-10">
+              <div className="flex-1">
+                <img 
+                  src="/images/feature-quiz.png" 
+                  alt={t('feature.quiz.title')} 
+                  className="rounded-2xl opacity-90 shadow-md transition-transform duration-700 ease-out hover:scale-105" 
+                />
+              </div>
+              <div className="flex-1 text-right">
+                <h3 className="text-4xl font-extrabold text-teal-700 mb-4">{t('feature.quiz.title')}</h3>
+                <p className="text-lg text-gray-700 opacity-90">{t('feature.quiz.desc')}</p>
+              </div>
+            </div>
+          </FadeInSection>
+
+          {/* 功能 3：AI 助手 */}
+          <FadeInSection>
+            <div className="flex flex-col md:flex-row-reverse items-center gap-10">
+              <div className="flex-1">
+                <img 
+                  src="/images/feature-ai.png" 
+                  alt={t('feature.ai.title')} 
+                  className="rounded-2xl opacity-90 shadow-md transition-transform duration-700 ease-out hover:scale-105" 
+                />
+              </div>
+              <div className="flex-1 text-right">
+                <h3 className="text-4xl font-extrabold text-teal-700 mb-4">{t('feature.ai.title')}</h3>
+                <p className="text-lg text-gray-700 opacity-90">{t('feature.ai.desc')}</p>
+              </div>
+            </div>
+          </FadeInSection>
+
+          {/* 功能 4：个性化反馈 */}
+          <FadeInSection>
+            <div className="flex flex-col md:flex-row items-center gap-10">
+              <div className="flex-1">
+                <img 
+                  src="/images/feature-feedback.png" 
+                  alt={t('feature.feedback.title')} 
+                  className="rounded-2xl opacity-90 shadow-md transition-transform duration-700 ease-out hover:scale-105" 
+                />
+              </div>
+              <div className="flex-1 text-right">
+                <h3 className="text-4xl font-extrabold text-teal-700 mb-4">{t('feature.feedback.title')}</h3>
+                <p className="text-lg text-gray-700 opacity-90">{t('feature.feedback.desc')}</p>
+              </div>
+            </div>
+          </FadeInSection>
+
+          {/* 功能 5：教师管理 */}
+          <FadeInSection>
+            <div className="flex flex-col md:flex-row-reverse items-center gap-10">
+              <div className="flex-1">
+                <img 
+                  src="/images/feature-dashboard.png" 
+                  alt={t('feature.dashboard.title')} 
+                  className="rounded-2xl opacity-90 shadow-md transition-transform duration-700 ease-out hover:scale-105" 
+                />
+              </div>
+              <div className="flex-1 text-right">
+                <h3 className="text-4xl font-extrabold text-teal-700 mb-4">{t('feature.dashboard.title')}</h3>
+                <p className="text-lg text-gray-700 opacity-90">{t('feature.dashboard.desc')}</p>
+              </div>
+            </div>
+          </FadeInSection>
 
           </div>
         </section>
