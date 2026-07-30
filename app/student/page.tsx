@@ -85,7 +85,10 @@ export default function StudentPage({ user }: { user?: any }) {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
-                onClick={() => window.location.href = `/student/${key}/learn`}
+                onClick={() => {
+                  setSelectedTopic(key)      // 先记录点击的主题
+                  setShowLangModal(true)     // 打开语言选择弹窗
+                }}
               >
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
