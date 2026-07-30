@@ -7,7 +7,6 @@ import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 
 export default function PdfPage({ title, subtitle, pdfPath }: { title: string; subtitle: string; pdfPath: string }) {
   const searchParams = useSearchParams()
-  const langParam = searchParams.get('lang') || 'en'
 
   return (
     <I18nProvider>
