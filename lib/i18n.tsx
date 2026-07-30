@@ -190,6 +190,11 @@ export const dict: Dict = {
     zh: '打开成果',
     ms: 'Buka Keputusan',
   },
+  'student.learningChallenge': {
+  en: 'Learning Challenge',
+  zh: '学习挑战',
+  ms: 'Cabaran Pembelajaran',
+}
 
   // Auth
   'auth.signIn': { en: 'Sign in', zh: '登录', ms: 'Log masuk' },
