@@ -196,6 +196,11 @@ export const dict: Dict = {
   ms: 'Cabaran Pembelajaran',
   },
 
+  "makecode.open": { "en": "Open MakeCode", "zh": "打开 MakeCode", "ms": "Buka MakeCode" },
+  "makecode.title": { "en": "MakeCode Editor", "zh": "MakeCode 编辑器", "ms": "Editor MakeCode" },
+  "makecode.confirmText": { "en": "Do you want to jump to MakeCode official editor?", "zh": "要跳转到 MakeCode 官方编辑器吗？", "ms": "Adakah anda mahu pergi ke editor rasmi MakeCode?" },
+  "makecode.yes": { "en": "Yes", "zh": "确定", "ms": "Ya" },
+  "makecode.no": { "en": "Cancel", "zh": "取消", "ms": "Batal" },
   // Auth
   'auth.signIn': { en: 'Sign in', zh: '登录', ms: 'Log masuk' },
   'auth.signUp': { en: 'Sign up', zh: '注册', ms: 'Daftar' },

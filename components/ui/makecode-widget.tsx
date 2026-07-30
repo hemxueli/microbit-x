@@ -1,9 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import { useI18n } from '@/lib/i18n'
 
 export default function MakeCodeWidget() {
   const [open, setOpen] = useState(false)
+  const { t } = useI18n()
+
+  const handleConfirm = () => {
+    window.open("https://makecode.microbit.org/#editor", "_blank")
+    setOpen(false)
+  }
 
   return (
     <>
@@ -11,39 +18,39 @@ export default function MakeCodeWidget() {
       <button
         onClick={() => setOpen(true)}
         className="w-14 h-14 rounded-full bg-green-500 shadow-lg flex items-center justify-center hover:bg-green-600 transition-transform hover:scale-105"
-        title="Open MakeCode"
+        title={t('makecode.open')}
       >
-        {/* 黑色长方形 + 黄色双点 + 灰色按钮 */}
+        {/* micro:bit 图标 */}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-10 h-10">
-          {/* 主板：更大黑色长方形，轻微圆角 */}
           <rect x="10" y="16" width="44" height="28" rx="6" fill="black" />
-
-          {/* 黄色 LED 双点（紧贴在一起） */}
           <circle cx="30" cy="22" r="2" fill="#FFD700" />
           <circle cx="32.5" cy="22" r="2" fill="#FFD700" />
-
-          {/* 左右按钮 A/B（缩小版） */}
           <circle cx="16" cy="30" r="2" fill="#cccccc" />
           <circle cx="48" cy="30" r="2" fill="#cccccc" />
         </svg>
       </button>
 
-      {/* 全屏 MakeCode 弹窗 */}
+      {/* 弹窗 */}
       {open && (
-        <div className="fixed inset-0 z-[9999] bg-white">
-          {/* 顶部关闭按钮 */}
-          <button
-            onClick={() => setOpen(false)}
-            className="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-2xl font-bold"
-          >
-            ✕
-          </button>
-
-          {/* iframe 区域 */}
-          <iframe
-            src="https://makecode.microbit.org/"
-            className="w-full h-full"
-          />
+        <div className="fixed inset-0 z-[9999] bg-black bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-md w-[320px] text-center">
+            <h2 className="text-lg font-bold mb-4">{t('makecode.title')}</h2>
+            <p className="mb-6">{t('makecode.confirmText')}</p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={handleConfirm}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                {t('makecode.yes')}
+              </button>
+              <button
+                onClick={() => setOpen(false)}
+                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+              >
+                {t('makecode.no')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>

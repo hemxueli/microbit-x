@@ -8,7 +8,6 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
-import type { QuizData } from '@/lib/quiz'
 
 export default function StudentPage({ user }: { user?: any }) {
   const { t } = useI18n()
