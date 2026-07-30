@@ -9,7 +9,7 @@ export default function Page({ params }: { params: { topic: string; lang: string
     <PdfPage
       title="Basic Micro:bit Learning"
       subtitle="Bahasa Melayu Version"
-      pdfPath={`/slides/${topic}-${lang}.pdf`}
+      pdfPath={`/slides/basic-en.pdf`}
       lang={lang}
     />
   )
