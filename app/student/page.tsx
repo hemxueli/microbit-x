@@ -85,10 +85,7 @@ export default function StudentPage({ user }: { user?: any }) {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
-                onClick={() => {
-                  // 跳转到学习页面
-                  window.location.href = `/student/${key}/learn`
-                }}
+                onClick={() => window.location.href = `/student/${key}/learn`}
               >
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
@@ -99,13 +96,13 @@ export default function StudentPage({ user }: { user?: any }) {
             ))}
           </div>
 
-          {/* Quiz 卡片区 */}
-          <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.myQuiz')}</h2>
+          {/* Learning Challenge 卡片区 */}
+          <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.learningChallenge')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { key: 'basicQuiz', image: '/images/quiz-basic.png' },
-              { key: 'inputQuiz', image: '/images/quiz-input.png' },
-              { key: 'musicQuiz', image: '/images/quiz-music.png' },
+              { key: 'basicChallenge', image: '/images/quiz-basic.png' },
+              { key: 'inputChallenge', image: '/images/quiz-input.png' },
+              { key: 'musicChallenge', image: '/images/quiz-music.png' },
             ].map(({ key, image }) => (
               <div
                 key={key}
@@ -115,10 +112,7 @@ export default function StudentPage({ user }: { user?: any }) {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
-                onClick={() => {
-                  // 跳转到 Quiz 页面
-                  window.location.href = `/student/${key}`
-                }}
+                onClick={() => window.location.href = `/student/${key}`}
               >
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
