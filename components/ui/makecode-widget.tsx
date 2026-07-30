@@ -4,10 +4,9 @@ import { useState } from 'react'
 
 export default function MakeCodeWidget() {
   const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState<'preview' | 'edit'>('preview')
 
   const handleSave = async () => {
-    // 假设我们能拿到代码 JSON（这里用示例代替）
+    // 示例：这里你可以通过 postMessage 或 API 获取代码 JSON
     const codeData = { source: "example code json" }
 
     const res = await fetch('/api/save-code', {
@@ -25,11 +24,9 @@ export default function MakeCodeWidget() {
 
   return (
     <>
+      {/* 悬浮球按钮 */}
       <button
-        onClick={() => {
-          setMode('preview')
-          setOpen(true)
-        }}
+        onClick={() => setOpen(true)}
         className="w-14 h-14 rounded-full bg-green-500 shadow-lg flex items-center justify-center hover:bg-green-600 transition-transform hover:scale-105"
         title="Open MakeCode"
       >
@@ -42,22 +39,31 @@ export default function MakeCodeWidget() {
         </svg>
       </button>
 
+      {/* 全屏 MakeCode 弹窗 */}
       {open && (
         <div className="fixed inset-0 z-[9999] bg-white">
+          {/* 顶部工具栏 */}
           <div className="flex justify-between items-center bg-green-600 text-white px-4 py-2">
-            <span className="font-semibold">MakeCode {mode === 'preview' ? '预览' : '编辑'}</span>
+            <span className="font-semibold">MakeCode 编辑器</span>
             <div className="flex gap-2">
-              <button onClick={() => setMode('preview')} className="bg-white text-green-600 px-3 py-1 rounded">预览</button>
-              <button onClick={() => setMode('edit')} className="bg-white text-green-600 px-3 py-1 rounded">编辑</button>
-              <button onClick={handleSave} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">保存</button>
-              <button onClick={() => setOpen(false)} className="bg-red-500 text-white px-3 py-1 rounded">✕</button>
+              <button
+                onClick={handleSave}
+                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+              >
+                保存
+              </button>
+              <button
+                onClick={() => setOpen(false)}
+                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              >
+                ✕
+              </button>
             </div>
           </div>
 
+          {/* iframe 永远是编辑模式 */}
           <iframe
-            src={mode === 'preview'
-              ? 'https://makecode.microbit.org/---run'
-              : 'https://makecode.microbit.org/#editor'}
+            src="https://makecode.microbit.org/#editor"
             className="w-full h-[calc(100%-48px)]"
           />
         </div>
