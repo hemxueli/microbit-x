@@ -3,25 +3,21 @@
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { MessageCircle, X, Send, Square, Bot, ClipboardCheck } from "lucide-react"
+import { X, Send, Square, Bot } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { UI, LANGS, type Lang } from "@/lib/i18n"
-import type { QuizData } from "@/lib/quiz"
 
 type AiChatWidgetProps = {
-  quizData?: QuizData
   defaultLanguage?: Lang
 }
 
-export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetProps) {
+export function AiChatWidget({ defaultLanguage = "en" }: AiChatWidgetProps) {
   const [open, setOpen] = useState(false)
   const [language, setLanguage] = useState<Lang>(defaultLanguage)
   const [input, setInput] = useState("")
 
   const languageRef = useRef(language)
-  const quizRef = useRef(quizData)
   languageRef.current = language
-  quizRef.current = quizData
 
   const transport = useMemo(
     () =>
@@ -29,10 +25,9 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
         api: "/api/chat",
         body: () => ({
           language: languageRef.current,
-          quizData: quizRef.current,
         }),
       }),
-    [],
+    []
   )
 
   const { messages, sendMessage, status, stop, error } = useChat({ transport })
@@ -63,11 +58,7 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
         className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full 
                   bg-teal-600 text-white shadow-lg hover:bg-teal-700 transition-transform hover:scale-105"
       >
-        {open ? (
-          <X className="h-6 w-6" />   
-        ) : (
-          <Bot className="h-6 w-6" /> 
-        )}
+        {open ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
       </button>
 
       {/* Chat panel */}
@@ -86,12 +77,8 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
               <h2 className="truncate text-sm font-semibold leading-tight">
                 {UI[language].widgetTitle}
               </h2>
-              {/* 只显示当前语言的副标题 */}
-              <p className="truncate text-xs text-teal-100">
-                {UI[language].widgetSubtitle}
-              </p>
+              <p className="truncate text-xs text-teal-100">{UI[language].widgetSubtitle}</p>
             </div>
-            {/* Language switch - 下拉菜单 */}
             <div className="flex shrink-0 items-center">
               <select
                 value={language}
@@ -105,24 +92,11 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
                   </option>
                 ))}
               </select>
-
             </div>
           </header>
 
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
-            {quizData && quizData.questions.length > 0 && (
-              <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-teal-50 px-3 py-2 text-xs text-teal-700">
-                <ClipboardCheck className="h-4 w-4 shrink-0 text-teal-600" />
-                <span className="font-medium">{t.quizAttached}</span>
-                {typeof quizData.score === "number" && (
-                  <span className="ml-auto tabular-nums">
-                    {quizData.score}/{quizData.total ?? quizData.questions.length}
-                  </span>
-                )}
-              </div>
-            )}
-
             {messages.length === 0 && (
               <div className="flex flex-col items-start gap-3">
                 <div className="max-w-[85%] rounded-xl bg-gray-100 px-3.5 py-2.5 text-sm text-gray-800">
@@ -209,7 +183,7 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
                 placeholder={t.inputPlaceholder}
                 className="max-h-28 min-h-[2.5rem] flex-1 resize-none rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-teal-500"
               />
-               {busy ? (
+              {busy ? (
                 <button
                   type="button"
                   onClick={() => stop()}
