@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Nunito, Geist_Mono } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import { Providers } from '@/components/providers'
+import { I18nProvider } from '@/lib/i18n'   // ✅ 引入 I18nProvider
 import './globals.css'
 
 const nunito = Nunito({
@@ -35,9 +36,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`light ${nunito.variable} ${geistMono.variable}`}>
       <body className="bg-background font-sans antialiased">
-        <Providers>{children}</Providers>
-        <Toaster />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {/* ✅ 强制语言为英文 */}
+        <I18nProvider initialLang="en">
+          <Providers>{children}</Providers>
+          <Toaster />
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </I18nProvider>
       </body>
     </html>
   )
