@@ -85,7 +85,10 @@ export default function StudentPage({ user }: { user?: any }) {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
-                onClick={() => window.location.href = `/student/${key}/learn`}
+                onClick={() => {
+                  setSelectedTopic(key)      // 先记录点击的主题
+                  setShowLangModal(true)     // 打开语言选择弹窗
+                }}
               >
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
@@ -134,19 +137,7 @@ export default function StudentPage({ user }: { user?: any }) {
       </footer>
 
       {/* AI Chatbot */}
-      <AiChatWidget
-        defaultLanguage="en"
-        quizData={{
-          title: 'Sample Quiz',
-          studentName: user?.name ?? t('student.defaultName'),
-          score: 2,
-          total: 3,
-          questions: [
-            { question: 'What is a micro:bit button?', studentAnswer: 'Switch', correctAnswer: 'Input device', isCorrect: false },
-            { question: 'LED stands for?', studentAnswer: 'Light Emitting Diode', correctAnswer: 'Light Emitting Diode', isCorrect: true },
-            { question: 'Which sensor detects motion?', studentAnswer: 'Accelerometer', correctAnswer: 'Accelerometer', isCorrect: true },
-          ],
-        } as QuizData}
+      <AiChatWidget defaultLanguage="en"
       />
 
       {/* 加入班级弹窗 */}
