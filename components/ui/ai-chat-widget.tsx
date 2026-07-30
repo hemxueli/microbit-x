@@ -6,22 +6,18 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { MessageCircle, X, Send, Square, Bot, ClipboardCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { UI, LANGS, type Lang } from "@/lib/i18n"
-import type { QuizData } from "@/lib/quiz"
 
 type AiChatWidgetProps = {
-  quizData?: QuizData
   defaultLanguage?: Lang
 }
 
-export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetProps) {
+export function AiChatWidget({ defaultLanguage = "en" }: AiChatWidgetProps) {
   const [open, setOpen] = useState(false)
   const [language, setLanguage] = useState<Lang>(defaultLanguage)
   const [input, setInput] = useState("")
 
   const languageRef = useRef(language)
-  const quizRef = useRef(quizData)
   languageRef.current = language
-  quizRef.current = quizData
 
   const transport = useMemo(
     () =>
@@ -29,7 +25,6 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
         api: "/api/chat",
         body: () => ({
           language: languageRef.current,
-          quizData: quizRef.current,
         }),
       }),
     [],
@@ -111,18 +106,7 @@ export function AiChatWidget({ quizData, defaultLanguage = "en" }: AiChatWidgetP
 
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
-            {quizData && quizData.questions.length > 0 && (
-              <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-teal-50 px-3 py-2 text-xs text-teal-700">
-                <ClipboardCheck className="h-4 w-4 shrink-0 text-teal-600" />
-                <span className="font-medium">{t.quizAttached}</span>
-                {typeof quizData.score === "number" && (
-                  <span className="ml-auto tabular-nums">
-                    {quizData.score}/{quizData.total ?? quizData.questions.length}
-                  </span>
-                )}
-              </div>
-            )}
-
+            
             {messages.length === 0 && (
               <div className="flex flex-col items-start gap-3">
                 <div className="max-w-[85%] rounded-xl bg-gray-100 px-3.5 py-2.5 text-sm text-gray-800">
