@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 import MakeCodeWidget from '@/components/ui/makecode-widget'
 
@@ -8,12 +7,10 @@ interface PdfPageProps {
   title: string
   subtitle: string
   pdfPath: string
+  language: 'en' | 'zh' | 'ms'   // 在进入页面前就确定好语言
 }
 
-export default function PdfPage({ title, subtitle, pdfPath }: PdfPageProps) {
-  // 默认语言是英文
-  const [language, setLanguage] = useState("en")
-
+export default function PdfPage({ title, subtitle, pdfPath, language }: PdfPageProps) {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* 页面头部 */}
@@ -22,7 +19,6 @@ export default function PdfPage({ title, subtitle, pdfPath }: PdfPageProps) {
           <h1 className="text-lg font-bold">{title}</h1>
           <p className="text-sm">{subtitle}</p>
         </div>
-
       </header>
 
       {/* 主体内容：PDF Slide */}
@@ -33,10 +29,12 @@ export default function PdfPage({ title, subtitle, pdfPath }: PdfPageProps) {
         />
       </main>
 
-      {/* 悬浮球容器：右下角，22/5.5 */}
+      {/* 悬浮球容器：右下角 */}
       <div className="fixed bottom-22 right-5.5 flex flex-col items-end gap-12 z-50">
-        <MakeCodeWidget />
-        <AiChatWidget />
+        {/* MakeCode 确认弹窗组件 */}
+        <MakeCodeWidget language={language} />
+        {/* AI 聊天悬浮球，跟随语言 */}
+        <AiChatWidget defaultLanguage={language} />
       </div>
     </div>
   )

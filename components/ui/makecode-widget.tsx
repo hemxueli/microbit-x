@@ -2,34 +2,37 @@
 
 import { useState } from 'react'
 
-export default function MakeCodeWidget() {
+interface MakeCodeWidgetProps {
+  language: 'en' | 'zh' | 'ms'
+}
+
+export default function MakeCodeWidget({ language }: MakeCodeWidgetProps) {
   const [open, setOpen] = useState(false)
 
-  const handleSave = async () => {
-    // 示例：这里你可以通过 postMessage 或 API 获取代码 JSON
-    const codeData = { source: "example code json" }
+  const labels = {
+    title: { en: 'MakeCode Editor', zh: 'MakeCode 编辑器', ms: 'Editor MakeCode' },
+    confirmText: {
+      en: 'Do you want to jump to MakeCode official editor?',
+      zh: '要跳转到 MakeCode 官方编辑器吗？',
+      ms: 'Adakah anda mahu pergi ke editor rasmi MakeCode?'
+    },
+    yes: { en: 'Yes', zh: '确定', ms: 'Ya' },
+    no: { en: 'Cancel', zh: '取消', ms: 'Batal' }
+  }
 
-    const res = await fetch('/api/save-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(codeData),
-    })
-
-    if (res.ok) {
-      alert('代码已保存到数据库！')
-    } else {
-      alert('保存失败')
-    }
+  const handleConfirm = () => {
+    window.open("https://makecode.microbit.org/#editor", "_blank")
+    setOpen(false)
   }
 
   return (
     <>
-      {/* 悬浮球按钮 */}
       <button
         onClick={() => setOpen(true)}
         className="w-14 h-14 rounded-full bg-green-500 shadow-lg flex items-center justify-center hover:bg-green-600 transition-transform hover:scale-105"
         title="Open MakeCode"
       >
+        {/* micro:bit 图标 */}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-10 h-10">
           <rect x="10" y="16" width="44" height="28" rx="6" fill="black" />
           <circle cx="30" cy="22" r="2" fill="#FFD700" />
@@ -39,33 +42,26 @@ export default function MakeCodeWidget() {
         </svg>
       </button>
 
-      {/* 全屏 MakeCode 弹窗 */}
       {open && (
-        <div className="fixed inset-0 z-[9999] bg-white">
-          {/* 顶部工具栏 */}
-          <div className="flex justify-between items-center bg-green-600 text-white px-4 py-2">
-            <span className="font-semibold">MakeCode 编辑器</span>
-            <div className="flex gap-2">
+        <div className="fixed inset-0 z-[9999] bg-black bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-md text-center">
+            <h2 className="text-lg font-bold mb-4">{labels.title[language]}</h2>
+            <p className="mb-6">{labels.confirmText[language]}</p>
+            <div className="flex gap-4 justify-center">
               <button
-                onClick={handleSave}
-                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                onClick={handleConfirm}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
               >
-                保存
+                {labels.yes[language]}
               </button>
               <button
                 onClick={() => setOpen(false)}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
               >
-                ✕
+                {labels.no[language]}
               </button>
             </div>
           </div>
-
-          {/* iframe 永远是编辑模式 */}
-          <iframe
-            src="https://makecode.microbit.org/#editor"
-            className="w-full h-[calc(100%-48px)]"
-          />
         </div>
       )}
     </>
