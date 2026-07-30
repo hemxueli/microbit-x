@@ -21,27 +21,28 @@ type Dict = Record<string, { en: string; zh: string; ms: string }>
 // Central dictionary. Add keys here; components read via t('key').
 export const dict: Dict = {
   'app.name': { en: 'MicroBOT-X', zh: 'MicroBOT-X', ms: 'MicroBOT-X' },
-  'app.tagline': {
-    en: 'Learn micro:bit the interactive way',
-    zh: '以互动方式学习 micro:bit',
-    ms: 'Belajar micro:bit secara interaktif',
-  },
   'nav.features': { en: 'Features', zh: '功能', ms: 'Ciri' },
   'nav.topics': { en: 'Topics', zh: '主题', ms: 'Topik' },
   'nav.login': { en: 'Log in', zh: '登录', ms: 'Log masuk' },
   'nav.getStarted': { en: 'Get started', zh: '开始使用', ms: 'Mula sekarang' },
   'nav.dashboard': { en: 'Dashboard', zh: '仪表盘', ms: 'Papan pemuka' },
   'nav.logout': { en: 'Log out', zh: '退出登录', ms: 'Log keluar' },
+  'app.tagline': {
+    en: 'Discover micro:bit through fun and play',
+    zh: '用趣味与探索开启 micro:bit 之旅',
+    ms: 'Terokai micro:bit dengan cara yang menyeronokkan',
+  },
 
   'home.heroTitle': {
-    en: 'Master micro:bit with AI-powered, hands-on learning',
-    zh: '借助 AI 与动手实践，掌握 micro:bit',
-    ms: 'Kuasai micro:bit dengan pembelajaran praktikal berkuasa AI',
+    en: 'Master micro:bit with AI and hands-on adventures',
+    zh: '借助 AI 与动手探险，掌握 micro:bit',
+    ms: 'Kuasai micro:bit dengan AI dan pembelajaran praktikal',
   },
+
   'home.heroSubtitle': {
-    en: 'Interactive lessons, embedded MakeCode, three-level quizzes, and a personal AI tutor — all in one place for students and teachers.',
-    zh: '互动课程、内嵌 MakeCode、三级测验，以及专属 AI 导师——为师生打造的一站式平台。',
-    ms: 'Pelajaran interaktif, MakeCode terbenam, kuiz tiga peringkat, dan tutor AI peribadi — semua di satu tempat untuk pelajar dan guru.',
+    en: 'Interactive lessons, embedded MakeCode, fun quizzes, and a personal AI tutor — all in one exciting platform for students and teachers.',
+    zh: '互动课程、内嵌 MakeCode、有趣的测验，以及专属 AI 导师——这一切尽在充满乐趣的平台。',
+    ms: 'Pelajaran interaktif, MakeCode terbenam, kuiz menyeronokkan, dan tutor AI peribadi — semuanya dalam satu platform yang menarik untuk pelajar dan guru.',
   },
   'home.ctaStudent': { en: 'Start learning', zh: '开始学习', ms: 'Mula belajar' },
   'home.ctaTeacher': {
