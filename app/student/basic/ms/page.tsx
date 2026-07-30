@@ -1,11 +1,16 @@
+'use client'
+
 import PdfPage from '@/components/ui/PdfPage'
 
-export default function BasicMsPage() {
+export default function Page({ params }: { params: { topic: string; lang: string } }) {
+  const { topic, lang } = params
+
   return (
     <PdfPage
-      title="Asas Pembelajaran Micro:bit"
-      subtitle="Versi Bahasa Melayu"
-      pdfPath="/slides/basic-ms.pdf"
+      title="Pelajaran Asas"
+      subtitle="Belajar asas micro:bit"
+      pdfPath={`/pdfs/${topic}.pdf`}
+      lang={lang}
     />
   )
 }

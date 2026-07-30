@@ -1,11 +1,16 @@
+'use client'
+
 import PdfPage from '@/components/ui/PdfPage'
 
-export default function BasicZhPage() {
+export default function Page({ params }: { params: { topic: string; lang: string } }) {
+  const { topic, lang } = params
+
   return (
     <PdfPage
-      title="基础 Micro:bit 学习"
-      subtitle="中文版本"
-      pdfPath="/slides/basic-zh.pdf"
+      title="基础课程"
+      subtitle="学习 micro:bit 基础知识"
+      pdfPath={`/pdfs/${topic}.pdf`}
+      lang={lang}
     />
   )
 }

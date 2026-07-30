@@ -476,14 +476,23 @@ type I18nContextValue = {
 }
 
 const I18nContext = createContext<I18nContextValue | null>(null)
-
-export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('en')
+export function I18nProvider({
+  children,
+  initialLang,
+}: {
+  children: React.ReactNode
+  initialLang?: Lang
+}) {
+  const [lang, setLangState] = useState<Lang>(initialLang || 'en')
 
   useEffect(() => {
     const stored = window.localStorage.getItem('mbx-lang') as Lang | null
-    if (stored && ['en', 'zh', 'ms'].includes(stored)) setLangState(stored)
-  }, [])
+    if (stored && ['en', 'zh', 'ms'].includes(stored)) {
+      setLangState(stored)
+    } else if (initialLang && ['en', 'zh', 'ms'].includes(initialLang)) {
+      setLangState(initialLang)
+    }
+  }, [initialLang])
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l)
