@@ -129,7 +129,7 @@ export default function StudentPage({ user }: { user?: any }) {
       <footer className="border-t border-border py-6">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
           <Logo showText={false} />
-          <span>{'\u00A9'} 2026 MicroBit-X</span>
+          <span>{'\u00A9'} 2026 MicroBOT-X</span>
         </div>
       </footer>
 
