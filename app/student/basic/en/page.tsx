@@ -12,19 +12,15 @@ export default function BasicEnPage() {
         <p className="text-sm">English Version</p>
       </header>
 
-      {/* 主体内容：PDF */}
+      {/* 主体内容：PDF Slide */}
       <main className="flex-1 p-6">
-        <object
-          data="/docs/microbit-bm.pdf"
-          type="application/pdf"
-          width="100%"
-          height="600"
-        >
-          <p>无法显示 PDF，请 <a href="/docs/microbit-bm.pdf" target="_blank">点击这里下载</a></p>
-        </object>
+        <iframe
+          src="/slides/basic-en.pdf"   // 你放在 public/slide/microbit-bm.pdf
+          className="w-full h-[600px] rounded-lg shadow-md"
+        />
       </main>
 
-      {/* 悬浮球容器：右下角堆叠，间距加大 */}
+      {/* 悬浮球容器：右下角堆叠 */}
       <div className="fixed bottom-22 right-5.5 flex flex-col items-end gap-12 z-50">
         {/* 上面：MakeCode 悬浮球 */}
         <MakeCodeWidget />
