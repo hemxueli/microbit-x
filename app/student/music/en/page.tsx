@@ -1,11 +1,15 @@
+'use client'
+
 import PdfPage from '@/components/ui/PdfPage'
 
-export default function MusicEnPage() {
+export default function Page({ params }: { params: { topic: string; lang: string } }) {
+  const { topic, lang } = params
   return (
     <PdfPage
-      title="Micro:bit Music Learning"
-      subtitle="English Version"
-      pdfPath="/slides/music-en.pdf"
+      title="Music Lesson"
+      subtitle="Learn micro:bit music"
+      pdfPath={`/slides/music-en.pdf`}
+      lang={lang}
     />
   )
 }

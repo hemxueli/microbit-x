@@ -1,11 +1,15 @@
+'use client'
+
 import PdfPage from '@/components/ui/PdfPage'
 
-export default function MusicMsPage() {
+export default function Page({ params }: { params: { topic: string; lang: string } }) {
+  const { topic, lang } = params
   return (
     <PdfPage
-      title="Pembelajaran Muzik Micro:bit"
-      subtitle="Versi Bahasa Melayu"
-      pdfPath="/slides/music-ms.pdf"
+      title="Pelajaran Muzik"
+      subtitle="Belajar muzik micro:bit"
+      pdfPath={`/slides/music-ms.pdf`}
+      lang={lang}
     />
   )
 }
