@@ -32,20 +32,29 @@ export default function MakeCodeWidget() {
 
       {/* 弹窗 */}
       {open && (
-        <div className="fixed inset-0 z-[9999] bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-md w-[320px] text-center">
-            <h2 className="text-lg font-bold mb-4">{t('makecode.title')}</h2>
-            <p className="mb-6">{t('makecode.confirmText')}</p>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-sm bg-white/30">
+          <div className="bg-white rounded-xl shadow-2xl w-[360px] p-8 text-center animate-fadeIn">
+            {/* 标题 */}
+            <h2 className="text-xl font-bold text-gray-800 mb-4">
+              {t('makecode.title')}
+            </h2>
+
+            {/* 提示文字 */}
+            <p className="text-gray-600 mb-6">
+              {t('makecode.confirmText')}
+            </p>
+
+            {/* 按钮区 */}
             <div className="flex gap-4 justify-center">
               <button
                 onClick={handleConfirm}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                className="bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition-transform hover:scale-105"
               >
                 {t('makecode.yes')}
               </button>
               <button
                 onClick={() => setOpen(false)}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-5 py-2 rounded-lg shadow-md transition-transform hover:scale-105"
               >
                 {t('makecode.no')}
               </button>
