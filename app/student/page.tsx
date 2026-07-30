@@ -69,7 +69,7 @@ export default function StudentPage({ user }: { user?: any }) {
             </div>
           </div>
 
-          {/* 学习卡片区 */}
+          {/* 学习内容卡片区 */}
           <h2 className="text-2xl font-bold mb-6">{t('student.learningContent')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -86,8 +86,38 @@ export default function StudentPage({ user }: { user?: any }) {
                   backgroundPosition: 'center',
                 }}
                 onClick={() => {
-                  setSelectedTopic(key)
-                  setShowLangModal(true)
+                  // 跳转到学习页面
+                  window.location.href = `/student/${key}/learn`
+                }}
+              >
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
+                    {t(`student.${key}`)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Quiz 卡片区 */}
+          <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.myQuiz')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { key: 'basicQuiz', image: '/images/quiz-basic.png' },
+              { key: 'inputQuiz', image: '/images/quiz-input.png' },
+              { key: 'musicQuiz', image: '/images/quiz-music.png' },
+            ].map(({ key, image }) => (
+              <div
+                key={key}
+                className="relative h-[280px] rounded-lg shadow-md overflow-hidden cursor-pointer group"
+                style={{
+                  backgroundImage: `url(${image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+                onClick={() => {
+                  // 跳转到 Quiz 页面
+                  window.location.href = `/student/${key}`
                 }}
               >
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
