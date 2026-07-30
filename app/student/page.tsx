@@ -137,19 +137,7 @@ export default function StudentPage({ user }: { user?: any }) {
       </footer>
 
       {/* AI Chatbot */}
-      <AiChatWidget
-        defaultLanguage="en"
-        quizData={{
-          title: 'Sample Quiz',
-          studentName: user?.name ?? t('student.defaultName'),
-          score: 2,
-          total: 3,
-          questions: [
-            { question: 'What is a micro:bit button?', studentAnswer: 'Switch', correctAnswer: 'Input device', isCorrect: false },
-            { question: 'LED stands for?', studentAnswer: 'Light Emitting Diode', correctAnswer: 'Light Emitting Diode', isCorrect: true },
-            { question: 'Which sensor detects motion?', studentAnswer: 'Accelerometer', correctAnswer: 'Accelerometer', isCorrect: true },
-          ],
-        } as QuizData}
+      <AiChatWidget defaultLanguage="en"
       />
 
       {/* 加入班级弹窗 */}
