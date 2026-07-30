@@ -15,7 +15,7 @@ export default function BasicEnPage() {
       {/* 主体内容：PDF Slide */}
       <main className="flex-1 p-6">
         <iframe
-          src="/slide/basic-en.pdf"   // 你放在 public/slide/microbit-bm.pdf
+          src="/slides/basic-en.pdf"   // 你放在 public/slide/microbit-bm.pdf
           className="w-full h-[600px] rounded-lg shadow-md"
         />
       </main>
