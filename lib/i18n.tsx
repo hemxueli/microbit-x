@@ -32,6 +32,7 @@ export const dict: Dict = {
   'nav.getStarted': { en: 'Get started', zh: '开始使用', ms: 'Mula sekarang' },
   'nav.dashboard': { en: 'Dashboard', zh: '仪表盘', ms: 'Papan pemuka' },
   'nav.logout': { en: 'Log out', zh: '退出登录', ms: 'Log keluar' },
+
   'home.heroTitle': {
     en: 'Master micro:bit with AI and hands-on adventures',
     zh: '借助 AI 与动手探险，掌握 micro:bit',
