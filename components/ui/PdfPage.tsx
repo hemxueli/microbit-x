@@ -23,16 +23,6 @@ export default function PdfPage({ title, subtitle, pdfPath }: PdfPageProps) {
           <p className="text-sm">{subtitle}</p>
         </div>
 
-        {/* 语言选择器 */}
-        <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="bg-white text-black px-2 py-1 rounded"
-        >
-          <option value="en">English</option>
-          <option value="ms">Bahasa Melayu</option>
-          <option value="zh">中文</option>
-        </select>
       </header>
 
       {/* 主体内容：PDF Slide */}
