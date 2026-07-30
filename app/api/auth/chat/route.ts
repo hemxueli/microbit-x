@@ -8,8 +8,6 @@ import {
 import { google } from "@ai-sdk/google"
 import { LANGUAGE_NAMES, type Lang } from "@/lib/i18n"
 
-console.log("Key exists:", !!process.env.GOOGLE_GENERATIVE_AI_API_KEY);
-
 export const maxDuration = 30
 
 function buildSystemPrompt(language: Lang) {
