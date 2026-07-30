@@ -39,10 +39,11 @@ export const dict: Dict = {
     ms: 'Kuasai micro:bit dengan AI dan pembelajaran praktikal',
   },
 
+  
   'home.heroSubtitle': {
-    en: 'Interactive lessons, embedded MakeCode, fun quizzes, and a personal AI tutor — all in one exciting platform for students and teachers.',
-    zh: '互动课程、内嵌 MakeCode、有趣的测验，以及专属 AI 导师——这一切尽在充满乐趣的平台。',
-    ms: 'Pelajaran interaktif, MakeCode terbenam, kuiz menyeronokkan, dan tutor AI peribadi — semuanya dalam satu platform yang menarik untuk pelajar dan guru.',
+    en: 'Dive into interactive lessons, build with MakeCode, challenge yourself with interesting quizzes, and chat with your personal AI tutor — all in one exciting platform.',
+    zh: '沉浸于互动课程，玩转 MakeCode，挑战趣味测验，并与专属 AI 导师交流——这一切尽在充满乐趣的平台。',
+    ms: 'Sertai pelajaran interaktif, bina dengan MakeCode, cabar diri dengan kuiz menarik, dan berbual dengan tutor AI peribadi — semuanya dalam satu platform yang menyeronokkan.',
   },
 
   'home.ctaStudent': { en: 'Start learning', zh: '开始学习', ms: 'Mula belajar' },
@@ -56,65 +57,61 @@ export const dict: Dict = {
     zh: '学习 micro:bit 所需的一切',
     ms: 'Semua yang anda perlukan untuk belajar micro:bit',
   },
+  
   'feature.materials.title': {
-    en: 'Interactive materials',
-    zh: '互动学习材料',
-    ms: 'Bahan interaktif',
+  en: 'Rich and engaging learning materials',
+  zh: '丰富有趣的学习内容',
+  ms: 'Bahan pembelajaran yang menarik dan kaya',
   },
+  
   'feature.materials.desc': {
-    en: 'Images, videos and notes organized by topic to guide every step.',
-    zh: '按主题组织的图文、视频与笔记，引导每一步学习。',
-    ms: 'Imej, video dan nota disusun mengikut topik untuk membimbing setiap langkah.',
+    en: 'Provides interactive courses and resources to help students master micro:bit with ease.',
+    zh: '提供大量互动课程与素材，让学生在探索中轻松掌握 micro:bit。',
+    ms: 'Menyediakan kursus interaktif dan sumber untuk membantu pelajar menguasai micro:bit dengan mudah.',
   },
-  'feature.makecode.title': {
-    en: 'Embedded MakeCode',
-    zh: '内嵌 MakeCode',
-    ms: 'MakeCode terbenam',
-  },
-  'feature.makecode.desc': {
-    en: 'Program your micro:bit right inside the platform — no switching tabs.',
-    zh: '直接在平台内为 micro:bit 编程，无需切换标签页。',
-    ms: 'Programkan micro:bit terus dalam platform — tanpa bertukar tab.',
-  },
+
   'feature.quiz.title': {
-    en: 'Three-level quizzes',
-    zh: '三级测验',
-    ms: 'Kuiz tiga peringkat',
+    en: 'Basic student quizzes',
+    zh: '基础学生测验',
+    ms: 'Kuiz asas pelajar',
   },
   'feature.quiz.desc': {
-    en: 'Assessments at three difficulty levels to match every learner.',
-    zh: '三种难度的评估，适配不同能力的学习者。',
-    ms: 'Penilaian pada tiga tahap kesukaran untuk setiap pelajar.',
+    en: 'Carefully designed tests help beginners check their learning progress and improve step by step.',
+    zh: '精心设计的测试帮助初学者检验学习成果，逐步提升能力。',
+    ms: 'Ujian yang direka dengan teliti membantu pelajar baharu menilai kemajuan pembelajaran dan meningkatkan tahap secara beransur.',
   },
+
   'feature.ai.title': {
     en: 'AI chat assistant',
     zh: 'AI 聊天助手',
     ms: 'Pembantu sembang AI',
   },
   'feature.ai.desc': {
-    en: 'Ask questions any time and get instant, friendly guidance.',
-    zh: '随时提问，获得即时而友好的指导。',
-    ms: 'Tanya soalan bila-bila masa dan dapatkan panduan segera.',
+    en: 'Ask questions anytime and get instant, friendly guidance like having a personal tutor.',
+    zh: '随时提问，获得即时而友好的指导，就像身边有一位专属导师。',
+    ms: 'Boleh bertanya pada bila-bila masa dan mendapat panduan mesra serta segera, seolah-olah mempunyai tutor peribadi.',
   },
+
   'feature.feedback.title': {
     en: 'Personalized feedback',
     zh: '个性化反馈',
     ms: 'Maklum balas peribadi',
   },
   'feature.feedback.desc': {
-    en: 'AI analyzes your quiz results and suggests what to improve.',
-    zh: 'AI 分析你的测验结果并给出改进建议。',
-    ms: 'AI menganalisis keputusan kuiz anda dan mencadangkan penambahbaikan.',
+    en: 'AI analyzes your learning and quiz results to provide tailored suggestions for improvement.',
+    zh: 'AI 会分析你的学习与测验结果，给出针对性的改进建议，助你不断进步。',
+    ms: 'AI menganalisis pembelajaran dan keputusan kuiz anda untuk memberikan cadangan penambahbaikan yang disesuaikan.',
   },
+
   'feature.dashboard.title': {
-    en: 'Teacher dashboard',
-    zh: '教师仪表盘',
-    ms: 'Papan pemuka guru',
+    en: 'Easy class management for teachers',
+    zh: '教师轻松管理班级',
+    ms: 'Pengurusan kelas mudah untuk guru',
   },
   'feature.dashboard.desc': {
-    en: 'Manage classes, monitor progress and review marks with ease.',
-    zh: '轻松管理班级、监控进度并审阅成绩。',
-    ms: 'Urus kelas, pantau kemajuan dan semak markah dengan mudah.',
+    en: 'The teacher dashboard makes class management, progress tracking, and grading simple and efficient.',
+    zh: '教师仪表盘让班级管理、进度监控和成绩评估变得简单高效。',
+    ms: 'Papan pemuka guru memudahkan pengurusan kelas, pemantauan kemajuan, dan penilaian dengan lebih cekap.',
   },
 
   'student.welcomeTitle': {
