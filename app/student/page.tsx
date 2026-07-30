@@ -100,9 +100,9 @@ export default function StudentPage({ user }: { user?: any }) {
           <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.learningChallenge')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { key: 'basicChallenge', image: '/images/quiz-basic.png' },
-              { key: 'inputChallenge', image: '/images/quiz-input.png' },
-              { key: 'musicChallenge', image: '/images/quiz-music.png' },
+              { key: 'basic', image: '/images/quiz-basic.png' },
+              { key: 'input', image: '/images/quiz-input.png' },
+              { key: 'music', image: '/images/quiz-music.png' },
             ].map(({ key, image }) => (
               <div
                 key={key}
