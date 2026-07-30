@@ -62,7 +62,7 @@ export async function POST(req: Request) {
   }: { messages: UIMessage[]; language?: Lang; quizData?: QuizData } = await req.json()
 
   const result = streamText({
-    model: google("gemini-flash-latest"),
+    model: google("gemini-1.5-flash"),
     system: buildSystemPrompt(language, quizData),
     messages: await convertToModelMessages(messages),
   })
