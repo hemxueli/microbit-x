@@ -9,7 +9,7 @@ export default function Page({ params }: { params: { topic: string; lang: string
     <PdfPage
       title="Pelajaran Asas"
       subtitle="Belajar asas micro:bit"
-      pdfPath={`/pdfs/${topic}.pdf`}
+      pdfPath={`/slides/basic-ms.pdf`}
       lang={lang}
     />
   )

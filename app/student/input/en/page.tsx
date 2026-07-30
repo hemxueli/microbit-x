@@ -8,7 +8,7 @@ export default function Page({ params }: { params: { topic: string; lang: string
     <PdfPage
       title="Input Lesson"
       subtitle="Learn micro:bit input"
-      pdfPath={`/pdfs/${topic}.pdf`}
+      pdfPath={`/slides/input-en.pdf`}
       lang={lang}
     />
   )
