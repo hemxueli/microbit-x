@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   }: { messages: UIMessage[]; language?: Lang } = await req.json()
 
   const result = streamText({
-    model: google("gemini-1.5-flash"), // ✅ 官方模型名
+    model: google("gemini-flash-latest"), 
     system: buildSystemPrompt(language),
     messages: await convertToModelMessages(messages),
   })
