@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useI18n, dict } from '@/lib/i18n'
@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false)
   const { lang } = useI18n()
   const searchParams = useSearchParams()
-  const email = searchParams.get('email') // ✅ 自动读取 URL 参数
+  const email = searchParams.get('email')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -64,7 +64,6 @@ export default function ResetPasswordPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* ✅ 邮箱自动读取，不需要用户再输入 */}
               <p className="text-sm text-gray-600 text-center">
                 {dict['auth.email'][lang]}: <span className="font-semibold">{email}</span>
               </p>
@@ -87,9 +86,17 @@ export default function ResetPasswordPage() {
                 {loading ? dict['auth.processing'][lang] : dict['common.submit'][lang]}
               </Button>
             </form>
+
             {message && (
               <p className="mt-4 text-sm text-gray-700 text-center">{message}</p>
             )}
+
+            {/* ✅ 返回登录链接 */}
+            <div className="mt-6 text-center">
+              <Link href="/sign-in" className="text-sm text-teal-700 hover:underline">
+                {dict['auth.backToSignIn'][lang]}
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

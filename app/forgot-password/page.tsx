@@ -19,8 +19,7 @@ export default function ForgotPasswordPage() {
   const { lang } = useI18n()
   const router = useRouter()
 
-  async function handleSendCode(e: React.FormEvent) {
-    e.preventDefault()
+  async function handleSendCode() {
     setMessage('')
     setLoading(true)
 
@@ -46,7 +45,6 @@ export default function ForgotPasswordPage() {
     setLoading(true)
 
     try {
-      // ⚠️ 这里假设你有一个 reset_codes 表来存验证码
       const { data, error } = await supabase
         .from('reset_codes')
         .select('*')
@@ -59,7 +57,7 @@ export default function ForgotPasswordPage() {
       } else if (new Date(data.expires_at).getTime() < Date.now()) {
         setMessage(dict['reset.error'][lang])
       } else {
-        // 验证成功 → 跳转到 reset-password 页面
+        // ✅ 验证成功 → 跳转到 reset-password 页面
         router.push(`/reset-password?email=${encodeURIComponent(email)}`)
       }
     } catch {
@@ -84,8 +82,8 @@ export default function ForgotPasswordPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* 输入邮箱并发送验证码 */}
-            <form onSubmit={handleSendCode} className="space-y-4">
+            <form onSubmit={handleVerifyCode} className="space-y-4">
+              {/* 邮箱输入 */}
               <Input
                 type="email"
                 placeholder={dict['forgot.placeholder'][lang]}
@@ -93,23 +91,34 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? dict['auth.processing'][lang] : dict['forgot.button'][lang]}
-              </Button>
-            </form>
 
-            {/* 输入验证码并验证 */}
-            <form onSubmit={handleVerifyCode} className="space-y-4 mt-6">
+              {/* 验证码输入 */}
               <Input
                 type="text"
                 placeholder={dict['reset.code'][lang]}
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                required
               />
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? dict['auth.processing'][lang] : dict['common.submit'][lang]}
-              </Button>
+
+              {/* 两个按钮并排 */}
+              <div className="flex gap-4">
+                <Button
+                  type="button"
+                  onClick={handleSendCode}
+                  disabled={loading || !email} // 没填邮箱时禁用
+                  className="flex-1"
+                >
+                  {loading ? dict['auth.processing'][lang] : dict['forgot.button'][lang]}
+                </Button>
+
+                <Button
+                  type="submit"
+                  disabled={loading || !code} // 没填验证码时禁用
+                  className="flex-1"
+                >
+                  {loading ? dict['auth.processing'][lang] : dict['common.submit'][lang]}
+                </Button>
+              </div>
             </form>
 
             {message && (
