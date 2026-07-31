@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useI18n, dict } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -18,7 +18,8 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false)
   const { lang } = useI18n()
   const searchParams = useSearchParams()
-  const email = searchParams.get('email')
+  const router = useRouter()
+  const email = searchParams.get('email') ?? ''
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -37,6 +38,8 @@ export default function ResetPasswordPage() {
         setMessage(error.message || dict['reset.error'][lang])
       } else {
         setMessage(dict['reset.success'][lang])
+        // ✅ 成功后跳转到登录页
+        router.push('/sign-in')
       }
     } catch {
       setMessage('Server error.')
@@ -91,7 +94,6 @@ export default function ResetPasswordPage() {
               <p className="mt-4 text-sm text-gray-700 text-center">{message}</p>
             )}
 
-            {/* ✅ 返回登录链接 */}
             <div className="mt-6 text-center">
               <Link href="/sign-in" className="text-sm text-teal-700 hover:underline">
                 {dict['auth.backToSignIn'][lang]}

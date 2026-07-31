@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://your-app.com/reset-password',
+        redirectTo: 'https://microbot-x.vercel.app/reset-password',
       })
       if (error) {
         setMessage(error.message)
