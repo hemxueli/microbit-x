@@ -1,72 +1,58 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export default function ResetPasswordPage() {
-  const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("loading");
     setMessage("");
 
-    try {
-      const { error } = await supabase.auth.updateUser({ password });
-
-      if (error) {
-        setStatus("error");
-        setMessage(`❌ ${error.message}`);
-      } else {
-        setStatus("success");
-        setMessage("✅ 密码已成功更新，请重新登录。");
-      }
-    } catch {
-      setStatus("error");
-      setMessage("❌ 服务器错误，请稍后再试。");
-    }
+    const res = await fetch("/api/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ email, code, newPassword }),
+    });
+    const data = await res.json();
+    setMessage(data.message);
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-teal-50 to-cyan-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <h1 className="text-2xl font-bold mb-4 text-teal-700">重置密码</h1>
-        <p className="text-gray-600 mb-6">请输入新密码。</p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            type="password"
-            placeholder="新密码"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          <Button
-            type="submit"
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white"
-            disabled={status === "loading"}
-          >
-            {status === "loading" ? "提交中..." : "更新密码"}
-          </Button>
-        </form>
-
-        {message && (
-          <div
-            className={`mt-4 text-sm p-2 rounded ${
-              status === "success"
-                ? "bg-teal-100 text-teal-700"
-                : "bg-red-100 text-red-700"
-            }`}
-          >
-            {message}
-          </div>
-        )}
-      </div>
+    <div className="p-8">
+      <h1 className="text-xl font-bold">重置密码</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="email"
+          placeholder="邮箱"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="border p-2 w-full"
+        />
+        <input
+          type="text"
+          placeholder="验证码"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          required
+          className="border p-2 w-full"
+        />
+        <input
+          type="password"
+          placeholder="新密码"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          required
+          className="border p-2 w-full"
+        />
+        <button type="submit" className="bg-teal-600 text-white p-2 w-full">
+          更新密码
+        </button>
+      </form>
+      {message && <p className="mt-4">{message}</p>}
     </div>
   );
 }

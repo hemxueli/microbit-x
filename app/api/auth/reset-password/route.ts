@@ -3,34 +3,41 @@ import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    const { email, code, newPassword } = await req.json();
 
-    if (!email) {
-      return NextResponse.json(
-        { success: false, message: "❌ 请输入邮箱地址。" },
-        { status: 400 }
-      );
+    if (!email || !code || !newPassword) {
+      return NextResponse.json({ success: false, message: "❌ 参数不完整" }, { status: 400 });
     }
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password`,
-    });
+    // 查找验证码
+    const { data, error } = await supabase
+      .from("reset_codes")
+      .select("*")
+      .eq("email", email)
+      .eq("code", code)
+      .eq("used", false)
+      .single();
 
-    if (error) {
-      return NextResponse.json(
-        { success: false, message: `❌ ${error.message}` },
-        { status: 400 }
-      );
+    if (error || !data) {
+      return NextResponse.json({ success: false, message: "❌ 验证码错误或已使用" }, { status: 400 });
     }
 
-    return NextResponse.json(
-      { success: true, message: "✅ 重置密码邮件已发送，请检查邮箱。" },
-      { status: 200 }
-    );
+    // 检查是否过期
+    if (new Date(data.expires_at) < new Date()) {
+      return NextResponse.json({ success: false, message: "❌ 验证码已过期" }, { status: 400 });
+    }
+
+    // 更新密码
+    const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
+    if (updateError) {
+      return NextResponse.json({ success: false, message: `❌ ${updateError.message}` }, { status: 400 });
+    }
+
+    // 标记验证码已使用
+    await supabase.from("reset_codes").update({ used: true }).eq("id", data.id);
+
+    return NextResponse.json({ success: true, message: "✅ 密码已更新" });
   } catch {
-    return NextResponse.json(
-      { success: false, message: "❌ 服务器错误，请稍后再试。" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: "❌ 服务器错误" }, { status: 500 });
   }
 }
