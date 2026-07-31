@@ -22,7 +22,6 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      // 调用后端 API 发送验证码邮件
       const res = await fetch("/api/auth/request-reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,7 +30,6 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (data.success) {
-        // 跳转到 reset-password 页面，带上 email
         router.push(`/reset-password?email=${encodeURIComponent(email)}`);
       } else {
         setError(data.message || "Failed to send reset code.");
@@ -44,11 +42,11 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-indigo-100">
+    <main className="flex min-h-screen flex-col bg-gradient-to-br from-teal-50 to-cyan-100">
       <div className="flex flex-1 items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md rounded-xl shadow-lg bg-white">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-extrabold text-indigo-700">
+            <CardTitle className="text-2xl font-extrabold text-teal-700">
               Forgot Password
             </CardTitle>
             <CardDescription className="text-gray-500">
@@ -68,14 +66,14 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50"
+                className="w-full rounded-md bg-teal-600 px-4 py-2 text-white font-semibold hover:bg-teal-700 disabled:opacity-50"
               >
                 {loading ? "Sending..." : "Send Reset Code"}
               </button>
             </form>
             {error && <p className="mt-3 text-red-600 text-sm">{error}</p>}
             <div className="mt-6 text-center">
-              <Link href="/sign-in" className="text-sm text-indigo-600 hover:text-indigo-800 underline">
+              <Link href="/sign-in" className="text-sm text-teal-600 hover:text-teal-800 underline">
                 Back to Login
               </Link>
             </div>
