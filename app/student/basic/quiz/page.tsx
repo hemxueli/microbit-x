@@ -134,10 +134,44 @@ export default function QuizBasicPage() {
 
       {/* 结果显示 */}
       {showResult && score !== null && (
-        <div className="mt-8 text-center animate-fadeIn">
-          <p className="text-2xl font-bold text-teal-700">
-            🎉 {t('quiz.yourScore')}: {score}/{questions.length}
-          </p>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center w-96 animate-fadeIn">
+            <h2 className="text-2xl font-bold text-teal-700 mb-4">
+              🎉 {t('quiz.yourScore')}: {score}/{questions.length}
+            </h2>
+
+            {/* 根据分数显示评语 */}
+            <p className="text-lg text-gray-700 mb-6">
+              {score <= 3
+                ? t('quiz.feedback.tryHarder')
+                : score <= 6
+                ? t('quiz.feedback.good')
+                : score <= 9
+                ? t('quiz.feedback.great')
+                : t('quiz.feedback.perfect')}
+            </p>
+
+            {/* 两个按钮 */}
+            <div className="flex justify-around">
+              <button
+                onClick={() => {
+                  setAnswers(Array(questions.length).fill(-1))
+                  setScore(null)
+                  setShowResult(false)
+                  setCurrent(0)
+                }}
+                className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
+              >
+                🔄 {t('quiz.retry')}
+              </button>
+              <button
+                onClick={() => (window.location.href = '/student/evaluation')}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              >
+                📊 {t('quiz.aiEvaluation')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
