@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { useI18n, dict } from '@/lib/i18n'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
-  const { lang } = useI18n() // 当前语言
+  const { lang } = useI18n()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -15,16 +16,18 @@ export default function ForgotPasswordPage() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/auth/request-reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      // 调用 Supabase 内置 API 发送重置密码邮件
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://your-app.com/reset-password', // 用户点击邮件后跳转的页面
       })
 
-      const data = await res.json()
-      setMessage(data.message || dict['forgot.success'][lang])
-    } catch (error) {
-      setMessage('Something went wrong. Please try again.')
+      if (error) {
+        setMessage(error.message)
+      } else {
+        setMessage(dict['forgot.success'][lang])
+      }
+    } catch (err) {
+      setMessage('Server error.')
     } finally {
       setLoading(false)
     }
