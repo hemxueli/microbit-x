@@ -290,6 +290,35 @@ export const dict: Dict = {
     ms: 'Kembali ke topik',
   },
 
+    // Quiz 标题翻译
+  'quiz.title.basic': {
+    en: 'Quiz: MakeCode Basic',
+    zh: '测验：MakeCode 基本',
+    ms: 'Kuiz: MakeCode Asas',
+  },
+  'quiz.title.input': {
+    en: 'Quiz: MakeCode Input',
+    zh: '测验：MakeCode 输入',
+    ms: 'Kuiz: MakeCode Input',
+  },
+  'quiz.title.music': {
+    en: 'Quiz: MakeCode Music',
+    zh: '测验：MakeCode 音乐',
+    ms: 'Kuiz: MakeCode Muzik',
+  },
+
+  // 音乐控制按钮
+  'quiz.sound': {
+    en: 'Sound',
+    zh: '声音',
+    ms: 'Bunyi',
+  },
+  'quiz.mute': {
+    en: 'Mute',
+    zh: '静音',
+    ms: 'Senyap',
+  },
+
   // Basic Quiz
   'quiz.basic.q1': {
     en: 'Which category contains the Show Icon block?',
@@ -410,6 +439,127 @@ export const dict: Dict = {
     ms: '4, 6, 8, 10',
   },
   'quiz.basic.q10.answer': { en: '8', zh: '8', ms: '8' },
+
+  // Input Quiz
+  'quiz.input.q1': {
+    en: 'Which category is used to receive information from buttons, sensors, and the environment?',
+    zh: '哪一个类别用于接收按钮、传感器和周围环境的信息？',
+    ms: 'Kategori manakah digunakan untuk menerima maklumat daripada butang, sensor dan persekitaran?',
+  },
+  'quiz.input.q1.options': {
+    en: 'Basic, Input, Music, Loops',
+    zh: '基本, 输入, 音乐, 循环',
+    ms: 'Asas, Input, Muzik, Gelung',
+  },
+  'quiz.input.q1.answer': { en: 'Input', zh: '输入', ms: 'Input' },
+
+  'quiz.input.q2': {
+    en: 'Which block runs when Button A is pressed?',
+    zh: '当按下 A 按钮时，哪一个积木会执行？',
+    ms: 'Blok manakah dijalankan apabila Butang A ditekan?',
+  },
+  'quiz.input.q2.options': {
+    en: 'Show Number, Forever, On Button A Pressed, Show Icon',
+    zh: '显示数字, 永远, 当按下 A 按钮时, 显示图示',
+    ms: 'Paparkan nombor, Selamanya, Semasa Butang A ditekan, Paparkan ikon',
+  },
+  'quiz.input.q2.answer': { en: 'On Button A Pressed', zh: '当按下 A 按钮时', ms: 'Semasa Butang A ditekan' },
+
+  'quiz.input.q3': {
+    en: 'Which gesture is detected when you shake the micro:bit?',
+    zh: '当你摇动 micro:bit 时，会检测到哪一种动作？',
+    ms: 'Gerakan manakah dikesan apabila anda menggoncang micro:bit?',
+  },
+  'quiz.input.q3.options': {
+    en: 'Tilt Left, Logo Up, Shake, Screen Down',
+    zh: '左倾斜, Logo 朝上, 摇动, 屏幕朝下',
+    ms: 'Condong kiri, Logo menghadap atas, Goncang, Skrin menghadap bawah',
+  },
+  'quiz.input.q3.answer': { en: 'Shake', zh: '摇动', ms: 'Goncang' },
+
+  'quiz.input.q4': {
+    en: 'Which block is used to detect the brightness of the surrounding environment?',
+    zh: '哪一个积木可以检测周围环境的亮度？',
+    ms: 'Blok manakah digunakan untuk mengesan tahap kecerahan persekitaran?',
+  },
+  'quiz.input.q4.options': {
+    en: 'Temperature, Compass Heading, Light Level, Sound Level',
+    zh: '温度, 指南针方向, 光线强度, 声音强度',
+    ms: 'Suhu, Arah kompas, Tahap cahaya, Tahap bunyi',
+  },
+  'quiz.input.q4.answer': { en: 'Light Level', zh: '光线强度', ms: 'Tahap cahaya' },
+
+  'quiz.input.q5': {
+    en: 'Which block measures the surrounding temperature?',
+    zh: '哪一个积木可以测量周围温度？',
+    ms: 'Blok manakah mengukur suhu persekitaran?',
+  },
+  'quiz.input.q5.options': {
+    en: 'Light Level, Temperature, Acceleration, Rotation',
+    zh: '光线强度, 温度, 加速度, 旋转',
+    ms: 'Tahap cahaya, Suhu, Pecutan, Putaran',
+  },
+  'quiz.input.q5.answer': { en: 'Temperature', zh: '温度', ms: 'Suhu' },
+
+  'quiz.input.q6': {
+    en: 'Which pins can be used as touch or input pins on the micro:bit?',
+    zh: 'micro:bit 的哪几个引脚可以作为输入引脚？',
+    ms: 'Pin manakah boleh digunakan sebagai pin sentuhan atau input pada micro:bit?',
+  },
+  'quiz.input.q6.options': {
+    en: '[P3, P4, P5]; [P0, P1, P2]; [P6, P7, P8]; [P9, P10, P11]',
+    zh: 'P3, P4, P5; P0, P1, P2; P6, P7, P8; P9, P10, P11',
+    ms: 'P3, P4, P5; P0, P1, P2; P6, P7, P8; P9, P10, P11',
+  },
+  'quiz.input.q6.answer': { en: 'P0, P1, P2', zh: 'P0, P1, P2', ms: 'P0, P1, P2' },
+
+  'quiz.input.q7': {
+    en: 'Which block tells the direction (North, East, South, or West)?',
+    zh: '哪一个积木可以显示方向（北、东、南、西）？',
+    ms: 'Blok manakah menunjukkan arah seperti Utara, Timur, Selatan atau Barat?',
+  },
+  'quiz.input.q7.options': {
+    en: 'Temperature, Light Level, Compass Heading, Running Time',
+    zh: '温度, 光线强度, 指南针方向, 运行时间',
+    ms: 'Suhu, Tahap cahaya, Arah kompas, Masa berjalan',
+  },
+  'quiz.input.q7.answer': { en: 'Compass Heading', zh: '指南针方向', ms: 'Arah kompas' },
+
+  'quiz.input.q8': {
+    en: 'Which block measures movement or acceleration?',
+    zh: '哪一个积木可以测量移动或加速度？',
+    ms: 'Blok manakah mengukur pergerakan atau pecutan?',
+  },
+  'quiz.input.q8.options': {
+    en: 'Rotation, Sound Level, Acceleration, Temperature',
+    zh: '旋转, 声音强度, 加速度, 温度',
+    ms: 'Putaran, Tahap bunyi, Pecutan, Suhu',
+  },
+  'quiz.input.q8.answer': { en: 'Acceleration', zh: '加速度', ms: 'Pecutan' },
+
+  'quiz.input.q9': {
+    en: 'Which block can detect a loud sound? (micro:bit V2)',
+    zh: '哪一个积木可以检测到很大的声音？（micro:bit V2）',
+    ms: 'Blok manakah boleh mengesan bunyi yang kuat? (micro:bit V2)',
+  },
+  'quiz.input.q9.options': {
+    en: 'Show Icon, Pause, Forever, On Loud Sound',
+    zh: '显示图示, 暂停, 永远, 当检测到大声音时',
+    ms: 'Paparkan ikon, Jeda, Selamanya, Semasa bunyi kuat',
+  },
+  'quiz.input.q9.answer': { en: 'On Loud Sound', zh: '当检测到大声音时', ms: 'Semasa bunyi kuat' },
+
+  'quiz.input.q10': {
+    en: 'What is the main purpose of the Input category?',
+    zh: 'Input 类别的主要作用是什么？',
+    ms: 'Apakah tujuan utama kategori Input?',
+  },
+  'quiz.input.q10.options': {
+    en: 'To display icons and text, To play music, To receive input from users and sensors, To draw LED patterns only',
+    zh: '显示图示和文字, 播放音乐, 接收来自用户和传感器的输入, 只绘制 LED 图案',
+    ms: 'Memaparkan ikon dan teks, Memainkan muzik, Menerima input daripada pengguna dan sensor, Melukis corak LED sahaja',
+  },
+  'quiz.input.q10.answer': { en: 'To receive input from users and sensors', zh: '接收来自用户和传感器的输入', ms: 'Menerima input daripada pengguna dan sensor' },
 
   'quiz.music.q1': {
     en: 'Which category is used to play sounds and music on the micro:bit?',
