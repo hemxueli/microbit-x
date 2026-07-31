@@ -290,6 +290,126 @@ export const dict: Dict = {
     ms: 'Kembali ke topik',
   },
 
+  'quiz.music.q1': {
+    en: 'Which category is used to play sounds and music on the micro:bit?',
+    zh: '哪一个类别用于让 micro:bit 播放声音和音乐？',
+    ms: 'Kategori manakah digunakan untuk memainkan bunyi dan muzik pada micro:bit?',
+  },
+  'quiz.music.q1.options': {
+    en: 'Basic, Input, Music, Logic',
+    zh: '基本, 输入, 音乐, 逻辑',
+    ms: 'Asas, Input, Muzik, Logik',
+  },
+  'quiz.music.q1.answer': { en: 'Music', zh: '音乐', ms: 'Muzik' },
+
+  'quiz.music.q2': {
+    en: 'Which block is used to play a melody?',
+    zh: '哪一个积木用于播放旋律？',
+    ms: 'Blok manakah digunakan untuk memainkan melodi?',
+  },
+  'quiz.music.q2.options': {
+    en: 'Show Icon, Play Melody, Show Number, Temperature',
+    zh: '显示图标, 播放旋律, 显示数字, 温度',
+    ms: 'Tunjuk Ikon, Mainkan Melodi, Tunjuk Nombor, Suhu',
+  },
+  'quiz.music.q2.answer': { en: 'Play Melody', zh: '播放旋律', ms: 'Mainkan Melodi' },
+
+  'quiz.music.q3': {
+    en: 'What does the Play Tone block do?',
+    zh: 'Play Tone 积木有什么作用？',
+    ms: 'Apakah fungsi blok Play Tone?',
+  },
+  'quiz.music.q3.options': {
+    en: 'Displays text, Detects light, Plays a musical note or tone, Measures temperature',
+    zh: '显示文字, 检测光线, 播放音符或音调, 测量温度',
+    ms: 'Paparkan teks, Mengesan cahaya, Mainkan nota atau nada muzik, Ukur suhu',
+  },
+  'quiz.music.q3.answer': { en: 'Plays a musical note or tone', zh: '播放音符或音调', ms: 'Mainkan nota atau nada muzik' },
+
+  'quiz.music.q4': {
+    en: 'Which block is used to stop all sounds?',
+    zh: '哪一个积木用于停止所有声音？',
+    ms: 'Blok manakah digunakan untuk menghentikan semua bunyi?',
+  },
+  'quiz.music.q4.options': {
+    en: 'Set Volume, Rest, Ring Tone, Stop All Sounds',
+    zh: '设置音量, 休止, 铃声, 停止所有声音',
+    ms: 'Tetapkan Volum, Rehat, Nada Dering, Hentikan Semua Bunyi',
+  },
+  'quiz.music.q4.answer': { en: 'Stop All Sounds', zh: '停止所有声音', ms: 'Hentikan Semua Bunyi' },
+
+  'quiz.music.q5': {
+    en: 'What is the function of the Set Volume block?',
+    zh: 'Set Volume 积木有什么作用？',
+    ms: 'Apakah fungsi blok Set Volume?',
+  },
+  'quiz.music.q5.options': {
+    en: 'Changes LED brightness, Adjusts the sound volume, Changes the temperature, Changes the screen',
+    zh: '改变 LED 亮度, 调整音量, 改变温度, 改变显示',
+    ms: 'Ubah kecerahan LED, Laraskan volum bunyi, Ubah suhu, Ubah paparan',
+  },
+  'quiz.music.q5.answer': { en: 'Adjusts the sound volume', zh: '调整音量', ms: 'Laraskan volum bunyi' },
+
+  'quiz.music.q6': {
+    en: 'Which value is commonly used as the default volume?',
+    zh: '哪一个数值通常是默认音量？',
+    ms: 'Nilai manakah biasanya digunakan sebagai tahap bunyi lalai?',
+  },
+  'quiz.music.q6.options': {
+    en: '0, 50, 127, 2550',
+    zh: '0, 50, 127, 2550',
+    ms: '0, 50, 127, 2550',
+  },
+  'quiz.music.q6.answer': { en: '127', zh: '127', ms: '127' },
+
+  'quiz.music.q7': {
+    en: 'What does Tempo (BPM) control?',
+    zh: 'Tempo（BPM） 控制什么？',
+    ms: 'Apakah yang dikawal oleh Tempo (BPM)?',
+  },
+  'quiz.music.q7.options': {
+    en: 'Screen brightness, LED pattern, The speed of the music, Temperature',
+    zh: '屏幕亮度, LED 图案, 音乐速度, 温度',
+    ms: 'Kecerahan skrin, Corak LED, Kelajuan muzik, Suhu',
+  },
+  'quiz.music.q7.answer': { en: 'The speed of the music', zh: '音乐速度', ms: 'Kelajuan muzik' },
+
+  'quiz.music.q8': {
+    en: 'What does the Rest block do?',
+    zh: 'Rest 积木有什么作用？',
+    ms: 'Apakah fungsi blok Rest?',
+  },
+  'quiz.music.q8.options': {
+    en: 'Plays music louder, Changes the tempo, Creates a short silence in the music, Displays a number',
+    zh: '播放更大声, 改变节奏, 制造短暂的静音, 显示数字',
+    ms: 'Mainkan muzik lebih kuat, Ubah tempo, Cipta senyap seketika dalam muzik, Tunjuk nombor',
+  },
+  'quiz.music.q8.answer': { en: 'Creates a short silence in the music', zh: '制造短暂的静音', ms: 'Cipta senyap seketika dalam muzik' },
+
+  'quiz.music.q9': {
+    en: 'Which built-in sound can make the micro:bit sound like laughter? (micro:bit V2)',
+    zh: 'micro:bit V2 的哪一种内建音效像笑声？',
+    ms: 'Bunyi terbina dalam manakah boleh membuat micro:bit berbunyi seperti ketawa? (micro:bit V2)',
+  },
+  'quiz.music.q9.options': {
+    en: 'Magic, Twinkle, Giggle, Boing',
+    zh: '魔法, 闪烁, 咯咯笑, 弹跳',
+    ms: 'Magik, Kelip, Ketawa, Boing',
+  },
+  'quiz.music.q9.answer': { en: 'Giggle', zh: '咯咯笑', ms: 'Ketawa' },
+
+  'quiz.music.q10': {
+    en: 'What is the main purpose of the Music category?',
+    zh: 'Music 类别的主要作用是什么？',
+    ms: 'Apakah tujuan utama kategori Music?',
+  },
+  'quiz.music.q10.options': {
+    en: 'To receive input from sensors, To display text and icons, To play sounds, tones, and melodies, To create LED patterns',
+    zh: '接收传感器输入, 显示文字和图示, 播放声音、音调和旋律, 制作 LED 图案',
+    ms: 'Menerima input daripada sensor, Paparkan teks dan ikon, Mainkan bunyi, nada dan melodi, Cipta corak LED',
+  },
+  'quiz.music.q10.answer': { en: 'To play sounds, tones, and melodies', zh: '播放声音、音调和旋律', ms: 'Mainkan bunyi, nada dan melodi' },
+    
   // Chat
   'chat.title': { en: 'AI Learning Assistant', zh: 'AI 学习助手', ms: 'Pembantu Pembelajaran AI' },
   'chat.placeholder': {
