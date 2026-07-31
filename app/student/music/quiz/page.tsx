@@ -30,7 +30,7 @@ export default function QuizMusicPage() {
 
   // 背景音乐
   useEffect(() => {
-    const audio = new Audio('/public/quiz.mp3')
+    const audio = new Audio('/music/quiz-bgm.mp3')
     audio.loop = true
     audio.volume = 0.3
     audio.play().catch(() => {})
@@ -80,29 +80,38 @@ export default function QuizMusicPage() {
       </div>
 
       {/* 当前题目卡片 */}
-      <div className="p-6 bg-white rounded-xl shadow-lg border-2 border-teal-400 animate-slideUp relative">
+      <div className="p-6 bg-white rounded-xl shadow-lg border-2 border-teal-400 animate-slideUp relative flex gap-6">
         {/* 图案装饰 */}
         <div className="absolute top-2 right-2 text-4xl text-teal-300 animate-spin">
           {icons[current]}
         </div>
-        <p className="font-semibold mb-4 text-xl text-teal-700">{t(questions[current])}</p>
-        {t(`${questions[current]}.options`).split(',').map((opt, j) => (
-          <button
-            key={j}
-            onClick={() => {
-              const newAns = [...answers]
-              newAns[current] = j
-              setAnswers(newAns)
-            }}
-            className={`block w-full text-left px-4 py-2 mb-2 rounded-lg border transition transform hover:scale-105 ${
-              answers[current] === j
-                ? 'bg-teal-200 border-teal-600 text-teal-900 font-bold'
-                : 'bg-gray-100 border-gray-300'
-            }`}
-          >
-            {opt.trim()}
-          </button>
-        ))}
+
+        {/* 图片位子（你可以放每题的插图） */}
+        <div className="w-1/3 flex items-center justify-center bg-teal-50 rounded-lg border border-teal-200">
+          <img src={`/images/${questions[current]}.png`} alt="quiz illustration" className="max-h-40" />
+        </div>
+
+        {/* 题目和选项 */}
+        <div className="flex-1">
+          <p className="font-semibold mb-4 text-xl text-teal-700">{t(questions[current])}</p>
+          {t(`${questions[current]}.options`).split(',').map((opt, j) => (
+            <button
+              key={j}
+              onClick={() => {
+                const newAns = [...answers]
+                newAns[current] = j
+                setAnswers(newAns)
+              }}
+              className={`block w-full text-left px-4 py-2 mb-2 rounded-lg border transition transform hover:scale-105 ${
+                answers[current] === j
+                  ? 'bg-teal-200 border-teal-600 text-teal-900 font-bold'
+                  : 'bg-gray-100 border-gray-300'
+              }`}
+            >
+              {opt.trim()}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 控制按钮 */}
@@ -116,15 +125,17 @@ export default function QuizMusicPage() {
         </button>
         {current < questions.length - 1 ? (
           <button
+            disabled={answers[current] === -1} // ✅ 没有选择答案不能 Next
             onClick={() => setCurrent(current + 1)}
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50"
           >
             {t('quiz.next')} ➡️
           </button>
         ) : (
           <button
+            disabled={answers[current] === -1} // ✅ 没有选择答案不能 Submit
             onClick={submitQuiz}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 animate-pulse"
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 animate-pulse disabled:opacity-50"
           >
             {t('quiz.finish')}
           </button>
