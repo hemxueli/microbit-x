@@ -114,6 +114,8 @@ export const dict: Dict = {
     ms: 'Papan pemuka guru memudahkan pengurusan kelas, pemantauan kemajuan, dan penilaian dengan lebih cekap.',
   },
 
+  'quiz.start': {en: 'START', zh: '开始', ms: 'MULA',},
+
   'student.welcomeTitle': {
     en: 'Welcome to your learning journey 🌟',
     zh: '欢迎来到学习之旅 🌟',

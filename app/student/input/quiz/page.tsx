@@ -19,6 +19,7 @@ export default function QuizInputPage() {
     'quiz.input.q10',
   ]
 
+  const [started, setStarted] = useState(false)
   const [answers, setAnswers] = useState<number[]>(Array(questions.length).fill(-1))
   const [score, setScore] = useState<number | null>(null)
   const [showResult, setShowResult] = useState(false)
@@ -54,6 +55,23 @@ export default function QuizInputPage() {
     setShowResult(true)
   }
 
+    if (!started) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center backdrop-blur-md bg-green-100/70">
+        <div className="text-center">
+          <button
+            onClick={() => setStarted(true)}
+            className="px-8 py-4 bg-teal-600 text-white rounded-lg text-2xl font-bold hover:bg-teal-700 animate-pulse"
+          >
+          🚀 {t('quiz.start')}
+          </button>
+          <div className="mt-6">
+            <LanguageSwitcher />
+          </div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="p-8 min-h-screen bg-gradient-to-r from-teal-50 via-white to-teal-100 animate-fadeIn">
       <div className="flex justify-between items-center mb-6">

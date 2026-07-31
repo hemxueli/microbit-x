@@ -114,7 +114,7 @@ export default function StudentPage({ user }: { user?: any }) {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
-                onClick={() => window.location.href = `/student/${key}`}
+                onClick={() => window.location.href = `/student/${key}/quiz`}
               >
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
