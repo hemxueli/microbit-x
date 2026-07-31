@@ -1,42 +1,66 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useI18n, dict } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Logo } from '@/components/logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
 
-export default function ResetPasswordPage() {
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+export default function ForgotPasswordPage() {
+  const [email, setEmail] = useState('')
+  const [code, setCode] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const { lang } = useI18n()
-  const searchParams = useSearchParams()
-  const email = searchParams.get('email') // ✅ 自动读取 URL 参数
+  const router = useRouter()
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSendCode(e: React.FormEvent) {
     e.preventDefault()
     setMessage('')
     setLoading(true)
 
-    if (newPassword !== confirmPassword) {
-      setMessage(dict['reset.mismatch'][lang])
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://your-app.com/reset-password',
+      })
+      if (error) {
+        setMessage(error.message)
+      } else {
+        setMessage(dict['forgot.success'][lang])
+      }
+    } catch {
+      setMessage('Server error.')
+    } finally {
       setLoading(false)
-      return
     }
+  }
+
+  async function handleVerifyCode(e: React.FormEvent) {
+    e.preventDefault()
+    setMessage('')
+    setLoading(true)
 
     try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword })
-      if (error) {
-        setMessage(error.message || dict['reset.error'][lang])
+      // ⚠️ 这里假设你有一个 reset_codes 表来存验证码
+      const { data, error } = await supabase
+        .from('reset_codes')
+        .select('*')
+        .eq('email', email)
+        .eq('code', code)
+        .single()
+
+      if (error || !data) {
+        setMessage(dict['reset.error'][lang])
+      } else if (new Date(data.expires_at).getTime() < Date.now()) {
+        setMessage(dict['reset.error'][lang])
       } else {
-        setMessage(dict['reset.success'][lang])
+        // 验证成功 → 跳转到 reset-password 页面
+        router.push(`/reset-password?email=${encodeURIComponent(email)}`)
       }
     } catch {
       setMessage('Server error.')
@@ -56,37 +80,38 @@ export default function ResetPasswordPage() {
         <Card className="w-full max-w-md rounded-xl shadow-lg bg-white">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-extrabold text-teal-800">
-              {dict['reset.title'][lang]}
+              {dict['forgot.title'][lang]}
             </CardTitle>
-            <CardDescription className="text-gray-500">
-              {dict['app.tagline'][lang]}
-            </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* ✅ 邮箱自动读取，不需要用户再输入 */}
-              <p className="text-sm text-gray-600 text-center">
-                {dict['auth.email'][lang]}: <span className="font-semibold">{email}</span>
-              </p>
-
+            {/* 输入邮箱并发送验证码 */}
+            <form onSubmit={handleSendCode} className="space-y-4">
               <Input
-                type="password"
-                placeholder={dict['reset.newPassword'][lang]}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                type="email"
+                placeholder={dict['forgot.placeholder'][lang]}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? dict['auth.processing'][lang] : dict['forgot.button'][lang]}
+              </Button>
+            </form>
+
+            {/* 输入验证码并验证 */}
+            <form onSubmit={handleVerifyCode} className="space-y-4 mt-6">
               <Input
-                type="password"
-                placeholder={dict['reset.confirmPassword'][lang]}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                type="text"
+                placeholder={dict['reset.code'][lang]}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
                 required
               />
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? dict['auth.processing'][lang] : dict['common.submit'][lang]}
               </Button>
             </form>
+
             {message && (
               <p className="mt-4 text-sm text-gray-700 text-center">{message}</p>
             )}

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useI18n, dict } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,6 +17,8 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const { lang } = useI18n()
+  const searchParams = useSearchParams()
+  const email = searchParams.get('email') // ✅ 自动读取 URL 参数
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -55,9 +58,17 @@ export default function ResetPasswordPage() {
             <CardTitle className="text-2xl font-extrabold text-teal-800">
               {dict['reset.title'][lang]}
             </CardTitle>
+            <CardDescription className="text-gray-500">
+              {dict['app.tagline'][lang]}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* ✅ 邮箱自动读取，不需要用户再输入 */}
+              <p className="text-sm text-gray-600 text-center">
+                {dict['auth.email'][lang]}: <span className="font-semibold">{email}</span>
+              </p>
+
               <Input
                 type="password"
                 placeholder={dict['reset.newPassword'][lang]}
