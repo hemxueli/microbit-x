@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
     setLoading(true)
 
     if (newPassword !== confirmPassword) {
-      setMessage('Passwords do not match.')
+      setMessage(dict['reset.mismatch'][lang])
       setLoading(false)
       return
     }
@@ -31,9 +31,13 @@ export default function ResetPasswordPage() {
       })
 
       const data = await res.json()
-      setMessage(data.message || 'Password reset successful.')
+      setMessage(
+        data.success
+          ? dict['reset.success'][lang]
+          : data.message || dict['reset.error'][lang]
+      )
     } catch (error) {
-      setMessage('Something went wrong. Please try again.')
+      setMessage('Server error.')
     } finally {
       setLoading(false)
     }
@@ -42,7 +46,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="p-8 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-4">
-        {dict['forgot.title'][lang]} {/* 可以复用“忘记密码”标题 */}
+        {dict['reset.title'][lang]}
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -55,7 +59,7 @@ export default function ResetPasswordPage() {
         />
         <input
           type="text"
-          placeholder="Enter verification code"
+          placeholder={dict['reset.code'][lang]}
           value={code}
           onChange={(e) => setCode(e.target.value)}
           required
@@ -63,7 +67,7 @@ export default function ResetPasswordPage() {
         />
         <input
           type="password"
-          placeholder="Enter new password"
+          placeholder={dict['reset.newPassword'][lang]}
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
@@ -71,7 +75,7 @@ export default function ResetPasswordPage() {
         />
         <input
           type="password"
-          placeholder="Confirm new password"
+          placeholder={dict['reset.confirmPassword'][lang]}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
