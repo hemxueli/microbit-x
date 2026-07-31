@@ -1,12 +1,21 @@
-"use client"
+'use client'
 
 import * as React from "react"
+import { useState, useEffect } from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
-
 import { cn } from "@/lib/utils"
 import { ChevronRightIcon, CheckIcon } from "lucide-react"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // ✅ SSR 阶段不渲染，避免 hydration mismatch
+  if (!mounted) return null
+
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
 }
 

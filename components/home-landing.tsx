@@ -7,13 +7,15 @@ import { Logo } from '@/components/logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // 滚动淡入 + 图片缩放组件
 function FadeInSection({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const el = ref.current
     if (!el) return
     const observer = new IntersectionObserver(
@@ -40,14 +42,11 @@ function FadeInSection({ children }: { children: React.ReactNode }) {
 
 export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
   const { t } = useI18n()
+  const [mounted, setMounted] = useState(false)
 
-  const features = [
-    { title: '丰富有趣的学习内容', desc: '提供大量互动课程与素材，让学生在探索中轻松掌握 micro:bit。', img: '/images/feature-learning.png' },
-    { title: '基础学生测验', desc: '精心设计的测试帮助初学者检验学习成果，逐步提升能力。', img: '/images/feature-quiz.png' },
-    { title: 'AI 聊天助手', desc: '随时提问，获得即时而友好的指导，就像身边有一位专属导师。', img: '/images/feature-ai.png' },
-    { title: '个性化反馈', desc: 'AI 会分析你的学习与测验结果，给出针对性的改进建议，助你不断进步。', img: '/images/feature-feedback.png' },
-    { title: '教师轻松管理班级', desc: '教师仪表盘让班级管理、进度监控和成绩评估变得简单高效。', img: '/images/feature-teacher.png' },
-  ]
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -56,7 +55,8 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-2">
-            <LanguageSwitcher />
+            {/* ✅ SSR 阶段不渲染 LanguageSwitcher，避免 mismatch */}
+            {mounted && <LanguageSwitcher />}
             {isAuthed ? (
               <Link href="/">
                 <Button size="sm">{t('nav.dashboard')}</Button>
@@ -76,7 +76,6 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
       </header>
 
       <main className="flex-1">
-        {/* Hero + Features 融合背景 */}
         <section className="relative py-24 bg-gradient-to-b from-white via-cyan-50 to-teal-100">
           <div className="mx-auto w-full max-w-6xl px-6 space-y-40">
 
@@ -113,23 +112,26 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
                 />
               </div>
             </div>
-          {/* 功能 1：学习材料 */}
-          <FadeInSection>
-            <div className="flex flex-col md:flex-row-reverse items-center gap-10">
-              <div className="flex-1">
-                <img 
-                  src="/images/feature-learning.png" 
-                  alt={t('feature.materials.title')} 
-                  className="rounded-2xl opacity-90 shadow-md transition-transform duration-700 ease-out hover:scale-105" 
-                />
-              </div>
-              <div className="flex-1 text-right">
-                <h3 className="text-4xl font-extrabold text-teal-700 mb-4">{t('feature.materials.title')}</h3>
-                <p className="text-lg text-gray-700 opacity-90">{t('feature.materials.desc')}</p>
-              </div>
-            </div>
-          </FadeInSection>
 
+            {/* Features 用 FadeInSection 包裹 */}
+            <FadeInSection>
+              {/* 功能 1：学习材料 */}
+              <div className="flex flex-col md:flex-row-reverse items-center gap-10">
+                <div className="flex-1">
+                  <img 
+                    src="/images/feature-learning.png" 
+                    alt={t('feature.materials.title')} 
+                    className="rounded-2xl opacity-90 shadow-md transition-transform duration-700 ease-out hover:scale-105" 
+                  />
+                </div>
+                <div className="flex-1 text-right">
+                  <h3 className="text-4xl font-extrabold text-teal-700 mb-4">{t('feature.materials.title')}</h3>
+                  <p className="text-lg text-gray-700 opacity-90">{t('feature.materials.desc')}</p>
+                </div>
+              </div>
+            </FadeInSection>
+
+            
           {/* 功能 2：学生测验 */}
           <FadeInSection>
             <div className="flex flex-col md:flex-row items-center gap-10">

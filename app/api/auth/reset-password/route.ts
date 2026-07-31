@@ -1,19 +1,36 @@
 import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(req: Request) {
-  const { email, code, password } = await req.json();
-  if (!email || !code || !password) {
-    return NextResponse.json({ success: false, message: "Missing fields" }, { status: 400 });
+  try {
+    const { email } = await req.json();
+
+    if (!email) {
+      return NextResponse.json(
+        { success: false, message: "❌ 请输入邮箱地址。" },
+        { status: 400 }
+      );
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password`,
+    });
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, message: `❌ ${error.message}` },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, message: "✅ 重置密码邮件已发送，请检查邮箱。" },
+      { status: 200 }
+    );
+  } catch {
+    return NextResponse.json(
+      { success: false, message: "❌ 服务器错误，请稍后再试。" },
+      { status: 500 }
+    );
   }
-
-  // TODO: 从数据库取出验证码并验证
-  // const record = await db.resetCodes.findOne({ email, code });
-  // if (!record || record.expiresAt < Date.now()) {
-  //   return NextResponse.json({ success: false, message: "Invalid or expired code" });
-  // }
-
-  // TODO: 更新用户密码
-  // await db.users.update({ email }, { password: hash(password) });
-
-  return NextResponse.json({ success: true });
 }

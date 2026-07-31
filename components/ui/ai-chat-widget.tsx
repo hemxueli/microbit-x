@@ -15,6 +15,11 @@ export function AiChatWidget({ defaultLanguage = "en" }: AiChatWidgetProps) {
   const [open, setOpen] = useState(false)
   const [language, setLanguage] = useState<Lang>(defaultLanguage)
   const [input, setInput] = useState("")
+  const [mounted, setMounted] = useState(false)   // ✅ 新增 mounted 检查
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const languageRef = useRef(language)
   languageRef.current = language
@@ -37,8 +42,10 @@ export function AiChatWidget({ defaultLanguage = "en" }: AiChatWidgetProps) {
 
   const scrollRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
-  }, [messages, busy])
+    if (mounted) {
+      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
+    }
+  }, [messages, busy, mounted])
 
   function submit(text: string) {
     const value = text.trim()
@@ -47,6 +54,21 @@ export function AiChatWidget({ defaultLanguage = "en" }: AiChatWidgetProps) {
     setInput("")
   }
 
+  // ✅ SSR 阶段只渲染一个空壳，避免 hydration mismatch
+  if (!mounted) {
+    return (
+      <button
+        type="button"
+        aria-label={t.openLabel}
+        title="micro:bit helper"
+        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full 
+                  bg-teal-600 text-white shadow-lg hover:bg-teal-700 transition-transform hover:scale-105"
+      >
+        <Bot className="h-6 w-6" />
+      </button>
+    )
+  }
+  
   return (
     <>
       {/* Launcher bubble */}
