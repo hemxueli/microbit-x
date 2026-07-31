@@ -30,7 +30,7 @@ export default function QuizMusicPage() {
 
   // 背景音乐
   useEffect(() => {
-    const audio = new Audio('/music/quiz-bgm.mp3')
+    const audio = new Audio('/public/quiz.mp3')
     audio.loop = true
     audio.volume = 0.3
     audio.play().catch(() => {})
