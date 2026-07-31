@@ -290,6 +290,405 @@ export const dict: Dict = {
     ms: 'Kembali ke topik',
   },
 
+    // Quiz 标题翻译
+  'quiz.title.basic': {
+    en: 'Quiz: MakeCode Basic',
+    zh: '测验：MakeCode 基本',
+    ms: 'Kuiz: MakeCode Asas',
+  },
+  'quiz.title.input': {
+    en: 'Quiz: MakeCode Input',
+    zh: '测验：MakeCode 输入',
+    ms: 'Kuiz: MakeCode Input',
+  },
+  'quiz.title.music': {
+    en: 'Quiz: MakeCode Music',
+    zh: '测验：MakeCode 音乐',
+    ms: 'Kuiz: MakeCode Muzik',
+  },
+
+  // 音乐控制按钮
+  'quiz.sound': {
+    en: 'Sound',
+    zh: '声音',
+    ms: 'Bunyi',
+  },
+  'quiz.mute': {
+    en: 'Mute',
+    zh: '静音',
+    ms: 'Senyap',
+  },
+
+  // Basic Quiz
+  'quiz.basic.q1': {
+    en: 'Which category contains the Show Icon block?',
+    zh: '哪一个类别包含 Show Icon 积木？',
+    ms: 'Kategori manakah yang mempunyai blok Show Icon?',
+  },
+  'quiz.basic.q1.options': {
+    en: 'Music, Input, Basic, Logic',
+    zh: '音乐, 输入, 基本, 逻辑',
+    ms: 'Muzik, Input, Asas, Logik',
+  },
+  'quiz.basic.q1.answer': { en: 'Basic', zh: '基本', ms: 'Asas' },
+
+  'quiz.basic.q2': {
+    en: 'What does the Show Number block do?',
+    zh: 'Show Number 积木有什么作用？',
+    ms: 'Apakah fungsi blok Show Number?',
+  },
+  'quiz.basic.q2.options': {
+    en: 'Plays music, Displays a number, Detects temperature, Turns off the micro:bit',
+    zh: '播放音乐, 显示数字, 检测温度, 关闭 micro:bit',
+    ms: 'Mainkan muzik, Paparkan nombor, Mengesan suhu, Matikan micro:bit',
+  },
+  'quiz.basic.q2.answer': { en: 'Displays a number', zh: '显示数字', ms: 'Paparkan nombor' },
+
+  'quiz.basic.q3': {
+    en: 'Which block is used to display words such as "HELLO"?',
+    zh: '哪一个积木可以显示 "HELLO" 这样的文字？',
+    ms: 'Blok manakah digunakan untuk memaparkan perkataan seperti "HELLO"?',
+  },
+  'quiz.basic.q3.options': {
+    en: 'Show Number, Show Icon, Show String, Pause',
+    zh: '显示数字, 显示图示, 显示字符串, 暂停',
+    ms: 'Paparkan nombor, Paparkan ikon, Paparkan rentetan, Jeda',
+  },
+  'quiz.basic.q3.answer': { en: 'Show String', zh: '显示字符串', ms: 'Paparkan rentetan' },
+
+  'quiz.basic.q4': {
+    en: 'Which block allows you to create your own 5×5 LED pattern?',
+    zh: '哪一个积木可以自己设计 5×5 LED 图案？',
+    ms: 'Blok manakah membolehkan anda mereka bentuk corak LED 5×5 sendiri?',
+  },
+  'quiz.basic.q4.options': {
+    en: 'Show Arrow, Show Icon, Show LEDs, Clear Screen',
+    zh: '显示箭头, 显示图示, 显示 LED, 清除屏幕',
+    ms: 'Paparkan anak panah, Paparkan ikon, Paparkan LED, Kosongkan skrin',
+  },
+  'quiz.basic.q4.answer': { en: 'Show LEDs', zh: '显示 LED', ms: 'Paparkan LED' },
+
+  'quiz.basic.q5': {
+    en: 'Which block repeats the program continuously?',
+    zh: '哪一个积木会不断重复执行程序？',
+    ms: 'Blok manakah akan mengulangi program secara berterusan?',
+  },
+  'quiz.basic.q5.options': {
+    en: 'Pause, On Start, Forever, Show Number',
+    zh: '暂停, 当开始时, 永远, 显示数字',
+    ms: 'Jeda, Semasa mula, Selamanya, Paparkan nombor',
+  },
+  'quiz.basic.q5.answer': { en: 'Forever', zh: '永远', ms: 'Selamanya' },
+
+  'quiz.basic.q6': {
+    en: 'Which block runs only once when the program starts?',
+    zh: '哪一个积木会在程序开始时执行一次？',
+    ms: 'Blok manakah hanya dijalankan sekali apabila program bermula?',
+  },
+  'quiz.basic.q6.options': {
+    en: 'Forever, Show Icon, Pause, On Start',
+    zh: '永远, 显示图示, 暂停, 当开始时',
+    ms: 'Selamanya, Paparkan ikon, Jeda, Semasa mula',
+  },
+  'quiz.basic.q6.answer': { en: 'On Start', zh: '当开始时', ms: 'Semasa mula' },
+
+  'quiz.basic.q7': {
+    en: 'What does the Pause (ms) block do?',
+    zh: 'Pause (毫秒) 积木有什么作用？',
+    ms: 'Apakah fungsi blok Pause (ms)?',
+  },
+  'quiz.basic.q7.options': {
+    en: 'Shows an icon, Clears the screen, Delays the program for a period of time, Displays a number',
+    zh: '显示图示, 清除屏幕, 程序暂停一段时间, 显示数字',
+    ms: 'Paparkan ikon, Kosongkan skrin, Jeda program seketika, Paparkan nombor',
+  },
+  'quiz.basic.q7.answer': { en: 'Delays the program for a period of time', zh: '程序暂停一段时间', ms: 'Jeda program seketika' },
+
+  'quiz.basic.q8': {
+    en: 'Which block clears all LEDs on the micro:bit screen?',
+    zh: '哪一个积木可以清除 micro:bit 上所有 LED？',
+    ms: 'Blok manakah memadam semua paparan LED pada micro:bit?',
+  },
+  'quiz.basic.q8.options': {
+    en: 'Show LEDs, Show String, Pause, Clear Screen',
+    zh: '显示 LED, 显示字符串, 暂停, 清除屏幕',
+    ms: 'Paparkan LED, Paparkan rentetan, Jeda, Kosongkan skrin',
+  },
+  'quiz.basic.q8.answer': { en: 'Clear Screen', zh: '清除屏幕', ms: 'Kosongkan skrin' },
+
+  'quiz.basic.q9': {
+    en: 'Which block is used to display a direction such as North or East?',
+    zh: '哪一个积木可以显示 North（北）或 East（东）等方向？',
+    ms: 'Blok manakah digunakan untuk memaparkan arah seperti North atau East?',
+  },
+  'quiz.basic.q9.options': {
+    en: 'Show Icon, Show LEDs, Show String, Show Arrow',
+    zh: '显示图示, 显示 LED, 显示字符串, 显示箭头',
+    ms: 'Paparkan ikon, Paparkan LED, Paparkan rentetan, Paparkan anak panah',
+  },
+  'quiz.basic.q9.answer': { en: 'Show Arrow', zh: '显示箭头', ms: 'Paparkan anak panah' },
+
+  'quiz.basic.q10': {
+    en: 'How many directions are available in the Show Arrow block?',
+    zh: 'Show Arrow 积木共有几个方向可以选择？',
+    ms: 'Berapakah jumlah arah yang terdapat dalam blok Show Arrow?',
+  },
+  'quiz.basic.q10.options': {
+    en: '4, 6, 8, 10',
+    zh: '4, 6, 8, 10',
+    ms: '4, 6, 8, 10',
+  },
+  'quiz.basic.q10.answer': { en: '8', zh: '8', ms: '8' },
+
+  // Input Quiz
+  'quiz.input.q1': {
+    en: 'Which category is used to receive information from buttons, sensors, and the environment?',
+    zh: '哪一个类别用于接收按钮、传感器和周围环境的信息？',
+    ms: 'Kategori manakah digunakan untuk menerima maklumat daripada butang, sensor dan persekitaran?',
+  },
+  'quiz.input.q1.options': {
+    en: 'Basic, Input, Music, Loops',
+    zh: '基本, 输入, 音乐, 循环',
+    ms: 'Asas, Input, Muzik, Gelung',
+  },
+  'quiz.input.q1.answer': { en: 'Input', zh: '输入', ms: 'Input' },
+
+  'quiz.input.q2': {
+    en: 'Which block runs when Button A is pressed?',
+    zh: '当按下 A 按钮时，哪一个积木会执行？',
+    ms: 'Blok manakah dijalankan apabila Butang A ditekan?',
+  },
+  'quiz.input.q2.options': {
+    en: 'Show Number, Forever, On Button A Pressed, Show Icon',
+    zh: '显示数字, 永远, 当按下 A 按钮时, 显示图示',
+    ms: 'Paparkan nombor, Selamanya, Semasa Butang A ditekan, Paparkan ikon',
+  },
+  'quiz.input.q2.answer': { en: 'On Button A Pressed', zh: '当按下 A 按钮时', ms: 'Semasa Butang A ditekan' },
+
+  'quiz.input.q3': {
+    en: 'Which gesture is detected when you shake the micro:bit?',
+    zh: '当你摇动 micro:bit 时，会检测到哪一种动作？',
+    ms: 'Gerakan manakah dikesan apabila anda menggoncang micro:bit?',
+  },
+  'quiz.input.q3.options': {
+    en: 'Tilt Left, Logo Up, Shake, Screen Down',
+    zh: '左倾斜, Logo 朝上, 摇动, 屏幕朝下',
+    ms: 'Condong kiri, Logo menghadap atas, Goncang, Skrin menghadap bawah',
+  },
+  'quiz.input.q3.answer': { en: 'Shake', zh: '摇动', ms: 'Goncang' },
+
+  'quiz.input.q4': {
+    en: 'Which block is used to detect the brightness of the surrounding environment?',
+    zh: '哪一个积木可以检测周围环境的亮度？',
+    ms: 'Blok manakah digunakan untuk mengesan tahap kecerahan persekitaran?',
+  },
+  'quiz.input.q4.options': {
+    en: 'Temperature, Compass Heading, Light Level, Sound Level',
+    zh: '温度, 指南针方向, 光线强度, 声音强度',
+    ms: 'Suhu, Arah kompas, Tahap cahaya, Tahap bunyi',
+  },
+  'quiz.input.q4.answer': { en: 'Light Level', zh: '光线强度', ms: 'Tahap cahaya' },
+
+  'quiz.input.q5': {
+    en: 'Which block measures the surrounding temperature?',
+    zh: '哪一个积木可以测量周围温度？',
+    ms: 'Blok manakah mengukur suhu persekitaran?',
+  },
+  'quiz.input.q5.options': {
+    en: 'Light Level, Temperature, Acceleration, Rotation',
+    zh: '光线强度, 温度, 加速度, 旋转',
+    ms: 'Tahap cahaya, Suhu, Pecutan, Putaran',
+  },
+  'quiz.input.q5.answer': { en: 'Temperature', zh: '温度', ms: 'Suhu' },
+
+  'quiz.input.q6': {
+    en: 'Which pins can be used as touch or input pins on the micro:bit?',
+    zh: 'micro:bit 的哪几个引脚可以作为输入引脚？',
+    ms: 'Pin manakah boleh digunakan sebagai pin sentuhan atau input pada micro:bit?',
+  },
+  'quiz.input.q6.options': {
+    en: 'P3; P4; P5, P0; P1; P2, P6; P7; P8, P9; P10; P11',
+    zh: 'P3; P4; P5, P0; P1; P2, P6; P7; P8, P9; P10; P11',
+    ms: 'P3; P4; P5, P0; P1; P2, P6; P7; P8, P9; P10; P11',
+  },
+  'quiz.input.q6.answer': { en: 'P0; P1; P2', zh: 'P0; P1; P2', ms: 'P0; P1; P2' },
+
+  'quiz.input.q7': {
+    en: 'Which block tells the direction (North, East, South, or West)?',
+    zh: '哪一个积木可以显示方向（北、东、南、西）？',
+    ms: 'Blok manakah menunjukkan arah seperti Utara, Timur, Selatan atau Barat?',
+  },
+  'quiz.input.q7.options': {
+    en: 'Temperature, Light Level, Compass Heading, Running Time',
+    zh: '温度, 光线强度, 指南针方向, 运行时间',
+    ms: 'Suhu, Tahap cahaya, Arah kompas, Masa berjalan',
+  },
+  'quiz.input.q7.answer': { en: 'Compass Heading', zh: '指南针方向', ms: 'Arah kompas' },
+
+  'quiz.input.q8': {
+    en: 'Which block measures movement or acceleration?',
+    zh: '哪一个积木可以测量移动或加速度？',
+    ms: 'Blok manakah mengukur pergerakan atau pecutan?',
+  },
+  'quiz.input.q8.options': {
+    en: 'Rotation, Sound Level, Acceleration, Temperature',
+    zh: '旋转, 声音强度, 加速度, 温度',
+    ms: 'Putaran, Tahap bunyi, Pecutan, Suhu',
+  },
+  'quiz.input.q8.answer': { en: 'Acceleration', zh: '加速度', ms: 'Pecutan' },
+
+  'quiz.input.q9': {
+    en: 'Which block can detect a loud sound? (micro:bit V2)',
+    zh: '哪一个积木可以检测到很大的声音？（micro:bit V2）',
+    ms: 'Blok manakah boleh mengesan bunyi yang kuat? (micro:bit V2)',
+  },
+  'quiz.input.q9.options': {
+    en: 'Show Icon, Pause, Forever, On Loud Sound',
+    zh: '显示图示, 暂停, 永远, 当检测到大声音时',
+    ms: 'Paparkan ikon, Jeda, Selamanya, Semasa bunyi kuat',
+  },
+  'quiz.input.q9.answer': { en: 'On Loud Sound', zh: '当检测到大声音时', ms: 'Semasa bunyi kuat' },
+
+  'quiz.input.q10': {
+    en: 'What is the main purpose of the Input category?',
+    zh: 'Input 类别的主要作用是什么？',
+    ms: 'Apakah tujuan utama kategori Input?',
+  },
+  'quiz.input.q10.options': {
+    en: 'To display icons and text, To play music, To receive input from users and sensors, To draw LED patterns only',
+    zh: '显示图示和文字, 播放音乐, 接收来自用户和传感器的输入, 只绘制 LED 图案',
+    ms: 'Memaparkan ikon dan teks, Memainkan muzik, Menerima input daripada pengguna dan sensor, Melukis corak LED sahaja',
+  },
+  'quiz.input.q10.answer': { en: 'To receive input from users and sensors', zh: '接收来自用户和传感器的输入', ms: 'Menerima input daripada pengguna dan sensor' },
+
+  'quiz.music.q1': {
+    en: 'Which category is used to play sounds and music on the micro:bit?',
+    zh: '哪一个类别用于让 micro:bit 播放声音和音乐？',
+    ms: 'Kategori manakah digunakan untuk memainkan bunyi dan muzik pada micro:bit?',
+  },
+  'quiz.music.q1.options': {
+    en: 'Basic, Input, Music, Logic',
+    zh: '基本, 输入, 音乐, 逻辑',
+    ms: 'Asas, Input, Muzik, Logik',
+  },
+  'quiz.music.q1.answer': { en: 'Music', zh: '音乐', ms: 'Muzik' },
+
+  'quiz.music.q2': {
+    en: 'Which block is used to play a melody?',
+    zh: '哪一个积木用于播放旋律？',
+    ms: 'Blok manakah digunakan untuk memainkan melodi?',
+  },
+  'quiz.music.q2.options': {
+    en: 'Show Icon, Play Melody, Show Number, Temperature',
+    zh: '显示图标, 播放旋律, 显示数字, 温度',
+    ms: 'Tunjuk Ikon, Mainkan Melodi, Tunjuk Nombor, Suhu',
+  },
+  'quiz.music.q2.answer': { en: 'Play Melody', zh: '播放旋律', ms: 'Mainkan Melodi' },
+
+  'quiz.music.q3': {
+    en: 'What does the Play Tone block do?',
+    zh: 'Play Tone 积木有什么作用？',
+    ms: 'Apakah fungsi blok Play Tone?',
+  },
+  'quiz.music.q3.options': {
+    en: 'Displays text, Detects light, Plays a musical note or tone, Measures temperature',
+    zh: '显示文字, 检测光线, 播放音符或音调, 测量温度',
+    ms: 'Paparkan teks, Mengesan cahaya, Mainkan nota atau nada muzik, Ukur suhu',
+  },
+  'quiz.music.q3.answer': { en: 'Plays a musical note or tone', zh: '播放音符或音调', ms: 'Mainkan nota atau nada muzik' },
+
+  'quiz.music.q4': {
+    en: 'Which block is used to stop all sounds?',
+    zh: '哪一个积木用于停止所有声音？',
+    ms: 'Blok manakah digunakan untuk menghentikan semua bunyi?',
+  },
+  'quiz.music.q4.options': {
+    en: 'Set Volume, Rest, Ring Tone, Stop All Sounds',
+    zh: '设置音量, 休止, 铃声, 停止所有声音',
+    ms: 'Tetapkan Volum, Rehat, Nada Dering, Hentikan Semua Bunyi',
+  },
+  'quiz.music.q4.answer': { en: 'Stop All Sounds', zh: '停止所有声音', ms: 'Hentikan Semua Bunyi' },
+
+  'quiz.music.q5': {
+    en: 'What is the function of the Set Volume block?',
+    zh: 'Set Volume 积木有什么作用？',
+    ms: 'Apakah fungsi blok Set Volume?',
+  },
+  'quiz.music.q5.options': {
+    en: 'Changes LED brightness, Adjusts the sound volume, Changes the temperature, Changes the screen',
+    zh: '改变 LED 亮度, 调整音量, 改变温度, 改变显示',
+    ms: 'Ubah kecerahan LED, Laraskan volum bunyi, Ubah suhu, Ubah paparan',
+  },
+  'quiz.music.q5.answer': { en: 'Adjusts the sound volume', zh: '调整音量', ms: 'Laraskan volum bunyi' },
+
+  'quiz.music.q6': {
+    en: 'Which value is commonly used as the default volume?',
+    zh: '哪一个数值通常是默认音量？',
+    ms: 'Nilai manakah biasanya digunakan sebagai tahap bunyi lalai?',
+  },
+  'quiz.music.q6.options': {
+    en: '0, 50, 127, 2550',
+    zh: '0, 50, 127, 2550',
+    ms: '0, 50, 127, 2550',
+  },
+  'quiz.music.q6.answer': { en: '127', zh: '127', ms: '127' },
+
+  'quiz.music.q7': {
+    en: 'What does Tempo (BPM) control?',
+    zh: 'Tempo（BPM） 控制什么？',
+    ms: 'Apakah yang dikawal oleh Tempo (BPM)?',
+  },
+  'quiz.music.q7.options': {
+    en: 'Screen brightness, LED pattern, The speed of the music, Temperature',
+    zh: '屏幕亮度, LED 图案, 音乐速度, 温度',
+    ms: 'Kecerahan skrin, Corak LED, Kelajuan muzik, Suhu',
+  },
+  'quiz.music.q7.answer': { en: 'The speed of the music', zh: '音乐速度', ms: 'Kelajuan muzik' },
+
+  'quiz.music.q8': {
+    en: 'What does the Rest block do?',
+    zh: 'Rest 积木有什么作用？',
+    ms: 'Apakah fungsi blok Rest?',
+  },
+  'quiz.music.q8.options': {
+    en: 'Plays music louder, Changes the tempo, Creates a short silence in the music, Displays a number',
+    zh: '播放更大声, 改变节奏, 制造短暂的静音, 显示数字',
+    ms: 'Mainkan muzik lebih kuat, Ubah tempo, Cipta senyap seketika dalam muzik, Tunjuk nombor',
+  },
+  'quiz.music.q8.answer': { en: 'Creates a short silence in the music', zh: '制造短暂的静音', ms: 'Cipta senyap seketika dalam muzik' },
+
+  'quiz.music.q9': {
+    en: 'Which built-in sound can make the micro:bit sound like laughter? (micro:bit V2)',
+    zh: 'micro:bit V2 的哪一种内建音效像笑声？',
+    ms: 'Bunyi terbina dalam manakah boleh membuat micro:bit berbunyi seperti ketawa? (micro:bit V2)',
+  },
+  'quiz.music.q9.options': {
+    en: 'Magic, Twinkle, Giggle, Boing',
+    zh: '魔法, 闪烁, 咯咯笑, 弹跳',
+    ms: 'Magik, Kelip, Ketawa, Boing',
+  },
+  'quiz.music.q9.answer': { en: 'Giggle', zh: '咯咯笑', ms: 'Ketawa' },
+
+  'quiz.music.q10': {
+    en: 'What is the main purpose of the Music category?',
+    zh: 'Music 类别的主要作用是什么？',
+    ms: 'Apakah tujuan utama kategori Music?',
+  },
+  'quiz.music.q10.options': {
+    en: 'To receive input from sensors, To display text and icons, To play sounds, tones, and melodies, To create LED patterns',
+    zh: '接收传感器输入, 显示文字和图示, 播放声音、音调和旋律, 制作 LED 图案',
+    ms: 'Menerima input daripada sensor, Paparkan teks dan ikon, Mainkan bunyi, nada dan melodi, Cipta corak LED',
+  },
+  'quiz.music.q10.answer': { en: 'To play sounds, tones, and melodies', zh: '播放声音、音调和旋律', ms: 'Mainkan bunyi, nada dan melodi' },
+  
+  'quiz.feedback.tryHarder': { en: 'Keep trying!', zh: '还需努力！', ms: 'Terus berusaha!' },
+  'quiz.feedback.good': { en: 'Good job!', zh: '不错哦！', ms: 'Bagus!' },
+  'quiz.feedback.great': { en: 'Excellent!', zh: '非常棒！', ms: 'Hebat!' },
+  'quiz.feedback.perfect': { en: 'Perfect!', zh: '完美！', ms: 'Sempurna!' },
+
+  'quiz.retry': { en: 'Try Again', zh: '再来一次', ms: 'Cuba lagi' },
+  'quiz.aiEvaluation': { en: 'View AI Evaluation', zh: '查看 AI 评估', ms: 'Lihat Penilaian AI' },
+
   // Chat
   'chat.title': { en: 'AI Learning Assistant', zh: 'AI 学习助手', ms: 'Pembantu Pembelajaran AI' },
   'chat.placeholder': {

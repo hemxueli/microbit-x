@@ -1,168 +1,182 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useI18n } from '@/lib/i18n'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
-export default function MusicQuizPage() {
+const icons = ['🎶','💡','🔲','🎹','🔊','🎼','⏱️','🤫','😂','🎵']
+
+export default function QuizMusicPage() {
+  const { t } = useI18n()
   const questions = [
-    {
-      q: 'Which category is used to play sounds and music on the micro:bit?',
-      ms: 'Kategori manakah digunakan untuk memainkan bunyi dan muzik pada micro:bit?',
-      zh: '哪一个类别用于让 micro:bit 播放声音和音乐？',
-      options: ['Basic / Asas / 基本', 'Input / Input / 输入', 'Music / Muzik / 音乐', 'Logic / Logik / 逻辑'],
-      answer: 2,
-      image: '/images/music-q1.png',
-    },
-    {
-      q: 'Which block is used to play a melody?',
-      ms: 'Blok manakah digunakan untuk memainkan melodi?',
-      zh: '哪一个积木用于播放旋律？',
-      options: ['Show Icon', 'Play Melody', 'Show Number', 'Temperature'],
-      answer: 1,
-      image: '/images/music-q2.png',
-    },
-    {
-      q: 'What does the Play Tone block do?',
-      ms: 'Apakah fungsi blok Play Tone?',
-      zh: 'Play Tone 积木有什么作用？',
-      options: ['Displays text', 'Detects light', 'Plays a musical note or tone', 'Measures temperature'],
-      answer: 2,
-      image: '/images/music-q3.png',
-    },
-    {
-      q: 'Which block is used to stop all sounds?',
-      ms: 'Blok manakah digunakan untuk menghentikan semua bunyi?',
-      zh: '哪一个积木用于停止所有声音？',
-      options: ['Set Volume', 'Rest', 'Ring Tone', 'Stop All Sounds'],
-      answer: 3,
-      image: '/images/music-q4.png',
-    },
-    {
-      q: 'What is the function of the Set Volume block?',
-      ms: 'Apakah fungsi blok Set Volume?',
-      zh: 'Set Volume 积木有什么作用？',
-      options: ['Changes LED brightness', 'Adjusts the sound volume', 'Changes the temperature', 'Changes the screen'],
-      answer: 1,
-      image: '/images/music-q5.png',
-    },
-    {
-      q: 'Which value is commonly used as the default volume?',
-      ms: 'Nilai manakah biasanya digunakan sebagai tahap bunyi lalai?',
-      zh: '哪一个数值通常是默认音量？',
-      options: ['0', '50', '127', '2550'],
-      answer: 2,
-      image: '/images/music-q6.png',
-    },
-    {
-      q: 'What does Tempo (BPM) control?',
-      ms: 'Apakah yang dikawal oleh Tempo (BPM)?',
-      zh: 'Tempo（BPM） 控制什么？',
-      options: ['Screen brightness', 'LED pattern', 'The speed of the music', 'Temperature'],
-      answer: 2,
-      image: '/images/music-q7.png',
-    },
-    {
-      q: 'What does the Rest block do?',
-      ms: 'Apakah fungsi blok Rest?',
-      zh: 'Rest 积木有什么作用？',
-      options: ['Plays music louder', 'Changes the tempo', 'Creates a short silence in the music', 'Displays a number'],
-      answer: 2,
-      image: '/images/music-q8.png',
-    },
-    {
-      q: 'Which built-in sound can make the micro:bit sound like laughter? (micro:bit V2)',
-      ms: 'Bunyi terbina dalam manakah boleh membuat micro:bit berbunyi seperti ketawa? (micro:bit V2)',
-      zh: 'micro:bit V2 的哪一种内建音效像笑声？',
-      options: ['Magic', 'Twinkle', 'Giggle', 'Boing'],
-      answer: 2,
-      image: '/images/music-q9.png',
-    },
-    {
-      q: 'What is the main purpose of the Music category?',
-      ms: 'Apakah tujuan utama kategori Music?',
-      zh: 'Music 类别的主要作用是什么？',
-      options: [
-        'To receive input from sensors',
-        'To display text and icons',
-        'To play sounds, tones, and melodies',
-        'To create LED patterns',
-      ],
-      answer: 2,
-      image: '/images/music-q10.png',
-    },
+    'quiz.music.q1',
+    'quiz.music.q2',
+    'quiz.music.q3',
+    'quiz.music.q4',
+    'quiz.music.q5',
+    'quiz.music.q6',
+    'quiz.music.q7',
+    'quiz.music.q8',
+    'quiz.music.q9',
+    'quiz.music.q10',
   ]
 
   const [answers, setAnswers] = useState<number[]>(Array(questions.length).fill(-1))
   const [score, setScore] = useState<number | null>(null)
+  const [showResult, setShowResult] = useState(false)
+  const [current, setCurrent] = useState(0)
+  const [muted, setMuted] = useState(false)
+  const [bgm, setBgm] = useState<HTMLAudioElement | null>(null)
+
+  // 背景音乐
+  useEffect(() => {
+    const audio = new Audio('/music/quiz.mp3') // ✅ 使用你指定的路径
+    audio.loop = true
+    audio.volume = 0.3
+    audio.play().catch(() => {})
+    setBgm(audio)
+    return () => audio.pause()
+  }, [])
+
+  const toggleMute = () => {
+    if (bgm) {
+      bgm.muted = !bgm.muted
+      setMuted(bgm.muted)
+    }
+  }
 
   const submitQuiz = () => {
     let s = 0
     questions.forEach((q, i) => {
-      if (answers[i] === q.answer) s++
+      const correct = t(`${q}.answer`)
+      const selected = t(`${q}.options`).split(',')[answers[i]]?.trim()
+      if (selected === correct) s++
     })
     setScore(s)
+    setShowResult(true)
+    // ❌ 不再播放赢家音乐
   }
 
   return (
-    <div className="p-8 bg-teal-50 min-h-screen">
-      <h1 className="text-4xl font-bold mb-10 text-center">QUIZ: MakeCode Music</h1>
-      {questions.map((q, i) => (
-        <div key={i} className="mb-8 p-6 bg-white rounded-lg shadow flex gap-8 items-center">
-          {/* 左边：题目和选项 */}
-          <div className="flex-1">
-            <p className="font-bold text-xl mb-4">
-              {`Q${i + 1}. ${q.q}`}
-              <br />
-              <span className="text-gray-600 text-lg">{q.ms}</span>
-              <br />
-              <span className="text-gray-600 text-lg">{q.zh}</span>
-            </p>
-            {q.options.map((opt, j) => (
-              <label key={j} className="block cursor-pointer text-lg mb-2">
-                <input
-                  type="radio"
-                  name={`q-${i}`}
-                  checked={answers[i] === j}
-                  onChange={() => {
-                    const newAns = [...answers]
-                    newAns[i] = j
-                    setAnswers(newAns)
-                  }}
-                />
-                <span className="ml-3">{opt}</span>
-              </label>
-            ))}
-            {score !== null && (
-              <p className="mt-3 text-lg text-green-600">
-                ✅ Correct Answer: {q.options[q.answer]}
-              </p>
-            )}
-          </div>
-
-          {/* 右边：图片 */}
-          <div className="w-48 h-48 flex-shrink-0">
-            <img
-              src={q.image}
-              alt={`Question ${i + 1}`}
-              className="w-full h-full object-cover rounded-lg border"
-            />
-          </div>
+    <div className="p-8 min-h-screen bg-gradient-to-r from-teal-50 via-white to-teal-100 animate-fadeIn">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-teal-700 animate-bounce">🎵 {t('quiz.title.music')}</h1>
+        <div className="flex gap-4">
+          <button
+            onClick={toggleMute}
+            className="px-3 py-1 bg-teal-200 text-teal-800 rounded-lg hover:bg-teal-300"
+          >
+            {muted ? `🔇 ${t('quiz.mute')}` : `🔊 ${t('quiz.sound')}`}
+          </button>
+          <LanguageSwitcher />
         </div>
-      ))}
+      </div>
 
-      <div className="text-center">
+      {/* 进度条 */}
+      <div className="mb-4 text-center font-semibold text-teal-600">
+        {t('quiz.question')} {current + 1} {t('quiz.of')} {questions.length}
+      </div>
+
+      {/* 当前题目卡片 */}
+      <div className="p-6 bg-white rounded-xl shadow-lg border-2 border-teal-400 animate-slideUp relative flex gap-6">
+        {/* 图片位子 */}
+        <div className="w-1/3 flex items-center justify-center bg-teal-50 rounded-lg border border-teal-200">
+          <img src={`/images/music/${questions[current]}.png`} alt="quiz illustration" className="max-h-40" />
+        </div>
+
+        {/* 题目和选项 */}
+        <div className="flex-1">
+          <p className="font-semibold mb-4 text-xl text-teal-700">{t(questions[current])}</p>
+          {t(`${questions[current]}.options`).split(',').map((opt, j) => (
+            <button
+              key={j}
+              onClick={() => {
+                const newAns = [...answers]
+                newAns[current] = j
+                setAnswers(newAns)
+              }}
+              className={`block w-full text-left px-4 py-2 mb-2 rounded-lg border transition transform hover:scale-105 ${
+                answers[current] === j
+                  ? 'bg-teal-200 border-teal-600 text-teal-900 font-bold'
+                  : 'bg-gray-100 border-gray-300'
+              }`}
+            >
+              {opt.trim()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 控制按钮 */}
+      <div className="flex justify-between mt-6">
         <button
-          onClick={submitQuiz}
-          className="bg-teal-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-teal-700"
+          disabled={current === 0}
+          onClick={() => setCurrent(current - 1)}
+          className="px-4 py-2 bg-teal-300 text-teal-900 rounded-lg hover:bg-teal-400 disabled:opacity-50"
         >
-          Submit Quiz
+          ⬅️ {t('common.back')}
         </button>
-
-        {score !== null && (
-          <p className="mt-8 text-2xl font-bold text-teal-700">
-            🎉 Your Score: {score}/{questions.length}
-          </p>
+        {current < questions.length - 1 ? (
+          <button
+            disabled={answers[current] === -1} // ✅ 没有选择答案不能 Next
+            onClick={() => setCurrent(current + 1)}
+            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50"
+          >
+            {t('quiz.next')} ➡️
+          </button>
+        ) : (
+          <button
+            disabled={answers[current] === -1} // ✅ 没有选择答案不能 Submit
+            onClick={submitQuiz}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 animate-pulse disabled:opacity-50"
+          >
+            {t('quiz.finish')}
+          </button>
         )}
       </div>
+
+      {/* 结果显示 */}
+      {showResult && score !== null && (
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/30">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center w-96 animate-fadeIn">
+            <h2 className="text-2xl font-bold text-teal-700 mb-4">
+              🎉 {t('quiz.yourScore')}: {score}/{questions.length}
+            </h2>
+
+            {/* 根据分数显示评语 */}
+            <p className="text-lg text-gray-700 mb-6">
+              {score <= 3
+                ? `${t('quiz.feedback.tryHarder')} 😢`
+                : score <= 6
+                ? `${t('quiz.feedback.good')} 👍`
+                : score <= 9
+                ? `${t('quiz.feedback.great')} 🌟`
+                : `${t('quiz.feedback.perfect')} 🏆`}
+            </p>
+
+            {/* 两个按钮 */}
+            <div className="flex justify-around">
+              <button
+                onClick={() => {
+                  setAnswers(Array(questions.length).fill(-1))
+                  setScore(null)
+                  setShowResult(false)
+                  setCurrent(0)
+                }}
+                className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
+              >
+                🔄 {t('quiz.retry')}
+              </button>
+              <button
+                onClick={() => (window.location.href = '/student/evaluation')}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              >
+                📊 {t('quiz.aiEvaluation')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
