@@ -2,10 +2,9 @@
 
 import { useState } from 'react'
 import { useI18n, dict } from '@/lib/i18n'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function ResetPasswordPage() {
-  const [email, setEmail] = useState('')
-  const [code, setCode] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [message, setMessage] = useState('')
@@ -24,19 +23,17 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const res = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code, newPassword }),
+      // 调用 Supabase 内置 API 更新密码
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
       })
 
-      const data = await res.json()
-      setMessage(
-        data.success
-          ? dict['reset.success'][lang]
-          : data.message || dict['reset.error'][lang]
-      )
-    } catch (error) {
+      if (error) {
+        setMessage(error.message || dict['reset.error'][lang])
+      } else {
+        setMessage(dict['reset.success'][lang])
+      }
+    } catch (err) {
       setMessage('Server error.')
     } finally {
       setLoading(false)
@@ -49,22 +46,6 @@ export default function ResetPasswordPage() {
         {dict['reset.title'][lang]}
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          placeholder={dict['forgot.placeholder'][lang]}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="border p-2 w-full rounded"
-        />
-        <input
-          type="text"
-          placeholder={dict['reset.code'][lang]}
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          required
-          className="border p-2 w-full rounded"
-        />
         <input
           type="password"
           placeholder={dict['reset.newPassword'][lang]}
