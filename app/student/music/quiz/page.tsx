@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n'
-import { LanguageSwitcher } from '@/components/language-switcher'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+
+const icons = ['🎶','💡','🔲','🎹','🔊','🎼','⏱️','🤫','😂','🎵']
 
 export default function QuizMusicPage() {
   const { t } = useI18n()
@@ -22,6 +24,26 @@ export default function QuizMusicPage() {
   const [answers, setAnswers] = useState<number[]>(Array(questions.length).fill(-1))
   const [score, setScore] = useState<number | null>(null)
   const [showResult, setShowResult] = useState(false)
+  const [current, setCurrent] = useState(0)
+  const [muted, setMuted] = useState(false)
+  const [bgm, setBgm] = useState<HTMLAudioElement | null>(null)
+
+  // 背景音乐
+  useEffect(() => {
+    const audio = new Audio('/music/quiz-bgm.mp3')
+    audio.loop = true
+    audio.volume = 0.3
+    audio.play().catch(() => {})
+    setBgm(audio)
+    return () => audio.pause()
+  }, [])
+
+  const toggleMute = () => {
+    if (bgm) {
+      bgm.muted = !bgm.muted
+      setMuted(bgm.muted)
+    }
+  }
 
   const submitQuiz = () => {
     let s = 0
@@ -32,54 +54,91 @@ export default function QuizMusicPage() {
     })
     setScore(s)
     setShowResult(true)
+
+    const win = new Audio('/music/win.mp3')
+    win.play()
   }
 
   return (
-    <div className="p-8 bg-teal-50 min-h-screen">
+    <div className="p-8 min-h-screen bg-gradient-to-r from-teal-50 via-white to-teal-100 animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">🎵 Quiz: MakeCode Music</h1>
-        <LanguageSwitcher />
+        <h1 className="text-3xl font-bold text-teal-700 animate-bounce">🎵 Quiz: MakeCode Music</h1>
+        <div className="flex gap-4">
+          <button
+            onClick={toggleMute}
+            className="px-3 py-1 bg-teal-200 text-teal-800 rounded-lg hover:bg-teal-300"
+          >
+            {muted ? '🔇 Mute' : '🔊 Sound'}
+          </button>
+          <LanguageSwitcher />
+        </div>
       </div>
 
-      {questions.map((q, i) => (
-        <div key={i} className="mb-6 p-4 bg-white rounded shadow">
-          <p className="font-semibold mb-3">{t(q)}</p>
-          {t(`${q}.options`).split(',').map((opt, j) => (
-            <label key={j} className="block mb-2">
-              <input
-                type="radio"
-                name={`q-${i}`}
-                checked={answers[i] === j}
-                onChange={() => {
-                  const newAns = [...answers]
-                  newAns[i] = j
-                  setAnswers(newAns)
-                }}
-              />
-              <span className="ml-2">{opt.trim()}</span>
-            </label>
-          ))}
-          {showResult && (
-            <p className="mt-2 text-green-600">
-              ✅ Correct Answer: {t(`${q}.answer`)}
-            </p>
-          )}
-        </div>
-      ))}
+      {/* 进度条 */}
+      <div className="mb-4 text-center font-semibold text-teal-600">
+        {t('quiz.question')} {current + 1} {t('quiz.of')} {questions.length}
+      </div>
 
-      <div className="text-center mt-6">
+      {/* 当前题目卡片 */}
+      <div className="p-6 bg-white rounded-xl shadow-lg border-2 border-teal-400 animate-slideUp relative">
+        {/* 图案装饰 */}
+        <div className="absolute top-2 right-2 text-4xl text-teal-300 animate-spin">
+          {icons[current]}
+        </div>
+        <p className="font-semibold mb-4 text-xl text-teal-700">{t(questions[current])}</p>
+        {t(`${questions[current]}.options`).split(',').map((opt, j) => (
+          <button
+            key={j}
+            onClick={() => {
+              const newAns = [...answers]
+              newAns[current] = j
+              setAnswers(newAns)
+            }}
+            className={`block w-full text-left px-4 py-2 mb-2 rounded-lg border transition transform hover:scale-105 ${
+              answers[current] === j
+                ? 'bg-teal-200 border-teal-600 text-teal-900 font-bold'
+                : 'bg-gray-100 border-gray-300'
+            }`}
+          >
+            {opt.trim()}
+          </button>
+        ))}
+      </div>
+
+      {/* 控制按钮 */}
+      <div className="flex justify-between mt-6">
         <button
-          onClick={submitQuiz}
-          className="bg-teal-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-teal-700"
+          disabled={current === 0}
+          onClick={() => setCurrent(current - 1)}
+          className="px-4 py-2 bg-teal-300 text-teal-900 rounded-lg hover:bg-teal-400 disabled:opacity-50"
         >
-          {t('common.submit')}
+          ⬅️ {t('common.back')}
         </button>
-        {showResult && score !== null && (
-          <p className="mt-4 text-xl font-bold text-teal-700">
-            🎉 {t('quiz.yourScore')}: {score}/{questions.length}
-          </p>
+        {current < questions.length - 1 ? (
+          <button
+            onClick={() => setCurrent(current + 1)}
+            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+          >
+            {t('quiz.next')} ➡️
+          </button>
+        ) : (
+          <button
+            onClick={submitQuiz}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 animate-pulse"
+          >
+            {t('quiz.finish')}
+          </button>
         )}
       </div>
+
+      {/* 结果显示 */}
+      {showResult && score !== null && (
+        <div className="mt-8 text-center animate-fadeIn">
+          <p className="text-2xl font-bold text-teal-700">
+            🎉 {t('quiz.yourScore')}: {score}/{questions.length}
+          </p>
+        </div>
+      )}
     </div>
   )
 }
