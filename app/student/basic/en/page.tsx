@@ -35,7 +35,7 @@ export default function LearningPage({ user }: { user?: any }) {
       {/* 页面主体：三个学习卡片 */}
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 py-12 md:py-20">
-          <h2 className="text-2xl font-bold mb-6">{t('student.basiclearningContent')}</h2>
+          <h2 className="text-2xl font-bold mb-6">{t('Basic Leaening Content')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { key: 'pdf', labelEn: 'Knowledge Scroll', labelMs: 'Gulungan Ilmu', labelZh: '知识卷轴', image: '/images/pdf.png', link: '/student/pdf' },
