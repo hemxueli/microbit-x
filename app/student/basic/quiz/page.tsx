@@ -134,7 +134,7 @@ export default function QuizBasicPage() {
 
       {/* 结果显示 */}
       {showResult && score !== null && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/30">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center w-96 animate-fadeIn">
             <h2 className="text-2xl font-bold text-teal-700 mb-4">
               🎉 {t('quiz.yourScore')}: {score}/{questions.length}
