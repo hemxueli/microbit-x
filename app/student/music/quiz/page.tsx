@@ -30,7 +30,7 @@ export default function QuizMusicPage() {
 
   // 背景音乐
   useEffect(() => {
-    const audio = new Audio('/music/quiz.mp3')
+    const audio = new Audio('/music/quiz.mp3') // ✅ 使用你指定的路径
     audio.loop = true
     audio.volume = 0.3
     audio.play().catch(() => {})
@@ -54,9 +54,7 @@ export default function QuizMusicPage() {
     })
     setScore(s)
     setShowResult(true)
-
-    const win = new Audio('/music/win.mp3')
-    win.play()
+    // ❌ 不再播放赢家音乐
   }
 
   return (
@@ -81,12 +79,7 @@ export default function QuizMusicPage() {
 
       {/* 当前题目卡片 */}
       <div className="p-6 bg-white rounded-xl shadow-lg border-2 border-teal-400 animate-slideUp relative flex gap-6">
-        {/* 图案装饰 */}
-        <div className="absolute top-2 right-2 text-4xl text-teal-300 animate-spin">
-          {icons[current]}
-        </div>
-
-        {/* 图片位子（你可以放每题的插图） */}
+        {/* 图片位子 */}
         <div className="w-1/3 flex items-center justify-center bg-teal-50 rounded-lg border border-teal-200">
           <img src={`/images/${questions[current]}.png`} alt="quiz illustration" className="max-h-40" />
         </div>
