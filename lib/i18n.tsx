@@ -290,6 +290,127 @@ export const dict: Dict = {
     ms: 'Kembali ke topik',
   },
 
+  // Basic Quiz
+  'quiz.basic.q1': {
+    en: 'Which category contains the Show Icon block?',
+    zh: '哪一个类别包含 Show Icon 积木？',
+    ms: 'Kategori manakah yang mempunyai blok Show Icon?',
+  },
+  'quiz.basic.q1.options': {
+    en: 'Music, Input, Basic, Logic',
+    zh: '音乐, 输入, 基本, 逻辑',
+    ms: 'Muzik, Input, Asas, Logik',
+  },
+  'quiz.basic.q1.answer': { en: 'Basic', zh: '基本', ms: 'Asas' },
+
+  'quiz.basic.q2': {
+    en: 'What does the Show Number block do?',
+    zh: 'Show Number 积木有什么作用？',
+    ms: 'Apakah fungsi blok Show Number?',
+  },
+  'quiz.basic.q2.options': {
+    en: 'Plays music, Displays a number, Detects temperature, Turns off the micro:bit',
+    zh: '播放音乐, 显示数字, 检测温度, 关闭 micro:bit',
+    ms: 'Mainkan muzik, Paparkan nombor, Mengesan suhu, Matikan micro:bit',
+  },
+  'quiz.basic.q2.answer': { en: 'Displays a number', zh: '显示数字', ms: 'Paparkan nombor' },
+
+  'quiz.basic.q3': {
+    en: 'Which block is used to display words such as "HELLO"?',
+    zh: '哪一个积木可以显示 "HELLO" 这样的文字？',
+    ms: 'Blok manakah digunakan untuk memaparkan perkataan seperti "HELLO"?',
+  },
+  'quiz.basic.q3.options': {
+    en: 'Show Number, Show Icon, Show String, Pause',
+    zh: '显示数字, 显示图示, 显示字符串, 暂停',
+    ms: 'Paparkan nombor, Paparkan ikon, Paparkan rentetan, Jeda',
+  },
+  'quiz.basic.q3.answer': { en: 'Show String', zh: '显示字符串', ms: 'Paparkan rentetan' },
+
+  'quiz.basic.q4': {
+    en: 'Which block allows you to create your own 5×5 LED pattern?',
+    zh: '哪一个积木可以自己设计 5×5 LED 图案？',
+    ms: 'Blok manakah membolehkan anda mereka bentuk corak LED 5×5 sendiri?',
+  },
+  'quiz.basic.q4.options': {
+    en: 'Show Arrow, Show Icon, Show LEDs, Clear Screen',
+    zh: '显示箭头, 显示图示, 显示 LED, 清除屏幕',
+    ms: 'Paparkan anak panah, Paparkan ikon, Paparkan LED, Kosongkan skrin',
+  },
+  'quiz.basic.q4.answer': { en: 'Show LEDs', zh: '显示 LED', ms: 'Paparkan LED' },
+
+  'quiz.basic.q5': {
+    en: 'Which block repeats the program continuously?',
+    zh: '哪一个积木会不断重复执行程序？',
+    ms: 'Blok manakah akan mengulangi program secara berterusan?',
+  },
+  'quiz.basic.q5.options': {
+    en: 'Pause, On Start, Forever, Show Number',
+    zh: '暂停, 当开始时, 永远, 显示数字',
+    ms: 'Jeda, Semasa mula, Selamanya, Paparkan nombor',
+  },
+  'quiz.basic.q5.answer': { en: 'Forever', zh: '永远', ms: 'Selamanya' },
+
+  'quiz.basic.q6': {
+    en: 'Which block runs only once when the program starts?',
+    zh: '哪一个积木会在程序开始时执行一次？',
+    ms: 'Blok manakah hanya dijalankan sekali apabila program bermula?',
+  },
+  'quiz.basic.q6.options': {
+    en: 'Forever, Show Icon, Pause, On Start',
+    zh: '永远, 显示图示, 暂停, 当开始时',
+    ms: 'Selamanya, Paparkan ikon, Jeda, Semasa mula',
+  },
+  'quiz.basic.q6.answer': { en: 'On Start', zh: '当开始时', ms: 'Semasa mula' },
+
+  'quiz.basic.q7': {
+    en: 'What does the Pause (ms) block do?',
+    zh: 'Pause (毫秒) 积木有什么作用？',
+    ms: 'Apakah fungsi blok Pause (ms)?',
+  },
+  'quiz.basic.q7.options': {
+    en: 'Shows an icon, Clears the screen, Delays the program for a period of time, Displays a number',
+    zh: '显示图示, 清除屏幕, 程序暂停一段时间, 显示数字',
+    ms: 'Paparkan ikon, Kosongkan skrin, Jeda program seketika, Paparkan nombor',
+  },
+  'quiz.basic.q7.answer': { en: 'Delays the program for a period of time', zh: '程序暂停一段时间', ms: 'Jeda program seketika' },
+
+  'quiz.basic.q8': {
+    en: 'Which block clears all LEDs on the micro:bit screen?',
+    zh: '哪一个积木可以清除 micro:bit 上所有 LED？',
+    ms: 'Blok manakah memadam semua paparan LED pada micro:bit?',
+  },
+  'quiz.basic.q8.options': {
+    en: 'Show LEDs, Show String, Pause, Clear Screen',
+    zh: '显示 LED, 显示字符串, 暂停, 清除屏幕',
+    ms: 'Paparkan LED, Paparkan rentetan, Jeda, Kosongkan skrin',
+  },
+  'quiz.basic.q8.answer': { en: 'Clear Screen', zh: '清除屏幕', ms: 'Kosongkan skrin' },
+
+  'quiz.basic.q9': {
+    en: 'Which block is used to display a direction such as North or East?',
+    zh: '哪一个积木可以显示 North（北）或 East（东）等方向？',
+    ms: 'Blok manakah digunakan untuk memaparkan arah seperti North atau East?',
+  },
+  'quiz.basic.q9.options': {
+    en: 'Show Icon, Show LEDs, Show String, Show Arrow',
+    zh: '显示图示, 显示 LED, 显示字符串, 显示箭头',
+    ms: 'Paparkan ikon, Paparkan LED, Paparkan rentetan, Paparkan anak panah',
+  },
+  'quiz.basic.q9.answer': { en: 'Show Arrow', zh: '显示箭头', ms: 'Paparkan anak panah' },
+
+  'quiz.basic.q10': {
+    en: 'How many directions are available in the Show Arrow block?',
+    zh: 'Show Arrow 积木共有几个方向可以选择？',
+    ms: 'Berapakah jumlah arah yang terdapat dalam blok Show Arrow?',
+  },
+  'quiz.basic.q10.options': {
+    en: '4, 6, 8, 10',
+    zh: '4, 6, 8, 10',
+    ms: '4, 6, 8, 10',
+  },
+  'quiz.basic.q10.answer': { en: '8', zh: '8', ms: '8' },
+
   'quiz.music.q1': {
     en: 'Which category is used to play sounds and music on the micro:bit?',
     zh: '哪一个类别用于让 micro:bit 播放声音和音乐？',

@@ -81,7 +81,7 @@ export default function QuizMusicPage() {
       <div className="p-6 bg-white rounded-xl shadow-lg border-2 border-teal-400 animate-slideUp relative flex gap-6">
         {/* 图片位子 */}
         <div className="w-1/3 flex items-center justify-center bg-teal-50 rounded-lg border border-teal-200">
-          <img src={`/images/${questions[current]}.png`} alt="quiz illustration" className="max-h-40" />
+          <img src={`/images/music/${questions[current]}.png`} alt="quiz illustration" className="max-h-40" />
         </div>
 
         {/* 题目和选项 */}
