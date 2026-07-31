@@ -57,13 +57,13 @@ export default function QuizBasicPage() {
   return (
     <div className="p-8 min-h-screen bg-gradient-to-r from-teal-50 via-white to-teal-100 animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-teal-700 animate-bounce">📘 Quiz: MakeCode Basic</h1>
+        <h1 className="text-3xl font-bold text-teal-700 animate-bounce">📘 {t('quiz.title.basic')}</h1>
         <div className="flex gap-4">
           <button
             onClick={toggleMute}
             className="px-3 py-1 bg-teal-200 text-teal-800 rounded-lg hover:bg-teal-300"
           >
-            {muted ? '🔇 Mute' : '🔊 Sound'}
+            {muted ? `🔇 ${t('quiz.mute')}` : `🔊 ${t('quiz.sound')}`}
           </button>
           <LanguageSwitcher />
         </div>

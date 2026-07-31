@@ -507,11 +507,11 @@ export const dict: Dict = {
     ms: 'Pin manakah boleh digunakan sebagai pin sentuhan atau input pada micro:bit?',
   },
   'quiz.input.q6.options': {
-    en: '[P3, P4, P5]; [P0, P1, P2]; [P6, P7, P8]; [P9, P10, P11]',
-    zh: 'P3, P4, P5; P0, P1, P2; P6, P7, P8; P9, P10, P11',
-    ms: 'P3, P4, P5; P0, P1, P2; P6, P7, P8; P9, P10, P11',
+    en: 'P3; P4; P5, P0; P1; P2, P6; P7; P8, P9; P10; P11',
+    zh: 'P3; P4; P5, P0; P1; P2, P6; P7; P8, P9; P10; P11',
+    ms: 'P3; P4; P5, P0; P1; P2, P6; P7; P8, P9; P10; P11',
   },
-  'quiz.input.q6.answer': { en: 'P0, P1, P2', zh: 'P0, P1, P2', ms: 'P0, P1, P2' },
+  'quiz.input.q6.answer': { en: 'P0; P1; P2', zh: 'P0; P1; P2', ms: 'P0; P1; P2' },
 
   'quiz.input.q7': {
     en: 'Which block tells the direction (North, East, South, or West)?',
