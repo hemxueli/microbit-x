@@ -1,8 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useI18n, dict } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Logo } from '@/components/logo'
+import { LanguageSwitcher } from '@/components/language-switcher'
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('')
@@ -23,17 +29,13 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      // 调用 Supabase 内置 API 更新密码
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
-      })
-
+      const { error } = await supabase.auth.updateUser({ password: newPassword })
       if (error) {
         setMessage(error.message || dict['reset.error'][lang])
       } else {
         setMessage(dict['reset.success'][lang])
       }
-    } catch (err) {
+    } catch {
       setMessage('Server error.')
     } finally {
       setLoading(false)
@@ -41,40 +43,45 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="p-8 max-w-md mx-auto">
-      <h1 className="text-xl font-bold mb-4">
-        {dict['reset.title'][lang]}
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="password"
-          placeholder={dict['reset.newPassword'][lang]}
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-          className="border p-2 w-full rounded"
-        />
-        <input
-          type="password"
-          placeholder={dict['reset.confirmPassword'][lang]}
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-          className="border p-2 w-full rounded"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className={`p-2 w-full rounded text-white ${
-            loading ? 'bg-gray-400' : 'bg-teal-600 hover:bg-teal-700'
-          }`}
-        >
-          {loading ? dict['auth.processing'][lang] : dict['common.submit'][lang]}
-        </button>
-      </form>
-      {message && (
-        <p className="mt-4 text-sm text-gray-700">{message}</p>
-      )}
-    </div>
+    <main className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-indigo-100">
+      <header className="flex items-center justify-between px-6 py-4">
+        <Link href="/"><Logo /></Link>
+        <LanguageSwitcher />
+      </header>
+
+      <div className="flex flex-1 items-center justify-center px-4 py-8">
+        <Card className="w-full max-w-md rounded-xl shadow-lg bg-white">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-extrabold text-teal-800">
+              {dict['reset.title'][lang]}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                type="password"
+                placeholder={dict['reset.newPassword'][lang]}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+              <Input
+                type="password"
+                placeholder={dict['reset.confirmPassword'][lang]}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? dict['auth.processing'][lang] : dict['common.submit'][lang]}
+              </Button>
+            </form>
+            {message && (
+              <p className="mt-4 text-sm text-gray-700 text-center">{message}</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </main>
   )
 }
