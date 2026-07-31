@@ -64,7 +64,7 @@ export default function QuizBasicPage() {
             onClick={() => setStarted(true)}
             className="px-8 py-4 bg-teal-600 text-white rounded-lg text-2xl font-bold hover:bg-teal-700 animate-pulse"
           >
-            🚀 {'quiz.start'}
+          🚀 {t('quiz.start')}
           </button>
           <div className="mt-6">
             <LanguageSwitcher />
