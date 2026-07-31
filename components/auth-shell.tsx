@@ -22,7 +22,7 @@ export function AuthShell({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       <div className="flex flex-1 items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md rounded-xl shadow-lg bg-white">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-extrabold text-indigo-700">
+            <CardTitle className="text-2xl font-extrabold text-teal-800">
               {mode === 'sign-up' ? t('auth.signUpTitle') : t('auth.signInTitle')}
             </CardTitle>
             <CardDescription className="text-gray-500">{t('app.tagline')}</CardDescription>

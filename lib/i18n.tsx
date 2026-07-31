@@ -234,6 +234,72 @@ export const dict: Dict = {
   },
   'auth.processing': { en: 'Please wait...', zh: '请稍候……', ms: 'Sila tunggu...' },
 
+  'forgot.title': {
+  en: 'Forgot Password',
+  zh: '忘记密码',
+  ms: 'Lupa Kata Laluan',
+  },
+
+  'forgot.placeholder': {
+    en: 'Enter your email',
+    zh: '请输入邮箱',
+    ms: 'Masukkan emel anda',
+  },
+
+  'forgot.button': {
+    en: 'Send Reset Code',
+    zh: '发送验证码',
+    ms: 'Hantar Kod Reset',
+  },
+
+  'forgot.success': {
+    en: 'Please check your email for the reset code.',
+    zh: '请检查邮箱获取验证码。',
+    ms: 'Sila semak emel anda untuk kod reset.',
+  },
+
+  'reset.title': {
+  en: 'Reset Password',
+  zh: '重置密码',
+    ms: 'Tetapkan Semula Kata Laluan',
+  },
+
+  'reset.code': {
+    en: 'Enter verification code',
+    zh: '输入验证码',
+    ms: 'Masukkan kod pengesahan',
+  },
+
+  'reset.newPassword': {
+    en: 'Enter new password',
+    zh: '输入新密码',
+    ms: 'Masukkan kata laluan baharu',
+  },
+
+  'reset.confirmPassword': {
+    en: 'Confirm new password',
+    zh: '确认新密码',
+    ms: 'Sahkan kata laluan baharu',
+  },
+
+  'reset.success': {
+    en: 'Password reset successful.',
+    zh: '密码重置成功。',
+    ms: 'Kata laluan berjaya ditetapkan semula.',
+  },
+
+  'reset.error': {
+    en: 'Invalid or expired code.',
+    zh: '验证码无效或已过期。',
+    ms: 'Kod tidak sah atau telah tamat tempoh.',
+  },
+
+  'reset.mismatch': {
+    en: 'Passwords do not match.',
+    zh: '两次输入的密码不一致。',
+    ms: 'Kata laluan tidak sepadan.',
+  },
+
   // Common
   'common.back': { en: 'Back', zh: '返回', ms: 'Kembali' },
   'common.save': { en: 'Save', zh: '保存', ms: 'Simpan' },
