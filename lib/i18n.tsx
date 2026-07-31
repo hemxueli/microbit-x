@@ -234,6 +234,30 @@ export const dict: Dict = {
   },
   'auth.processing': { en: 'Please wait...', zh: '请稍候……', ms: 'Sila tunggu...' },
 
+  'forgot.title': {
+  en: 'Forgot Password',
+  zh: '忘记密码',
+  ms: 'Lupa Kata Laluan',
+  },
+
+  'forgot.placeholder': {
+    en: 'Enter your email',
+    zh: '请输入邮箱',
+    ms: 'Masukkan emel anda',
+  },
+
+  'forgot.button': {
+    en: 'Send Reset Code',
+    zh: '发送验证码',
+    ms: 'Hantar Kod Reset',
+  },
+
+  'forgot.success': {
+    en: 'Please check your email for the reset code.',
+    zh: '请检查邮箱获取验证码。',
+    ms: 'Sila semak emel anda untuk kod reset.',
+  },
+
   // Common
   'common.back': { en: 'Back', zh: '返回', ms: 'Kembali' },
   'common.save': { en: 'Save', zh: '保存', ms: 'Simpan' },
