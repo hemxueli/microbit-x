@@ -143,12 +143,12 @@ export default function QuizBasicPage() {
             {/* 根据分数显示评语 */}
             <p className="text-lg text-gray-700 mb-6">
               {score <= 3
-                ? t('quiz.feedback.tryHarder')
+                ? `${t('quiz.feedback.tryHarder')} 😢`
                 : score <= 6
-                ? t('quiz.feedback.good')
+                ? `${t('quiz.feedback.good')} 👍`
                 : score <= 9
-                ? t('quiz.feedback.great')
-                : t('quiz.feedback.perfect')}
+                ? `${t('quiz.feedback.great')} 🌟`
+                : `${t('quiz.feedback.perfect')} 🏆`}
             </p>
 
             {/* 两个按钮 */}
