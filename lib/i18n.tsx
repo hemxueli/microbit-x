@@ -195,6 +195,25 @@ export const dict: Dict = {
   ms: 'Cabaran Pembelajaran',
   },
 
+  'student.pdfCard': {
+  en: 'Knowledge Scroll',
+  zh: '知识卷轴',
+  ms: 'Gulungan Ilmu',
+  },
+
+  'student.websiteCard': {
+    en: 'Discovery Portal',
+    zh: '探索入口',
+    ms: 'Pintu Penemuan',
+  },
+
+  'student.videoCard': {
+    en: 'Vision Stream',
+    zh: '视觉之流',
+    ms: 'Aliran Visual',
+  },
+
+
   "makecode.open": { "en": "Open MakeCode", "zh": "打开 MakeCode", "ms": "Buka MakeCode" },
   "makecode.title": { "en": "MakeCode Editor", "zh": "MakeCode 编辑器", "ms": "Editor MakeCode" },
   "makecode.confirmText": { "en": "Do you want to jump to MakeCode official editor?", "zh": "要跳转到 MakeCode 官方编辑器吗？", "ms": "Adakah anda mahu pergi ke editor rasmi MakeCode?" },
