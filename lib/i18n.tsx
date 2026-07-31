@@ -680,7 +680,15 @@ export const dict: Dict = {
     ms: 'Menerima input daripada sensor, Paparkan teks dan ikon, Mainkan bunyi, nada dan melodi, Cipta corak LED',
   },
   'quiz.music.q10.answer': { en: 'To play sounds, tones, and melodies', zh: '播放声音、音调和旋律', ms: 'Mainkan bunyi, nada dan melodi' },
-    
+  
+  'quiz.feedback.tryHarder': { en: 'Keep trying!', zh: '还需努力！', ms: 'Terus berusaha!' },
+  'quiz.feedback.good': { en: 'Good job!', zh: '不错哦！', ms: 'Bagus!' },
+  'quiz.feedback.great': { en: 'Excellent!', zh: '非常棒！', ms: 'Hebat!' },
+  'quiz.feedback.perfect': { en: 'Perfect!', zh: '完美！', ms: 'Sempurna!' },
+
+  'quiz.retry': { en: 'Try Again', zh: '再来一次', ms: 'Cuba lagi' },
+  'quiz.aiEvaluation': { en: 'View AI Evaluation', zh: '查看 AI 评估', ms: 'Lihat Penilaian AI' },
+
   // Chat
   'chat.title': { en: 'AI Learning Assistant', zh: 'AI 学习助手', ms: 'Pembantu Pembelajaran AI' },
   'chat.placeholder': {
