@@ -81,7 +81,15 @@ export default function TeacherPage({ user }: { user?: any }) {
               <span className="font-medium">{name}</span>
               <ChevronDown className="w-4 h-4 text-gray-500" />
             </div>
-            <Button variant="ghost" size="sm">{t('nav.logout')}</Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                window.location.href = '/'
+              }}
+            >
+              {t('nav.logout')}
+            </Button>
           </div>
         </div>
       </header>

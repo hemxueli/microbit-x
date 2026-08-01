@@ -31,7 +31,8 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     try {
       if (mode === 'sign-up') {
-        const { error } = await authClient.signUp.email({
+        // 1. 注册到 Supabase Auth
+        const { data, error } = await authClient.signUp.email({
           email,
           password,
           name,
@@ -40,6 +41,29 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           role,
         })
         if (error) throw new Error(error.message)
+
+        const newUser = data.user
+        if (!newUser) throw new Error('User not created')
+
+        // 2. 保存到 teachers/students 表
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: newUser.id,
+            name,
+            role,
+          }),
+        })
+
+        if (!res.ok) {
+          const errData = await res.json()
+          throw new Error(errData.error || 'Failed to save user profile')
+        }
+
+        // 3. 跳转
         router.push(role === 'teacher' ? '/teacher' : '/student')
       } else {
         const { error } = await authClient.signIn.email({ email, password })
