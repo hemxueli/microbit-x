@@ -8,13 +8,28 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
+import { supabase } from '@/lib/supabaseClient' // 用 anon key 初始化的客户端
 
-export default function StudentPage({ user }: { user?: any }) {
+export default function StudentPage({ user }: { user: any }) {
   const { t } = useI18n()
   const [showJoin, setShowJoin] = useState(false)
   const [classCode, setClassCode] = useState('')
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
+
+  // 新增：名字和头像编辑状态
+  const [name, setName] = useState(user?.name ?? user?.id)
+  const [editingName, setEditingName] = useState(false)
+  const [avatar, setAvatar] = useState(user?.avatar ?? '/images/default-avatar.png')
+
+  const avatarOptions = [
+    '/images/avatar1.png',
+    '/images/avatar2.png',
+    '/images/avatar3.png',
+    '/images/avatar4.png',
+    '/images/avatar5.png',
+    '/images/avatar6.png',
+  ]
 
   // 禁止背景滚动
   useEffect(() => {
@@ -25,6 +40,14 @@ export default function StudentPage({ user }: { user?: any }) {
     }
   }, [showJoin, showLangModal])
 
+  async function updateProfile(updates: { name?: string; avatar?: string }) {
+    const { error } = await supabase
+      .from('students')
+      .update(updates)
+      .eq('id', user.id)
+    if (error) alert(error.message)
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* 顶部导航栏 */}
@@ -33,14 +56,53 @@ export default function StudentPage({ user }: { user?: any }) {
           <Logo />
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
-            <Image
-              src={user?.image ?? '/images/default-avatar.png'}
-              alt="avatar"
-              width={36}
-              height={36}
-              className="rounded-full border"
-            />
-            <span className="font-medium">{user?.name ?? t('student.defaultName')}</span>
+
+            {/* 头像选择 */}
+            <div className="flex gap-2">
+              {avatarOptions.map((src) => (
+                <Image
+                  key={src}
+                  src={src}
+                  alt="avatar option"
+                  width={36}
+                  height={36}
+                  className={`rounded-full cursor-pointer border ${avatar === src ? 'border-primary' : ''}`}
+                  onClick={() => {
+                    setAvatar(src)
+                    updateProfile({ avatar: src })
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* 名字编辑 */}
+            {editingName ? (
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="border rounded px-2 py-1"
+                />
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    updateProfile({ name })
+                    setEditingName(false)
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-2 items-center">
+                <span className="font-medium">{name}</span>
+                <Button variant="ghost" size="sm" onClick={() => setEditingName(true)}>
+                  Edit
+                </Button>
+              </div>
+            )}
+
             <Button variant="ghost" size="sm">
               {t('nav.logout')}
             </Button>
