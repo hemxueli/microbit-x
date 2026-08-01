@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ChevronDown } from 'lucide-react'
 import { Logo } from '@/components/logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
-import { supabase } from '@/lib/supabaseClient' // 用 anon key 初始化的客户端
+import { supabase } from '@/lib/supabaseClient'
 
 export default function StudentPage({ user }: { user: any }) {
   const { t } = useI18n()
@@ -17,10 +18,14 @@ export default function StudentPage({ user }: { user: any }) {
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
 
-  // 新增：名字和头像编辑状态
+  // 名字和头像编辑状态
   const [name, setName] = useState(user?.name ?? user?.id)
-  const [editingName, setEditingName] = useState(false)
   const [avatar, setAvatar] = useState(user?.avatar ?? '/images/default-avatar.png')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [editAvatarOpen, setEditAvatarOpen] = useState(false)
+  const [editNameOpen, setEditNameOpen] = useState(false)
+  const [tempName, setTempName] = useState(name)
+  const [tempAvatar, setTempAvatar] = useState(avatar)
 
   const avatarOptions = [
     '/images/avatar1.png',
@@ -33,19 +38,20 @@ export default function StudentPage({ user }: { user: any }) {
 
   // 禁止背景滚动
   useEffect(() => {
-    if (showJoin || showLangModal) {
+    if (showJoin || showLangModal || editAvatarOpen || editNameOpen) {
       document.body.classList.add('modal-open')
     } else {
       document.body.classList.remove('modal-open')
     }
-  }, [showJoin, showLangModal])
+  }, [showJoin, showLangModal, editAvatarOpen, editNameOpen])
 
   async function updateProfile(updates: { name?: string; avatar?: string }) {
-    const { error } = await supabase
-      .from('students')
-      .update(updates)
-      .eq('id', user.id)
+    const { error } = await supabase.from('students').update(updates).eq('id', user.id)
     if (error) alert(error.message)
+    else {
+      if (updates.name) setName(updates.name)
+      if (updates.avatar) setAvatar(updates.avatar)
+    }
   }
 
   return (
@@ -54,58 +60,33 @@ export default function StudentPage({ user }: { user: any }) {
       <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
+          <div className="flex items-center gap-2 relative">
+            <Image src={avatar} alt="avatar" width={36} height={36} className="rounded-full border" />
+            <span className="font-medium">{name}</span>
+            <ChevronDown className="w-4 h-4 cursor-pointer text-gray-600" onClick={() => setMenuOpen(!menuOpen)} />
 
-            {/* 头像选择 */}
-            <div className="flex gap-2">
-              {avatarOptions.map((src) => (
-                <Image
-                  key={src}
-                  src={src}
-                  alt="avatar option"
-                  width={36}
-                  height={36}
-                  className={`rounded-full cursor-pointer border ${avatar === src ? 'border-primary' : ''}`}
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-40 bg-white border rounded shadow">
+                <button
+                  className="w-full text-left px-3 py-2 hover:bg-gray-100"
                   onClick={() => {
-                    setAvatar(src)
-                    updateProfile({ avatar: src })
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* 名字编辑 */}
-            {editingName ? (
-              <div className="flex gap-2 items-center">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="border rounded px-2 py-1"
-                />
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    updateProfile({ name })
-                    setEditingName(false)
+                    setEditAvatarOpen(true)
+                    setMenuOpen(false)
                   }}
                 >
-                  Save
-                </Button>
-              </div>
-            ) : (
-              <div className="flex gap-2 items-center">
-                <span className="font-medium">{name}</span>
-                <Button variant="ghost" size="sm" onClick={() => setEditingName(true)}>
-                  Edit
-                </Button>
+                  Edit Avatar
+                </button>
+                <button
+                  className="w-full text-left px-3 py-2 hover:bg-gray-100"
+                  onClick={() => {
+                    setEditNameOpen(true)
+                    setMenuOpen(false)
+                  }}
+                >
+                  Edit User Name
+                </button>
               </div>
             )}
-
-            <Button variant="ghost" size="sm">
-              {t('nav.logout')}
-            </Button>
           </div>
         </div>
       </header>
