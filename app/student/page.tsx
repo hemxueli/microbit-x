@@ -28,12 +28,12 @@ export default function StudentPage({ user }: { user: any }) {
   const [tempAvatar, setTempAvatar] = useState(avatar)
 
   const avatarOptions = [
-    '/images/avatar1.png',
-    '/images/avatar2.png',
-    '/images/avatar3.png',
-    '/images/avatar4.png',
-    '/images/avatar5.png',
-    '/images/avatar6.png',
+    '/images/savatar1.png',
+    '/images/savatar2.png',
+    '/images/savatar3.png',
+    '/images/savatar4.png',
+    '/images/savatar5.png',
+    '/images/savatar6.png',
   ]
 
   // 禁止背景滚动
