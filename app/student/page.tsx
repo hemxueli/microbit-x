@@ -10,9 +10,12 @@ import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/navigation'
 
 export default function StudentPage({ user }: { user: any }) {
   const { t } = useI18n()
+  const router = useRouter()
+
   const [showJoin, setShowJoin] = useState(false)
   const [classCode, setClassCode] = useState('')
   const [showLangModal, setShowLangModal] = useState(false)
@@ -41,15 +44,15 @@ export default function StudentPage({ user }: { user: any }) {
     async function ensureProfile() {
       if (!user?.id) return
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('students')
-        .select('id, name, avatar')
-        .eq('id', user.id)
+        .select('user_id, name, avatar')
+        .eq('user_id', user.id)
         .single()
 
       if (!data) {
         await supabase.from('students').insert({
-          id: user.id,
+          user_id: user.id,
           name: user.email ?? user.id,
           avatar: '/images/default-avatar.png',
         })
@@ -64,8 +67,13 @@ export default function StudentPage({ user }: { user: any }) {
     ensureProfile()
   }, [user])
 
+  // 更新名字或头像
   async function updateProfile(updates: { name?: string; avatar?: string }) {
-    const { error } = await supabase.from('students').update(updates).eq('id', user.id)
+    const { error } = await supabase
+      .from('students')
+      .update(updates)
+      .eq('user_id', user.id)
+
     if (error) alert(error.message)
     else {
       if (updates.name) setName(updates.name)
@@ -76,7 +84,7 @@ export default function StudentPage({ user }: { user: any }) {
   return (
     <div className="flex min-h-screen flex-col">
       {/* 顶部导航栏 */}
-      <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-2 relative">
@@ -88,13 +96,12 @@ export default function StudentPage({ user }: { user: any }) {
               variant="ghost"
               size="sm"
               onClick={async () => {
-                await supabase.auth.signOut()   // 先退出登录
-                window.location.href = '/'      // 再跳回主页
+                await supabase.auth.signOut()
+                router.push('/')   // 用 router.push 替代 window.location.href
               }}
             >
               {t('nav.logout')}
             </Button>
-
 
             {menuOpen && (
               <div className="absolute right-0 top-full mt-2 w-40 bg-white border rounded shadow">
@@ -296,7 +303,7 @@ export default function StudentPage({ user }: { user: any }) {
 
       {/* 编辑头像弹窗 */}
       {editAvatarOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96">
             <h2 className="font-bold mb-4">Choose Avatar</h2>
             <div className="grid grid-cols-3 gap-4 mb-4">
@@ -307,7 +314,7 @@ export default function StudentPage({ user }: { user: any }) {
                   alt="avatar option"
                   width={64}
                   height={64}
-                  className={`rounded-full cursor-pointer border-4 ${
+                  className={`rounded-full cursor-pointer border-4 transition ${
                     tempAvatar === src ? 'border-primary' : 'border-gray-300'
                   }`}
                   onClick={() => setTempAvatar(src)}
@@ -324,7 +331,7 @@ export default function StudentPage({ user }: { user: any }) {
 
       {/* 编辑名字弹窗 */}
       {editNameOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96">
             <h2 className="font-bold mb-4">Edit Name</h2>
             <input
