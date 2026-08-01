@@ -115,6 +115,51 @@ export default function StudentPage({ user }: { user: any }) {
             </div>
           </div>
 
+          {/* 编辑头像弹窗 */}
+          {editAvatarOpen && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+              <div className="bg-white p-6 rounded shadow-lg w-96">
+                <h2 className="font-bold mb-4">Choose Avatar</h2>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  {avatarOptions.map((src) => (
+                    <Image
+                      key={src}
+                      src={src}
+                      alt="avatar option"
+                      width={64}
+                      height={64}
+                      className={`rounded-full cursor-pointer border ${tempAvatar === src ? 'border-4' : ''}`}
+                      onClick={() => setTempAvatar(src)}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>Cancel</Button>
+                  <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>Save</Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 编辑名字弹窗 */}
+          {editNameOpen && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+              <div className="bg-white p-6 rounded shadow-lg w-96">
+                <h2 className="font-bold mb-4">Edit Name</h2>
+                <input
+                  type="text"
+                  value={tempName}
+                  onChange={(e) => setTempName(e.target.value)}
+                  className="border rounded px-2 py-1 w-full mb-4"
+                />
+                <div className="flex justify-end gap-2">
+                  <Button variant="ghost" onClick={() => setEditNameOpen(false)}>Cancel</Button>
+                  <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>Save</Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* 学习内容卡片区 */}
           <h2 className="text-2xl font-bold mb-6">{t('student.learningContent')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
