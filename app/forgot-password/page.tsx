@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useI18n, dict } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,58 +12,16 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
-  const [code, setCode] = useState('')
   const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
   const { lang } = useI18n()
-  const router = useRouter()
 
-  async function handleSendCode() {
+  async function handleSendEmail() {
     setMessage('')
-    setLoading(true)
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://microbot-x.vercel.app/reset-password',
-      })
-      if (error) {
-        setMessage(error.message)
-      } else {
-        setMessage(dict['forgot.success'][lang])
-      }
-    } catch {
-      setMessage('Server error.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function handleVerifyCode(e: React.FormEvent) {
-    e.preventDefault()
-    setMessage('')
-    setLoading(true)
-
-    try {
-      const { data, error } = await supabase
-        .from('reset_codes')
-        .select('*')
-        .eq('email', email)
-        .eq('code', code)
-        .single()
-
-      if (error || !data) {
-        setMessage(dict['reset.error'][lang])
-      } else if (new Date(data.expires_at).getTime() < Date.now()) {
-        setMessage(dict['reset.error'][lang])
-      } else {
-        // ✅ 验证成功 → 跳转到 reset-password 页面
-        router.push(`/reset-password?email=${encodeURIComponent(email)}`)
-      }
-    } catch {
-      setMessage('Server error.')
-    } finally {
-      setLoading(false)
-    }
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`
+    })
+    if (error) setMessage(error.message)
+    else setMessage(dict['forgot.success'][lang])
   }
 
   return (
@@ -82,8 +39,7 @@ export default function ForgotPasswordPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleVerifyCode} className="space-y-4">
-              {/* 邮箱输入 */}
+            <div className="space-y-4">
               <Input
                 type="email"
                 placeholder={dict['forgot.placeholder'][lang]}
@@ -91,39 +47,17 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-
-              {/* 验证码输入 */}
-              <Input
-                type="text"
-                placeholder={dict['reset.code'][lang]}
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-              />
-
-              {/* 两个按钮并排 */}
-              <div className="flex gap-4">
-                <Button
-                  type="button"
-                  onClick={handleSendCode}
-                  disabled={loading || !email} // 没填邮箱时禁用
-                  className="flex-1"
-                >
-                  {loading ? dict['auth.processing'][lang] : dict['forgot.button'][lang]}
-                </Button>
-
-                <Button
-                  type="submit"
-                  disabled={loading || !code} // 没填验证码时禁用
-                  className="flex-1"
-                >
-                  {loading ? dict['auth.processing'][lang] : dict['common.submit'][lang]}
-                </Button>
-              </div>
-            </form>
-
-            {message && (
-              <p className="mt-4 text-sm text-gray-700 text-center">{message}</p>
-            )}
+              <Button
+                onClick={handleSendEmail}
+                disabled={!email}
+                className="w-full"
+              >
+                {dict['forgot.button'][lang]}
+              </Button>
+              {message && (
+                <p className="mt-4 text-sm text-gray-700 text-center">{message}</p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>

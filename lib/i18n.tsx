@@ -300,6 +300,18 @@ export const dict: Dict = {
     ms: 'Kata laluan tidak sepadan.',
   },
 
+  'forgot.emailButton': {
+  en: 'Send Reset Email',
+  zh: '发送重置邮件',
+  ms: 'Hantar Emel Reset',
+  },
+
+  'reset.button': {
+  en: 'Update Password',
+  zh: '更新密码',
+  ms: 'Kemas kini Kata Laluan',
+  },
+
   // Common
   'common.back': { en: 'Back', zh: '返回', ms: 'Kembali' },
   'common.save': { en: 'Save', zh: '保存', ms: 'Simpan' },
