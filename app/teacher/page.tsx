@@ -7,6 +7,7 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { ChevronDown, MoreVertical, X } from 'lucide-react'
 import { useI18n } from '@/lib/i18n'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function TeacherPage({ user }: { user?: any }) {
   const { t } = useI18n()
@@ -84,12 +85,14 @@ export default function TeacherPage({ user }: { user?: any }) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => {
-                window.location.href = '/'
+              onClick={async () => {
+                await supabase.auth.signOut()   // 先退出登录
+                window.location.href = '/'      // 再跳回主页
               }}
             >
               {t('nav.logout')}
             </Button>
+
           </div>
         </div>
       </header>
