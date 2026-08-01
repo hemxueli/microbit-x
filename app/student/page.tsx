@@ -18,7 +18,7 @@ export default function StudentPage({ user }: { user: any }) {
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
 
-  // 名字和头像编辑状态
+  // 名字和头像状态
   const [name, setName] = useState(user?.name ?? user?.id)
   const [avatar, setAvatar] = useState(user?.avatar ?? '/images/default-avatar.png')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -36,14 +36,33 @@ export default function StudentPage({ user }: { user: any }) {
     '/images/savatar6.png',
   ]
 
-  // 禁止背景滚动
+  // 自动补全逻辑：检查 students 表是否有记录，没有就插入
   useEffect(() => {
-    if (showJoin || showLangModal || editAvatarOpen || editNameOpen) {
-      document.body.classList.add('modal-open')
-    } else {
-      document.body.classList.remove('modal-open')
+    async function ensureProfile() {
+      if (!user?.id) return
+
+      const { data, error } = await supabase
+        .from('students')
+        .select('id, name, avatar')
+        .eq('id', user.id)
+        .single()
+
+      if (!data) {
+        await supabase.from('students').insert({
+          id: user.id,
+          name: user.email ?? user.id,
+          avatar: '/images/default-avatar.png',
+        })
+        setName(user.email ?? user.id)
+        setAvatar('/images/default-avatar.png')
+      } else {
+        setName(data.name)
+        setAvatar(data.avatar)
+      }
     }
-  }, [showJoin, showLangModal, editAvatarOpen, editNameOpen])
+
+    ensureProfile()
+  }, [user])
 
   async function updateProfile(updates: { name?: string; avatar?: string }) {
     const { error } = await supabase.from('students').update(updates).eq('id', user.id)
@@ -114,51 +133,6 @@ export default function StudentPage({ user }: { user: any }) {
               </Button>
             </div>
           </div>
-
-          {/* 编辑头像弹窗 */}
-          {editAvatarOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-              <div className="bg-white p-6 rounded shadow-lg w-96">
-                <h2 className="font-bold mb-4">Choose Avatar</h2>
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  {avatarOptions.map((src) => (
-                    <Image
-                      key={src}
-                      src={src}
-                      alt="avatar option"
-                      width={64}
-                      height={64}
-                      className={`rounded-full cursor-pointer border ${tempAvatar === src ? 'border-4' : ''}`}
-                      onClick={() => setTempAvatar(src)}
-                    />
-                  ))}
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>Cancel</Button>
-                  <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>Save</Button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 编辑名字弹窗 */}
-          {editNameOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-              <div className="bg-white p-6 rounded shadow-lg w-96">
-                <h2 className="font-bold mb-4">Edit Name</h2>
-                <input
-                  type="text"
-                  value={tempName}
-                  onChange={(e) => setTempName(e.target.value)}
-                  className="border rounded px-2 py-1 w-full mb-4"
-                />
-                <div className="flex justify-end gap-2">
-                  <Button variant="ghost" onClick={() => setEditNameOpen(false)}>Cancel</Button>
-                  <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>Save</Button>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* 学习内容卡片区 */}
           <h2 className="text-2xl font-bold mb-6">{t('student.learningContent')}</h2>
@@ -307,6 +281,53 @@ export default function StudentPage({ user }: { user: any }) {
               >
                 中文
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 编辑头像弹窗 */}
+      {editAvatarOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="font-bold mb-4">Choose Avatar</h2>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              {avatarOptions.map((src) => (
+                <Image
+                  key={src}
+                  src={src}
+                  alt="avatar option"
+                  width={64}
+                  height={64}
+                  className={`rounded-full cursor-pointer border-4 ${
+                    tempAvatar === src ? 'border-primary' : 'border-gray-300'
+                  }`}
+                  onClick={() => setTempAvatar(src)}
+                />
+              ))}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>Cancel</Button>
+              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>Save</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 编辑名字弹窗 */}
+      {editNameOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="font-bold mb-4">Edit Name</h2>
+            <input
+              type="text"
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              className="border rounded px-2 py-1 w-full mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>Cancel</Button>
+              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>Save</Button>
             </div>
           </div>
         </div>
