@@ -9,13 +9,10 @@ import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { useEffect, useRef, useState } from 'react'
 
-// 滚动淡入 + 图片缩放组件
 function FadeInSection({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     const el = ref.current
     if (!el) return
     const observer = new IntersectionObserver(
@@ -40,7 +37,7 @@ function FadeInSection({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
+export function HomeLanding() {
   const { t } = useI18n()
   const [mounted, setMounted] = useState(false)
 
@@ -55,22 +52,14 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-2">
-            {/* ✅ SSR 阶段不渲染 LanguageSwitcher，避免 mismatch */}
             {mounted && <LanguageSwitcher />}
-            {isAuthed ? (
-              <Link href="/">
-                <Button size="sm">{t('nav.dashboard')}</Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/sign-in">
-                  <Button variant="ghost" size="sm">{t('nav.login')}</Button>
-                </Link>
-                <Link href="/sign-up">
-                  <Button size="sm">{t('nav.getStarted')}</Button>
-                </Link>
-              </>
-            )}
+            {/* 未登录时显示 Login / Get started */}
+            <Link href="/sign-in">
+              <Button variant="ghost" size="sm">{t('nav.login')}</Button>
+            </Link>
+            <Link href="/sign-up">
+              <Button size="sm">{t('nav.getStarted')}</Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -78,7 +67,6 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
       <main className="flex-1">
         <section className="relative py-24 bg-gradient-to-b from-white via-cyan-50 to-teal-100">
           <div className="mx-auto w-full max-w-6xl px-6 space-y-40">
-
             {/* Hero */}
             <div className="grid md:grid-cols-2 items-center gap-10">
               <div className="flex flex-col gap-6">
@@ -86,17 +74,19 @@ export function HomeLanding({ isAuthed }: { isAuthed: boolean }) {
                   <Sparkles className="size-4" />
                   {t('app.tagline')}
                 </span>
-                <h1 className="text-balance text-4xl font-extrabold leading-tight tracking-tight md:text-5xl text-teal-800">
+                <h1 className="text-4xl font-extrabold leading-tight tracking-tight md:text-5xl text-teal-800">
                   {t('home.heroTitle')}
                 </h1>
-                <p className="text-pretty text-lg leading-relaxed text-gray-700">
+                <p className="text-lg leading-relaxed text-gray-700">
                   {t('home.heroSubtitle')}
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Link href="/sign-up">
+                  {/* 学生按钮 → 永远跳去 sign-in?role=student */}
+                  <Link href="/sign-in?role=student">
                     <Button size="lg">{t('home.ctaStudent')}</Button>
                   </Link>
-                  <Link href="/sign-up">
+                  {/* 老师按钮 → 永远跳去 sign-in?role=teacher */}
+                  <Link href="/sign-in?role=teacher">
                     <Button size="lg" variant="outline">{t('home.ctaTeacher')}</Button>
                   </Link>
                 </div>
