@@ -61,9 +61,13 @@ export default function StudentPage({ user }: { user: any }) {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-2 relative">
+            <LanguageSwitcher />
             <Image src={avatar} alt="avatar" width={36} height={36} className="rounded-full border" />
             <span className="font-medium">{name}</span>
             <ChevronDown className="w-4 h-4 cursor-pointer text-gray-600" onClick={() => setMenuOpen(!menuOpen)} />
+            <Button variant="ghost" size="sm" onClick={() => (window.location.href = '/')}>
+              {t('nav.logout')}
+            </Button>
 
             {menuOpen && (
               <div className="absolute right-0 top-full mt-2 w-40 bg-white border rounded shadow">
