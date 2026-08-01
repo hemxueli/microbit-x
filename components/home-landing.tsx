@@ -89,6 +89,10 @@ export function HomeLanding() {
                   <Link href="/sign-in?role=teacher">
                     <Button size="lg" variant="outline">{t('home.ctaTeacher')}</Button>
                   </Link>
+                  {/* Get started 保持注册逻辑 */}
+                  <Link href="/sign-up">
+                    <Button size="lg" variant="secondary">{t('nav.getStarted')}</Button>
+                  </Link>
                 </div>
               </div>
               <div className="relative">
