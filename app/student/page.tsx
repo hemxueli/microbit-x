@@ -84,9 +84,17 @@ export default function StudentPage({ user }: { user: any }) {
             <Image src={avatar} alt="avatar" width={36} height={36} className="rounded-full border" />
             <span className="font-medium">{name}</span>
             <ChevronDown className="w-4 h-4 cursor-pointer text-gray-600" onClick={() => setMenuOpen(!menuOpen)} />
-            <Button variant="ghost" size="sm" onClick={() => (window.location.href = '/')}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={async () => {
+                await supabase.auth.signOut()   // 先退出登录
+                window.location.href = '/'      // 再跳回主页
+              }}
+            >
               {t('nav.logout')}
             </Button>
+
 
             {menuOpen && (
               <div className="absolute right-0 top-full mt-2 w-40 bg-white border rounded shadow">
