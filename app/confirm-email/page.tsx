@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 
 export default function ConfirmEmailPage() {
@@ -12,12 +11,28 @@ export default function ConfirmEmailPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const checkUser = async () => {
+    const verifyEmail = async () => {
+      const url = new URL(window.location.href)
+      const token = url.searchParams.get('token')
+      const email = url.searchParams.get('email')
+
+      // 固定 type 为 signup，因为这是邮箱注册确认
+      if (token && email) {
+        const { error } = await supabase.auth.verifyOtp({
+          email,
+          token,
+          type: 'signup',
+        })
+        if (error) {
+          alert(error.message)
+        }
+      }
+
+      // 验证后获取用户信息
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
 
-        // 如果邮箱已经确认
         if (user.confirmed_at) {
           // 查询角色
           const { data: teacher } = await supabase
@@ -41,14 +56,15 @@ export default function ConfirmEmailPage() {
             router.push('/student')
             return
           }
+
+          // 如果没有角色，跳到默认首页
+          router.push('/')
         }
       }
       setLoading(false)
     }
 
-    // 每隔 3 秒检查一次用户状态
-    const interval = setInterval(checkUser, 3000)
-    return () => clearInterval(interval)
+    verifyEmail()
   }, [router])
 
   if (loading) {
@@ -63,32 +79,11 @@ export default function ConfirmEmailPage() {
         {user ? (
           <>
             <p className="text-gray-600 mb-6">
-              We’ve sent a confirmation link to <span className="font-semibold">{user.email}</span>.
-              Please check your inbox and click the link to activate your account.
+              Your email <span className="font-semibold">{user.email}</span> has been confirmed.
             </p>
             <p className="text-sm text-gray-500 mb-6">
-              If you don’t see the email, check your spam folder.
+              Redirecting you to your dashboard...
             </p>
-            <Button
-              onClick={async () => {
-                const { error } = await supabase.auth.resend({
-                  type: 'signup',
-                  email: user.email,
-                })
-                if (error) {
-                  alert(error.message)
-                } else {
-                  alert(`Confirmation email resent to ${user.email}. Please check your inbox.`)
-                  // 立即检查一次用户状态
-                  const { data: { user: refreshedUser } } = await supabase.auth.getUser()
-                  if (refreshedUser?.confirmed_at) {
-                    router.push('/student') // 或 /teacher，根据角色
-                  }
-                }
-              }}
-            >
-              Resend Email
-            </Button>
           </>
         ) : (
           <p className="text-gray-600">No user found. Please sign up again.</p>
