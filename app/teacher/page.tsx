@@ -26,15 +26,6 @@ export default function TeacherPage({ user }: { user: any }) {
   const [newClassName, setNewClassName] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
 
-  const avatarOptions = [
-    '/images/tavatar1.png',
-    '/images/tavatar2.png',
-    '/images/tavatar3.png',
-    '/images/tavatar4.png',
-    '/images/tavatar5.png',
-    '/images/tavatar6.png',
-  ]
-
   // 自动补全逻辑：检查 teachers 表是否有记录，没有就插入
   useEffect(() => {
     async function ensureProfile() {
@@ -142,7 +133,7 @@ export default function TeacherPage({ user }: { user: any }) {
                     setMenuOpen(false)
                   }}
                 >
-                  Edit Avatar
+                  {t('teacher.editAvatar')}
                 </button>
                 <button
                   className="w-full text-left px-3 py-2 hover:bg-gray-100"
@@ -151,7 +142,7 @@ export default function TeacherPage({ user }: { user: any }) {
                     setMenuOpen(false)
                   }}
                 >
-                  Edit User Name
+                  {t('teacher.editUserName')}
                 </button>
               </div>
             )}
@@ -205,7 +196,7 @@ export default function TeacherPage({ user }: { user: any }) {
                 type="text"
                 value={newClassName}
                 onChange={(e) => setNewClassName(e.target.value)}
-                placeholder={t('student.enterCode')}
+                placeholder={t('teacher.className')}
                 className="border rounded px-2 py-1 w-full mb-4"
               />
               <div className="flex justify-end gap-2">
