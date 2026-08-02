@@ -133,7 +133,7 @@ export default function TeacherPage({ user }: { user: any }) {
                     setMenuOpen(false)
                   }}
                 >
-                  {t('teacher.editAvatar')}
+                  {t('editAvatar')}
                 </button>
                 <button
                   className="w-full text-left px-3 py-2 hover:bg-gray-100"
@@ -142,7 +142,7 @@ export default function TeacherPage({ user }: { user: any }) {
                     setMenuOpen(false)
                   }}
                 >
-                  {t('teacher.editUserName')}
+                  {t('editUserName')}
                 </button>
               </div>
             )}
@@ -157,14 +157,13 @@ export default function TeacherPage({ user }: { user: any }) {
 
         <Button onClick={() => setShowCreateModal(true)}>{t('teacher.createClass')}</Button>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">{t('teacher.classList')}</h2>
+        <h2 className="text-2xl font-semibold mt-8 mb-4">{t('teacher.classesTable')}</h2>
         <table className="w-full border-collapse border">
           <thead>
             <tr className="bg-gray-100">
               <th className="border px-4 py-2">{t('teacher.classList')}</th>
               <th className="border px-4 py-2">{t('teacher.studentsCount')}</th>
-              <th className="border px-4 py-2">创建时间</th>
-              <th className="border px-4 py-2">{t('teacher.enterClass')}</th>
+              <th className="border px-4 py-2">{t('teacher.createtime')}</th>
             </tr>
           </thead>
           <tbody>
@@ -196,7 +195,7 @@ export default function TeacherPage({ user }: { user: any }) {
                 type="text"
                 value={newClassName}
                 onChange={(e) => setNewClassName(e.target.value)}
-                placeholder={t('teacher.className')}
+                placeholder={t('teacher.enterClass')}
                 className="border rounded px-2 py-1 w-full mb-4"
               />
               <div className="flex justify-end gap-2">

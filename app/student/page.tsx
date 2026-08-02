@@ -112,7 +112,7 @@ export default function StudentPage({ user }: { user: any }) {
                     setMenuOpen(false)
                   }}
                 >
-                  Edit Avatar
+                  {t('editAvatar')}
                 </button>
                 <button
                   className="w-full text-left px-3 py-2 hover:bg-gray-100"
@@ -121,7 +121,7 @@ export default function StudentPage({ user }: { user: any }) {
                     setMenuOpen(false)
                   }}
                 >
-                  Edit User Name
+                  {t('editUserName')}
                 </button>
               </div>
             )}

@@ -858,8 +858,32 @@ export const dict: Dict = {
     zh: '当前班级还没有学生',
     ms: 'Tiada pelajar dalam kelas ini lagi',
   },
+  'teacher.classList': {
+    en: 'Class',
+    zh: '班级',
+    ms: 'Kelas',
+  },
+  'teacher.studentsCount': {
+    en: 'Number of Students',
+    zh: '学生人数',
+    ms: 'Bilangan Murid',
+  },
+  'teacher.createtime':{
+    en:'Creation Time',
+    zh:'创建时间',
+    ms:'Masa Penciptaan',
+  },
+  'editAvatar': {
+    en: 'Edit Avatar',
+    zh: '编辑头像',
+    ms: 'Sunting Avatar',
+  },
+  'editUserName': {
+    en: 'Edit User Name',
+    zh: '编辑用户名字',
+    ms: 'Sunting Nama Pengguna',
+  }
 }
-
 
 type UIStrings = {
   widgetTitle: string
