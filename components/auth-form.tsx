@@ -55,8 +55,8 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           throw new Error(errData.error || 'Failed to save user profile')
         }
 
-        // 4. 跳转
-        router.push(role === 'teacher' ? '/teacher' : '/student')
+        // 4. 跳转到确认邮箱页面
+        router.push('/confirm-email')
       } else {
         // 登录
         const { error } = await supabase.auth.signInWithPassword({ email, password })
@@ -66,7 +66,9 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) throw new Error("User not found")
 
-        // 跳转
+        alert(`We have sent a confirmation email to ${email}. Please check your inbox and click the confirmation link.`)
+
+        // 登录成功后直接跳转首页（或根据角色跳转）
         router.push('/')
       }
       router.refresh()
