@@ -55,11 +55,16 @@ export default function StudentPage() {
 
   // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('students')
       .select('user_id, name, avatar')
       .eq('user_id', user.id)
       .single()
+
+    if (error && error.code !== 'PGRST116') {
+      alert('Error loading profile: ' + error.message)
+      return
+    }
 
     if (!data) {
       const defaultName = user.user_metadata?.name || user.email || user.id
@@ -83,11 +88,9 @@ export default function StudentPage() {
 
   // 更新名字或头像
   async function updateProfile(updates: { name?: string; avatar?: string }) {
-    const { error } = await supabase
-      .from('students')
-      .update(updates)
-      .eq('user_id', user.id)
-
+  if (!user) return
+    const payload = { user_id: user.id, ...updates }
+    const { error } = await supabase.from('students').upsert(payload)
     if (error) {
       alert(error.message)
     } else {
