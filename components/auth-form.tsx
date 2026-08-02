@@ -13,13 +13,18 @@ import { Label } from '@/components/ui/label'
 
 type Role = 'student' | 'teacher'
 
-export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
+interface AuthFormProps {
+  mode: 'sign-in' | 'sign-up'
+  role?: Role   // 👈 支持传入 role
+}
+
+export function AuthForm({ mode, role }: AuthFormProps) {
   const { t } = useI18n()
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [role, setRole] = useState<Role>('student')
+  const [selectedRole, setSelectedRole] = useState<Role>(role || 'student') // 默认用传入的 role
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -32,33 +37,33 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     try {
       if (mode === 'sign-up') {
+        // 注册
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/confirm-email`, // 跳到确认页面
-            data: { name, role } // 保存名字和角色到 metadata
+            emailRedirectTo: `${window.location.origin}/confirm-email`,
+            data: { name, role: selectedRole } // 保存名字和角色到 metadata
           }
         })
         if (error) throw new Error(error.message)
 
         const user = data.user
         if (user) {
-          await supabase.from(role === 'teacher' ? 'teachers' : 'students').insert({
+          await supabase.from(selectedRole === 'teacher' ? 'teachers' : 'students').insert({
             user_id: user.id,
             name,
             avatar: '/images/default-avatar.png',
           })
         }
 
-        alert(`Sign-up successful! A confirmation email has been sent to ${email}. Please check your inbox to verify your account. After confirming, please log in again.`)
+        alert(`注册成功！确认邮件已发送到 ${email}，请查收并验证后再登录。`)
         router.push('/sign-in')
       } else {
         // 登录
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw new Error(error.message)
 
-        // 登录成功后查询角色
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
           const { data: teacher } = await supabase
@@ -86,6 +91,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
       {mode === 'sign-up' && (
         <>
+          {/* 角色选择 */}
           <div className="flex flex-col gap-2">
             <Label>{t('auth.role')}</Label>
             <div className="grid grid-cols-2 gap-3">
@@ -98,14 +104,14 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
                 <button
                   key={value}
                   type="button"
-                  onClick={() => setRole(value)}
+                  onClick={() => setSelectedRole(value)}
                   className={cn(
                     'flex flex-col items-center gap-2 rounded-xl border-2 p-4 text-sm font-semibold transition-colors',
-                    role === value
+                    selectedRole === value
                       ? 'border-primary bg-primary/5 text-primary'
                       : 'border-border text-muted-foreground hover:border-primary/40',
                   )}
-                  aria-pressed={role === value}
+                  aria-pressed={selectedRole === value}
                 >
                   <Icon className="size-6" />
                   {label}
@@ -114,6 +120,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             </div>
           </div>
 
+          {/* 姓名输入 */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">{t('auth.name')}</Label>
             <Input id="name" name="name" required autoComplete="name" />
@@ -121,11 +128,13 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         </>
       )}
 
+      {/* 邮箱输入 */}
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">{t('auth.email')}</Label>
         <Input id="email" name="email" type="email" required autoComplete="email" placeholder="you@school.edu" />
       </div>
 
+      {/* 密码输入 */}
       <div className="flex flex-col gap-2">
         <Label htmlFor="password">{t('auth.password')}</Label>
         <div className="relative">
@@ -148,12 +157,14 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         </div>
       </div>
 
+      {/* 错误提示 */}
       {error && (
         <p className="text-sm font-medium text-destructive" role="alert">
           {error}
         </p>
       )}
 
+      {/* 提交按钮 */}
       <Button type="submit" disabled={loading} size="lg" className="w-full">
         {loading
           ? t('auth.processing')
@@ -162,6 +173,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             : t('auth.signIn')}
       </Button>
 
+      {/* 底部切换链接 */}
       <p className="text-center text-sm text-muted-foreground">
         {mode === 'sign-up' ? (
           <>
