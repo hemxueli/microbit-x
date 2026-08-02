@@ -22,13 +22,13 @@ export default function StudentPage() {
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
 
   // 名字和头像状态（保留你的 const）
-  const [name, setName] = useState(user?.name ?? user?.id)
-  const [avatar, setAvatar] = useState(user?.avatar ?? '/images/default-avatar.png')
+  const [name, setName] = useState("")
+  const [avatar, setAvatar] = useState("/images/default-avatar.png")
   const [menuOpen, setMenuOpen] = useState(false)
   const [editAvatarOpen, setEditAvatarOpen] = useState(false)
   const [editNameOpen, setEditNameOpen] = useState(false)
-  const [tempName, setTempName] = useState(name)
-  const [tempAvatar, setTempAvatar] = useState(avatar)
+  const [tempName, setTempName] = useState("")
+  const [tempAvatar, setTempAvatar] = useState("/images/default-avatar.png")
 
   const avatarOptions = [
     '/images/savatar1.png',
@@ -53,7 +53,7 @@ export default function StudentPage() {
     loadUser()
   }, [])
 
-  // 自动补全逻辑：检查 students 表是否有记录，没有就插入
+  // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
     const { data } = await supabase
       .from('students')
@@ -62,15 +62,17 @@ export default function StudentPage() {
       .single()
 
     if (!data) {
+      const defaultName = user.user_metadata?.name || user.email || user.id
+      const defaultAvatar = '/images/default-avatar.png'
       await supabase.from('students').insert({
         user_id: user.id,
-        name: user.user_metadata?.name || user.email || user.id,
-        avatar: '/images/default-avatar.png',
+        name: defaultName,
+        avatar: defaultAvatar,
       })
-      setName(user.user_metadata?.name || user.email || user.id)
-      setAvatar('/images/default-avatar.png')
-      setTempName(user.user_metadata?.name || user.email || user.id)
-      setTempAvatar('/images/default-avatar.png')
+      setName(defaultName)
+      setAvatar(defaultAvatar)
+      setTempName(defaultName)
+      setTempAvatar(defaultAvatar)
     } else {
       setName(data.name)
       setAvatar(data.avatar)
@@ -99,7 +101,6 @@ export default function StudentPage() {
       }
     }
   }
-
   
   async function joinClass() {
   if (!classCode.trim() || !user?.id) return
