@@ -32,18 +32,27 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     try {
       if (mode === 'sign-up') {
-        // 注册到 Supabase Auth，并写入 fullname 到 user_metadata
-        const { error } = await supabase.auth.signUp({
+        // 注册到 Supabase Auth
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin, // 验证后回到当前站点
+            emailRedirectTo: window.location.origin,
             data: { name }
           }
         })
         if (error) throw new Error(error.message)
 
-        // 提示用户去邮箱确认，然后刷新页面
+        const user = data.user
+        if (user) {
+          // 插入到 teachers/students 表
+          await supabase.from(role === 'teacher' ? 'teachers' : 'students').insert({
+            user_id: user.id,
+            name,
+            avatar: '/images/default-avatar.png',
+          })
+        }
+
         alert(`Sign-up successful! A confirmation email has been sent to ${email}. Please check your inbox and reload the page after verification.`)
         window.location.reload()
       } else {
