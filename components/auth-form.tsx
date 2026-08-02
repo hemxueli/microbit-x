@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { GraduationCap, School } from 'lucide-react'
-import { authClient } from '@/lib/auth-client'
+import { supabase } from '@/lib/supabaseClient'
 import { useI18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -32,27 +32,19 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     try {
       if (mode === 'sign-up') {
         // 1. 注册到 Supabase Auth
-        const { data, error } = await authClient.signUp.email({
-          email,
-          password,
-          name,
-          // custom additional field configured in lib/auth.ts
-          // @ts-expect-error role is a Better Auth additional field
-          role,
-        })
+        const { data, error } = await supabase.auth.signUp({ email, password })
         if (error) throw new Error(error.message)
 
-        const newUser = data.user
-        if (!newUser) throw new Error('User not created')
+        // 2. 获取用户对象
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error('User not created')
 
-        // 2. 保存到 teachers/students 表
+        // 3. 保存到 teachers/students 表
         const res = await fetch('/api/register', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            user_id: newUser.id,
+            user_id: user.id,
             name,
             role,
           }),
@@ -63,11 +55,18 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           throw new Error(errData.error || 'Failed to save user profile')
         }
 
-        // 3. 跳转
+        // 4. 跳转
         router.push(role === 'teacher' ? '/teacher' : '/student')
       } else {
-        const { error } = await authClient.signIn.email({ email, password })
+        // 登录
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw new Error(error.message)
+
+        // 登录成功后获取用户
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error("User not found")
+
+        // 跳转
         router.push('/')
       }
       router.refresh()
@@ -118,14 +117,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">{t('auth.email')}</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          placeholder="you@school.edu"
-        />
+        <Input id="email" name="email" type="email" required autoComplete="email" placeholder="you@school.edu" />
       </div>
 
       <div className="flex flex-col gap-2">

@@ -10,21 +10,18 @@ import { useI18n } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
-export default function TeacherPage({ user }: { user: any }) {
+export default function TeacherPage() {
   const { t } = useI18n()
   const router = useRouter()
 
-  const [name, setName] = useState(user?.name ?? user?.id)
-  const [avatar, setAvatar] = useState(user?.avatar ?? '/images/default-avatar.png')
+  const [user, setUser] = useState<any>(null)
+  const [name, setName] = useState("")
+  const [avatar, setAvatar] = useState("/images/default-avatar.png")
   const [menuOpen, setMenuOpen] = useState(false)
   const [editAvatarOpen, setEditAvatarOpen] = useState(false)
   const [editNameOpen, setEditNameOpen] = useState(false)
-  const [tempName, setTempName] = useState(name)
-  const [tempAvatar, setTempAvatar] = useState(avatar)
-
-  const [classes, setClasses] = useState<any[]>([])
-  const [newClassName, setNewClassName] = useState('')
-  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [tempName, setTempName] = useState("")
+  const [tempAvatar, setTempAvatar] = useState("/images/default-avatar.png")
 
   const avatarOptions = [
     '/images/tavatar1.png',
@@ -35,48 +32,56 @@ export default function TeacherPage({ user }: { user: any }) {
     '/images/tavatar6.png',
   ]
 
-  // 自动补全逻辑：检查 teachers 表是否有记录，没有就插入
+  const [classes, setClasses] = useState<any[]>([])
+  const [newClassName, setNewClassName] = useState('')
+  const [showCreateModal, setShowCreateModal] = useState(false)
+
+  // 加载用户并初始化
   useEffect(() => {
-    async function ensureProfile() {
-      if (!user?.id) return
-
-      const { data } = await supabase
-        .from('teachers')
-        .select('user_id, name, avatar')
-        .eq('user_id', user.id)
-        .single()
-
-      if (!data) {
-        await supabase.from('teachers').insert({
-          user_id: user.id,
-          name: user.email ?? user.id,
-          avatar: '/images/default-avatar.png',
-        })
-        setName(user.email ?? user.id)
-        setAvatar('/images/default-avatar.png')
+    const loadUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUser(user)
+        ensureProfile(user)
+        loadClasses(user)
       } else {
-        setName(data.name)
-        setAvatar(data.avatar)
+        router.push("/sign-in")
       }
     }
+    loadUser()
+  }, [])
 
-    ensureProfile()
-  }, [user])
+  async function ensureProfile(user: any) {
+    const { data } = await supabase
+      .from('teachers')
+      .select('user_id, name, avatar')
+      .eq('user_id', user.id)
+      .single()
 
-  // 加载班级
-  useEffect(() => {
-    async function loadClasses() {
-      if (!user?.id) return
-      const { data } = await supabase
-        .from('classes')
-        .select('id, name, created_at, students(count)')
-        .eq('teacher_id', user.id)
-      setClasses(data || [])
+    if (!data) {
+      await supabase.from('teachers').insert({
+        user_id: user.id,
+        name: user.email ?? user.id,
+        avatar: '/images/default-avatar.png',
+      })
+      setName(user.email ?? user.id)
+      setAvatar('/images/default-avatar.png')
+    } else {
+      setName(data.name)
+      setAvatar(data.avatar)
     }
-    loadClasses()
-  }, [user])
+    setTempName(name)
+    setTempAvatar(avatar)
+  }
 
-  // 更新名字或头像
+  async function loadClasses(user: any) {
+    const { data } = await supabase
+      .from('classes')
+      .select('id, name, created_at, students(count)')
+      .eq('teacher_id', user.id)
+    setClasses(data || [])
+  }
+
   async function updateProfile(updates: { name?: string; avatar?: string }) {
     const { error } = await supabase
       .from('teachers')
@@ -90,7 +95,6 @@ export default function TeacherPage({ user }: { user: any }) {
     }
   }
 
-  // 创建班级
   async function createClass() {
     if (!newClassName.trim()) return
     const { error } = await supabase.from('classes').insert({
@@ -142,7 +146,7 @@ export default function TeacherPage({ user }: { user: any }) {
                     setMenuOpen(false)
                   }}
                 >
-                  Edit Avatar
+                  {t('editAvatar')}
                 </button>
                 <button
                   className="w-full text-left px-3 py-2 hover:bg-gray-100"
@@ -151,13 +155,60 @@ export default function TeacherPage({ user }: { user: any }) {
                     setMenuOpen(false)
                   }}
                 >
-                  Edit User Name
+                  {t('editUserName')}
                 </button>
               </div>
             )}
           </div>
         </div>
       </header>
+
+      {/* 编辑头像弹窗 */}
+      {editAvatarOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="font-bold mb-4">{t('editAvatar')}</h2>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              {avatarOptions.map((src) => (
+                <Image
+                  key={src}
+                  src={src}
+                  alt="avatar option"
+                  width={64}
+                  height={64}
+                  className={`rounded-full cursor-pointer border-4 transition ${
+                    tempAvatar === src ? 'border-primary' : 'border-gray-300'
+                  }`}
+                  onClick={() => setTempAvatar(src)}
+                />
+              ))}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>{t('common.cancel')}</Button>
+              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>{t('common.save')}</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 编辑名字弹窗 */}
+      {editNameOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="font-bold mb-4">{t('editUserName')}</h2>
+            <input
+              type="text"
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              className="border rounded px-2 py-1 w-full mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>{t('common.cancel')}</Button>
+              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>{t('common.save')}</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 页面主体 */}
       <main className="flex-1 p-6 max-w-5xl mx-auto">
@@ -166,14 +217,13 @@ export default function TeacherPage({ user }: { user: any }) {
 
         <Button onClick={() => setShowCreateModal(true)}>{t('teacher.createClass')}</Button>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">{t('teacher.classList')}</h2>
+        <h2 className="text-2xl font-semibold mt-8 mb-4">{t('teacher.classesTable')}</h2>
         <table className="w-full border-collapse border">
           <thead>
             <tr className="bg-gray-100">
               <th className="border px-4 py-2">{t('teacher.classList')}</th>
               <th className="border px-4 py-2">{t('teacher.studentsCount')}</th>
-              <th className="border px-4 py-2">创建时间</th>
-              <th className="border px-4 py-2">{t('teacher.enterClass')}</th>
+              <th className="border px-4 py-2">{t('teacher.createtime')}</th>
             </tr>
           </thead>
           <tbody>
@@ -205,7 +255,7 @@ export default function TeacherPage({ user }: { user: any }) {
                 type="text"
                 value={newClassName}
                 onChange={(e) => setNewClassName(e.target.value)}
-                placeholder={t('student.enterCode')}
+                placeholder={t('teacher.enterClass')}
                 className="border rounded px-2 py-1 w-full mb-4"
               />
               <div className="flex justify-end gap-2">
@@ -219,10 +269,11 @@ export default function TeacherPage({ user }: { user: any }) {
         )}
       </main>
 
-      {/* 底部 Footer */}
-      <footer className="border-t border-border bg-background py-4">
-        <div className="mx-auto max-w-6xl px-6 text-center text-gray-500 text-sm">
-          © 2026 {t('app.name')} — {t('app.tagline')}
+      {/* 底部版权栏 */}
+      <footer className="border-t border-border py-6">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
+          <Logo showText={false} />
+          <span>{'\u00A9'} 2026 MicroBOT-X</span>
         </div>
       </footer>
     </div>
