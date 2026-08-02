@@ -89,7 +89,11 @@ export default function StudentPage() {
   // 更新名字或头像
   async function updateProfile(updates: { name?: string; avatar?: string }) {
   if (!user) return
-    const payload = { user_id: user.id, ...updates }
+    const payload = {
+      user_id: user.id,
+      name: updates.name ?? name,   // 👈 保证 name 永远有值
+      avatar: updates.avatar ?? avatar,
+    }
     const { error } = await supabase.from('students').upsert(payload)
     if (error) {
       alert(error.message)
