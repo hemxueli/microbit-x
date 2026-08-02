@@ -21,7 +21,7 @@ export default function StudentPage() {
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
 
-  // 名字和头像状态
+  // 名字和头像状态（保留你的 const）
   const [name, setName] = useState(user?.name ?? user?.id)
   const [avatar, setAvatar] = useState(user?.avatar ?? '/images/default-avatar.png')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -45,7 +45,7 @@ export default function StudentPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
-        ensureProfile(user)
+        await ensureProfile(user)   // 👈 确保 profile 存在并加载
       } else {
         router.push("/sign-in")
       }
@@ -64,17 +64,19 @@ export default function StudentPage() {
     if (!data) {
       await supabase.from('students').insert({
         user_id: user.id,
-        name: user.email ?? user.id,
+        name: user.user_metadata?.name || user.email || user.id,
         avatar: '/images/default-avatar.png',
       })
-      setName(user.email ?? user.id)
+      setName(user.user_metadata?.name || user.email || user.id)
       setAvatar('/images/default-avatar.png')
+      setTempName(user.user_metadata?.name || user.email || user.id)
+      setTempAvatar('/images/default-avatar.png')
     } else {
       setName(data.name)
       setAvatar(data.avatar)
+      setTempName(data.name)
+      setTempAvatar(data.avatar)
     }
-    setTempName(name)
-    setTempAvatar(avatar)
   }
 
   // 更新名字或头像
@@ -84,12 +86,20 @@ export default function StudentPage() {
       .update(updates)
       .eq('user_id', user.id)
 
-    if (error) alert(error.message)
-    else {
-      if (updates.name) setName(updates.name)
-      if (updates.avatar) setAvatar(updates.avatar)
+    if (error) {
+      alert(error.message)
+    } else {
+      if (updates.name) {
+        setName(updates.name)
+        setTempName(updates.name)
+      }
+      if (updates.avatar) {
+        setAvatar(updates.avatar)
+        setTempAvatar(updates.avatar)
+      }
     }
   }
+
   
   async function joinClass() {
   if (!classCode.trim() || !user?.id) return
