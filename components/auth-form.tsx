@@ -1,10 +1,10 @@
+// AuthForm.tsx
 'use client'
 
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, GraduationCap, School } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { GraduationCap, School } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
 import { useI18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
@@ -33,44 +33,20 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     try {
       if (mode === 'sign-up') {
-        // 1. 注册到 Supabase Auth
-        const { data, error } = await supabase.auth.signUp({ email, password })
+        // 注册到 Supabase Auth
+        const { error } = await supabase.auth.signUp({ email, password })
         if (error) throw new Error(error.message)
 
-        // 2. 获取用户对象
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) throw new Error('User not created')
+        // 提示用户去邮箱确认
+        alert(`We have sent a confirmation email to ${email}. Please check your inbox.`)
 
-        // 3. 保存到 teachers/students 表
-        const res = await fetch('/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user_id: user.id,
-            name,
-            role,
-          }),
-        })
-
-        if (!res.ok) {
-          const errData = await res.json()
-          throw new Error(errData.error || 'Failed to save user profile')
-        }
-
-        // 4. 跳转到确认邮箱页面
-        router.push('/confirm-email')
+        // 跳转到确认邮箱页面，并带上注册信息
+        router.push(`/confirm-email?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&role=${role}`)
       } else {
         // 登录
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw new Error(error.message)
 
-        // 登录成功后获取用户
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) throw new Error("User not found")
-
-        alert(`We have sent a confirmation email to ${email}. Please check your inbox and click the confirmation link.`)
-
-        // 登录成功后直接跳转首页（或根据角色跳转）
         router.push('/')
       }
       router.refresh()
@@ -83,65 +59,65 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
       {mode === 'sign-up' && (
-        <div className="flex flex-col gap-2">
-          <Label>{t('auth.role')}</Label>
-          <div className="grid grid-cols-2 gap-3">
-            {(
-              [
-                { value: 'student', label: t('auth.student'), Icon: GraduationCap },
-                { value: 'teacher', label: t('auth.teacher'), Icon: School },
-              ] as const
-            ).map(({ value, label, Icon }) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setRole(value)}
-                className={cn(
-                  'flex flex-col items-center gap-2 rounded-xl border-2 p-4 text-sm font-semibold transition-colors',
-                  role === value
-                    ? 'border-primary bg-primary/5 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/40',
-                )}
-                aria-pressed={role === value}
-              >
-                <Icon className="size-6" />
-                {label}
-              </button>
-            ))}
+        <>
+          <div className="flex flex-col gap-2">
+            <Label>{t('auth.role')}</Label>
+            <div className="grid grid-cols-2 gap-3">
+              {(
+                [
+                  { value: 'student', label: t('auth.student'), Icon: GraduationCap },
+                  { value: 'teacher', label: t('auth.teacher'), Icon: School },
+                ] as const
+              ).map(({ value, label, Icon }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRole(value)}
+                  className={cn(
+                    'flex flex-col items-center gap-2 rounded-xl border-2 p-4 text-sm font-semibold transition-colors',
+                    role === value
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/40',
+                  )}
+                  aria-pressed={role === value}
+                >
+                  <Icon className="size-6" />
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
 
-      {mode === 'sign-up' && (
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="name">{t('auth.name')}</Label>
-          <Input id="name" name="name" required autoComplete="name" />
-        </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="name">{t('auth.name')}</Label>
+            <Input id="name" name="name" required autoComplete="name" />
+          </div>
+        </>
       )}
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">{t('auth.email')}</Label>
         <Input id="email" name="email" type="email" required autoComplete="email" placeholder="you@school.edu" />
       </div>
-  
+
       <div className="flex flex-col gap-2">
         <Label htmlFor="password">{t('auth.password')}</Label>
         <div className="relative">
           <Input
             id="password"
             name="password"
-            type={showPassword ? 'text' : 'password'}   // 切换显示/隐藏
+            type={showPassword ? 'text' : 'password'}
             required
             minLength={8}
             autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'}
-            className="pr-10" // 给右边留空间放图标按钮
+            className="pr-10"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
           >
-            {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
         </div>
       </div>

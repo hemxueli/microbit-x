@@ -3,52 +3,72 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 
 export default function ConfirmEmailPage() {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setUser(user)
+    const verifyAndRegister = async () => {
+      const url = new URL(window.location.href)
+      const token = url.searchParams.get('token')
+      const email = url.searchParams.get('email')
+      const name = url.searchParams.get('name')
+      const role = url.searchParams.get('role')
 
-        // 如果邮箱已经确认
-        if (user.confirmed_at) {
-          // 查询角色
-          const { data: teacher } = await supabase
-            .from('teachers')
-            .select('user_id')
-            .eq('user_id', user.id)
-            .single()
-
-          if (teacher) {
-            router.push('/teacher')
-            return
-          }
-
-          const { data: student } = await supabase
-            .from('students')
-            .select('user_id')
-            .eq('user_id', user.id)
-            .single()
-
-          if (student) {
-            router.push('/student')
-            return
-          }
+      // 1. 验证邮箱
+      if (token && email) {
+        const { error } = await supabase.auth.verifyOtp({
+          email,
+          token,
+          type: 'signup', // 固定为 signup
+        })
+        if (error) {
+          alert(error.message)
+          setLoading(false)
+          return
         }
       }
+
+      // 2. 获取用户信息
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.confirmed_at) {
+        setUser(user)
+
+        // 3. 保存到 teachers/students 表
+        if (name && role) {
+          const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: user.id,
+              name,
+              role,
+            }),
+          })
+
+          if (!res.ok) {
+            const errData = await res.json()
+            alert(errData.error || 'Failed to save user profile')
+          }
+        }
+
+        // 4. 跳转到角色页面
+        if (role === 'teacher') {
+          router.push('/teacher')
+        } else {
+          router.push('/student')
+        }
+      } else {
+        alert('Email not confirmed yet. Please check your inbox.')
+      }
+
       setLoading(false)
     }
 
-    // 每隔 3 秒检查一次用户状态
-    const interval = setInterval(checkUser, 3000)
-    return () => clearInterval(interval)
+    verifyAndRegister()
   }, [router])
 
   if (loading) {
@@ -61,35 +81,9 @@ export default function ConfirmEmailPage() {
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md text-center">
         <h1 className="text-2xl font-bold mb-4">Confirm Your Email</h1>
         {user ? (
-          <>
-            <p className="text-gray-600 mb-6">
-              We’ve sent a confirmation link to <span className="font-semibold">{user.email}</span>.
-              Please check your inbox and click the link to activate your account.
-            </p>
-            <p className="text-sm text-gray-500 mb-6">
-              If you don’t see the email, check your spam folder.
-            </p>
-            <Button
-              onClick={async () => {
-                const { error } = await supabase.auth.resend({
-                  type: 'signup',
-                  email: user.email,
-                })
-                if (error) {
-                  alert(error.message)
-                } else {
-                  alert(`Confirmation email resent to ${user.email}. Please check your inbox.`)
-                  // 立即检查一次用户状态
-                  const { data: { user: refreshedUser } } = await supabase.auth.getUser()
-                  if (refreshedUser?.confirmed_at) {
-                    router.push('/student') // 或 /teacher，根据角色
-                  }
-                }
-              }}
-            >
-              Resend Email
-            </Button>
-          </>
+          <p className="text-gray-600">
+            Your email <span className="font-semibold">{user.email}</span> has been confirmed. Redirecting...
+          </p>
         ) : (
           <p className="text-gray-600">No user found. Please sign up again.</p>
         )}

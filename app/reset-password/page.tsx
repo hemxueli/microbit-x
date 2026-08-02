@@ -9,17 +9,22 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Logo } from '@/components/logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState('')
   const { lang } = useI18n()
 
   async function handleReset() {
     setMessage('')
     const { error } = await supabase.auth.updateUser({ password })
-    if (error) setMessage(error.message)
-    else setMessage(dict['reset.success'][lang])
+    if (error) {
+      setMessage(error.message)
+    } else {
+      setMessage(dict['reset.success'][lang])
+    }
   }
 
   return (
@@ -38,13 +43,24 @@ export default function ResetPasswordPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <Input
-                type="password"
-                placeholder={dict['reset.newPassword'][lang]}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={dict['reset.newPassword'][lang]}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                </button>
+              </div>
+
               <Button
                 onClick={handleReset}
                 disabled={!password}
@@ -52,6 +68,7 @@ export default function ResetPasswordPage() {
               >
                 {dict['common.submit'][lang]}
               </Button>
+
               {message && (
                 <p className="mt-4 text-sm text-gray-700 text-center">{message}</p>
               )}
