@@ -1,5 +1,6 @@
 'use client'
 
+import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -16,6 +17,7 @@ type Role = 'student' | 'teacher'
 export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   const { t } = useI18n()
   const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [role, setRole] = useState<Role>('student')
@@ -55,8 +57,8 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           throw new Error(errData.error || 'Failed to save user profile')
         }
 
-        // 4. 跳转
-        router.push(role === 'teacher' ? '/teacher' : '/student')
+        // 4. 跳转到确认邮箱页面
+        router.push('/confirm-email')
       } else {
         // 登录
         const { error } = await supabase.auth.signInWithPassword({ email, password })
@@ -66,7 +68,9 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) throw new Error("User not found")
 
-        // 跳转
+        alert(`We have sent a confirmation email to ${email}. Please check your inbox and click the confirmation link.`)
+
+        // 登录成功后直接跳转首页（或根据角色跳转）
         router.push('/')
       }
       router.refresh()
@@ -119,17 +123,27 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         <Label htmlFor="email">{t('auth.email')}</Label>
         <Input id="email" name="email" type="email" required autoComplete="email" placeholder="you@school.edu" />
       </div>
-
+  
       <div className="flex flex-col gap-2">
         <Label htmlFor="password">{t('auth.password')}</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          required
-          minLength={8}
-          autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'}
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}   // 切换显示/隐藏
+            required
+            minLength={8}
+            autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'}
+            className="pr-10" // 给右边留空间放图标按钮
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {error && (
