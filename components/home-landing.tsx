@@ -81,11 +81,11 @@ export function HomeLanding() {
                   {t('home.heroSubtitle')}
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  {/* 学生按钮 → 永远跳去 sign-in?role=student */}
+                  {/* 学生按钮 */}
                   <Link href="/sign-in?role=student">
                     <Button size="lg">{t('home.ctaStudent')}</Button>
                   </Link>
-                  {/* 老师按钮 → 永远跳去 sign-in?role=teacher */}
+                  {/* 老师按钮 */}
                   <Link href="/sign-in?role=teacher">
                     <Button size="lg" variant="outline">{t('home.ctaTeacher')}</Button>
                   </Link>
