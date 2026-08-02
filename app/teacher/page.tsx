@@ -209,10 +209,11 @@ export default function TeacherPage({ user }: { user: any }) {
         )}
       </main>
 
-      {/* 底部 Footer */}
-      <footer className="border-t border-border bg-background py-4">
-        <div className="mx-auto max-w-6xl px-6 text-center text-gray-500 text-sm">
-          © 2026 {t('app.name')} — {t('app.tagline')}
+      {/* 底部版权栏 */}
+      <footer className="border-t border-border py-6">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
+          <Logo showText={false} />
+          <span>{'\u00A9'} 2026 MicroBOT-X</span>
         </div>
       </footer>
     </div>
