@@ -32,12 +32,13 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     try {
       if (mode === 'sign-up') {
-        // 注册到 Supabase Auth，并指定 redirectTo
+        // 注册到 Supabase Auth，并写入 fullname 到 user_metadata
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: 'https://microbot-x.vercel.app/confirm-email'
+            emailRedirectTo: 'https://microbot-x.vercel.app/confirm-email',
+            data: { name }   // 👈 保存 fullname
           }
         })
         if (error) throw new Error(error.message)
@@ -122,7 +123,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
           >
-            {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
         </div>
       </div>

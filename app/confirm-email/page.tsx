@@ -18,40 +18,44 @@ export default function ConfirmEmailPage() {
       const name = url.searchParams.get('name')
       const role = url.searchParams.get('role')
 
-      // 1. 验证邮箱
+      let verified = false
+
+      // 1. 尝试验证邮箱（只在有 token 时）
       if (token && email) {
         const { error } = await supabase.auth.verifyOtp({
           email,
           token,
-          type: 'signup', // 固定为 signup
+          type: 'signup',
         })
-        if (error) {
-          alert(error.message)
-          setLoading(false)
-          return
+        if (!error) {
+          verified = true
         }
       }
 
-      // 2. 获取用户信息
+      // 2. 获取用户信息（即使 verifyOtp 失败也尝试）
       const { data: { user } } = await supabase.auth.getUser()
       if (user?.confirmed_at) {
         setUser(user)
 
         // 3. 保存到 teachers/students 表
         if (name && role) {
-          const res = await fetch('/api/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              user_id: user.id,
-              name,
-              role,
-            }),
-          })
+          try {
+            const res = await fetch('/api/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                user_id: user.id,
+                name,
+                role,
+              }),
+            })
 
-          if (!res.ok) {
-            const errData = await res.json()
-            alert(errData.error || 'Failed to save user profile')
+            if (!res.ok) {
+              const errData = await res.json()
+              alert(errData.error || 'Failed to save user profile')
+            }
+          } catch (err) {
+            alert('Register API error: ' + (err instanceof Error ? err.message : String(err)))
           }
         }
 
@@ -62,7 +66,7 @@ export default function ConfirmEmailPage() {
           router.push('/student')
         }
       } else {
-        alert('Email not confirmed yet. Please check your inbox.')
+        alert(verified ? 'Email confirmed, but user not found.' : 'Email not confirmed yet. Please check your inbox.')
       }
 
       setLoading(false)
