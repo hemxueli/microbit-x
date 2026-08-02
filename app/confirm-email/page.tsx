@@ -15,12 +15,10 @@ export default function ConfirmEmailPage() {
       const url = new URL(window.location.href)
       const token = url.searchParams.get('token')
       const email = url.searchParams.get('email')
-      const name = url.searchParams.get('name')
-      const role = url.searchParams.get('role')
 
       let verified = false
 
-      // 1. Try to verify email (only if token exists)
+      // 1. 验证邮箱
       if (token && email) {
         const { error } = await supabase.auth.verifyOtp({
           email,
@@ -32,23 +30,41 @@ export default function ConfirmEmailPage() {
         }
       }
 
-      // 2. Get user info
+      // 2. 获取用户信息
       const { data: { user } } = await supabase.auth.getUser()
       if (user?.confirmed_at) {
         setUser(user)
 
-        // 3. Save to teachers/students table
-        if (name && role) {
-          await supabase.from(role === 'teacher' ? 'teachers' : 'students').upsert({
-            user_id: user.id,
-            name,
-            avatar: '/images/default-avatar.png',
-          })
-        }
+        // 3. 从 metadata 里拿 name 和 role
+        const name = user.user_metadata?.name || user.email || user.id
+        const role = user.user_metadata?.role
 
-        // 4. Jump directly to role page
-        alert('Email confirmed successfully! Redirecting to your dashboard...')
-        router.replace(role === 'teacher' ? '/teacher' : '/student')
+        if (role) {
+          try {
+            // 调用你写的 API，自动 upsert
+            const res = await fetch('/api/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                user_id: user.id,
+                name,
+                role,
+              }),
+            })
+
+            if (!res.ok) {
+              const errData = await res.json()
+              alert(errData.error || 'Failed to save user profile')
+            } else {
+              alert('Email confirmed successfully! Redirecting to your dashboard...')
+              router.replace(role === 'teacher' ? '/teacher' : '/student')
+            }
+          } catch (err) {
+            alert('Register API error: ' + (err instanceof Error ? err.message : String(err)))
+          }
+        } else {
+          alert('Email confirmed, but role not found. Please sign up again.')
+        }
       } else {
         alert(verified ? 'Email confirmed, but user not found.' : 'Email not confirmed yet. Please check your inbox.')
       }
