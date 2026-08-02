@@ -141,7 +141,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
           >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
           </button>
         </div>
       </div>
