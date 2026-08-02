@@ -90,6 +90,35 @@ export default function StudentPage() {
       if (updates.avatar) setAvatar(updates.avatar)
     }
   }
+  
+  async function joinClass() {
+  if (!classCode.trim() || !user?.id) return
+
+  // 查询班级是否存在
+  const { data: cls, error: clsError } = await supabase
+    .from('classes')
+    .select('id, name')
+    .eq('id', classCode)
+    .single()
+
+  if (clsError || !cls) {
+    alert(t('student.classNotFound'))
+    return
+  }
+
+  // 更新学生的 class_id
+  const { error } = await supabase
+    .from('students')
+    .update({ class_id: cls.id })
+    .eq('user_id', user.id)
+
+  if (error) {
+    alert(error.message)
+  } else {
+    alert(`${t('student.joinedClass')}: ${cls.name}`)
+    setShowJoin(false)
+  }
+}
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -197,13 +226,6 @@ export default function StudentPage() {
             <p className="text-gray-700 mt-2">
               {t('student.welcomeSubtitle')}
             </p>
-
-            {/* 加入班级按钮 */}
-            <div className="absolute bottom-4 right-4">
-              <Button variant="default" size="sm" onClick={() => setShowJoin(true)}>
-                {t('student.joinClass')}
-              </Button>
-            </div>
           </div>
 
           {/* 学习内容卡片区 */}
@@ -277,46 +299,6 @@ export default function StudentPage() {
       <AiChatWidget defaultLanguage="en"
       />
 
-      {/* 加入班级弹窗 */}
-      {showJoin && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
-            <button
-              onClick={() => setShowJoin(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-            <h2 className="text-lg font-bold mb-4">{t('student.joinClass')}</h2>
-            <input
-              type="text"
-              placeholder={t('student.enterCode')}
-              value={classCode}
-              onChange={(e) => setClassCode(e.target.value)}
-              className="border rounded px-2 py-1 w-full mb-4"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  alert(`${t('student.joinedClass')}: ${classCode}`)
-                  setShowJoin(false)
-                }
-              }}
-            />
-            <div className="flex justify-end">
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => {
-                  alert(`${t('student.joinedClass')}: ${classCode}`)
-                  setShowJoin(false)
-                }}
-              >
-                {t('student.confirm')}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 语言选择弹窗 */}
       {showLangModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
@@ -357,49 +339,45 @@ export default function StudentPage() {
           </div>
         </div>
       )}
+            
+      {/* 加入班级按钮 */}
+      <div className="absolute bottom-4 right-4">
+        <Button variant="default" size="sm" onClick={() => setShowJoin(true)}>
+          {t('student.joinClass')}
+        </Button>
+      </div>
 
-      {/* 编辑头像弹窗 */}
-      {editAvatarOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="font-bold mb-4">Choose Avatar</h2>
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              {avatarOptions.map((src) => (
-                <Image
-                  key={src}
-                  src={src}
-                  alt="avatar option"
-                  width={64}
-                  height={64}
-                  className={`rounded-full cursor-pointer border-4 transition ${
-                    tempAvatar === src ? 'border-primary' : 'border-gray-300'
-                  }`}
-                  onClick={() => setTempAvatar(src)}
-                />
-              ))}
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>Cancel</Button>
-              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>Save</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 编辑名字弹窗 */}
-      {editNameOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="font-bold mb-4">Edit Name</h2>
+      {/* 加入班级弹窗 */}
+      {showJoin && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
+            <button
+              onClick={() => setShowJoin(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+            <h2 className="text-lg font-bold mb-4">{t('student.joinClass')}</h2>
             <input
               type="text"
-              value={tempName}
-              onChange={(e) => setTempName(e.target.value)}
+              placeholder={t('student.enterCode')}
+              value={classCode}
+              onChange={(e) => setClassCode(e.target.value)}
               className="border rounded px-2 py-1 w-full mb-4"
+              onKeyDown={async (e) => {
+                if (e.key === 'Enter') {
+                  await joinClass()
+                }
+              }}
             />
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>Cancel</Button>
-              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>Save</Button>
+            <div className="flex justify-end">
+              <Button
+                variant="default"
+                size="sm"
+                onClick={joinClass}
+              >
+                {t('student.confirm')}
+              </Button>
             </div>
           </div>
         </div>
