@@ -7,64 +7,68 @@ import { Logo } from '@/components/logo'
 
 export default function ConfirmEmailPage() {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    const verifyEmail = async () => {
+    const verifyAndRegister = async () => {
       const url = new URL(window.location.href)
       const token = url.searchParams.get('token')
       const email = url.searchParams.get('email')
+      const name = url.searchParams.get('name')
+      const role = url.searchParams.get('role')
 
-      // 固定 type 为 signup，因为这是邮箱注册确认
+      // 1. 验证邮箱
       if (token && email) {
         const { error } = await supabase.auth.verifyOtp({
           email,
           token,
-          type: 'signup',
+          type: 'signup', // 固定为 signup
         })
         if (error) {
           alert(error.message)
+          setLoading(false)
+          return
         }
       }
 
-      // 验证后获取用户信息
+      // 2. 获取用户信息
       const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
+      if (user?.confirmed_at) {
         setUser(user)
 
-        if (user.confirmed_at) {
-          // 查询角色
-          const { data: teacher } = await supabase
-            .from('teachers')
-            .select('user_id')
-            .eq('user_id', user.id)
-            .single()
+        // 3. 保存到 teachers/students 表
+        if (name && role) {
+          const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: user.id,
+              name,
+              role,
+            }),
+          })
 
-          if (teacher) {
-            router.push('/teacher')
-            return
+          if (!res.ok) {
+            const errData = await res.json()
+            alert(errData.error || 'Failed to save user profile')
           }
-
-          const { data: student } = await supabase
-            .from('students')
-            .select('user_id')
-            .eq('user_id', user.id)
-            .single()
-
-          if (student) {
-            router.push('/student')
-            return
-          }
-
-          // 如果没有角色，跳到默认首页
-          router.push('/')
         }
+
+        // 4. 跳转到角色页面
+        if (role === 'teacher') {
+          router.push('/teacher')
+        } else {
+          router.push('/student')
+        }
+      } else {
+        alert('Email not confirmed yet. Please check your inbox.')
       }
+
       setLoading(false)
     }
 
-    verifyEmail()
+    verifyAndRegister()
   }, [router])
 
   if (loading) {
@@ -77,14 +81,9 @@ export default function ConfirmEmailPage() {
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md text-center">
         <h1 className="text-2xl font-bold mb-4">Confirm Your Email</h1>
         {user ? (
-          <>
-            <p className="text-gray-600 mb-6">
-              Your email <span className="font-semibold">{user.email}</span> has been confirmed.
-            </p>
-            <p className="text-sm text-gray-500 mb-6">
-              Redirecting you to your dashboard...
-            </p>
-          </>
+          <p className="text-gray-600">
+            Your email <span className="font-semibold">{user.email}</span> has been confirmed. Redirecting...
+          </p>
         ) : (
           <p className="text-gray-600">No user found. Please sign up again.</p>
         )}
