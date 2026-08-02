@@ -96,7 +96,12 @@ export default function TeacherPage() {
   async function updateProfile(updates: { name?: string; avatar?: string }) {
     if (!user) return
 
-    const payload = { user_id: user.id, ...updates }
+    const payload = {
+      user_id: user.id,
+      name: updates.name ?? name,   // 👈 保证 name 永远有值
+      avatar: updates.avatar ?? avatar,
+    }
+
     const { error } = await supabase.from('teachers').upsert(payload)
 
     if (error) {
