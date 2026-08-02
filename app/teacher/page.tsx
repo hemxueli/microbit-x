@@ -54,25 +54,30 @@ export default function TeacherPage() {
 
   // 确保用户 profile 存在并加载
   async function ensureProfile(user: any) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('teachers')
       .select('user_id, name, avatar')
       .eq('user_id', user.id)
       .single()
 
+    if (error && error.code !== 'PGRST116') {
+      alert('Error loading profile: ' + error.message)
+      return
+    }
+
     if (!data) {
-      // 如果没有记录，插入默认值
+      const defaultName = user.user_metadata?.name || user.email || user.id
+      const defaultAvatar = '/images/default-avatar.png'
       await supabase.from('teachers').insert({
         user_id: user.id,
-        name: user.user_metadata?.name || user.email || user.id,
-        avatar: '/images/default-avatar.png',
+        name: defaultName,
+        avatar: defaultAvatar,
       })
-      setName(user.user_metadata?.name || user.email || user.id)
-      setAvatar('/images/default-avatar.png')
-      setTempName(user.user_metadata?.name || user.email || user.id)
-      setTempAvatar('/images/default-avatar.png')
+      setName(defaultName)
+      setAvatar(defaultAvatar)
+      setTempName(defaultName)
+      setTempAvatar(defaultAvatar)
     } else {
-      // 如果有记录，直接用数据库里的值
       setName(data.name)
       setAvatar(data.avatar)
       setTempName(data.name)
@@ -89,15 +94,22 @@ export default function TeacherPage() {
   }
 
   async function updateProfile(updates: { name?: string; avatar?: string }) {
-    const { error } = await supabase
-      .from('teachers')
-      .update(updates)
-      .eq('user_id', user.id)
+    if (!user) return
 
-    if (error) alert(error.message)
-    else {
-      if (updates.name) setName(updates.name)
-      if (updates.avatar) setAvatar(updates.avatar)
+    const payload = { user_id: user.id, ...updates }
+    const { error } = await supabase.from('teachers').upsert(payload)
+
+    if (error) {
+      alert(error.message)
+    } else {
+      if (updates.name) {
+        setName(updates.name)
+        setTempName(updates.name)
+      }
+      if (updates.avatar) {
+        setAvatar(updates.avatar)
+        setTempAvatar(updates.avatar)
+      }
     }
   }
 
