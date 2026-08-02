@@ -91,7 +91,7 @@ export function HomeLanding() {
                   </Link>
                   {/* Get started 保持注册逻辑 */}
                   <Link href="/sign-up">
-                    <Button size="lg" variant="secondary">{t('nav.getStarted')}</Button>
+                    <Button size="lg" variant="secondary">{t('home.ctaStudent')}</Button>
                   </Link>
                 </div>
               </div>
