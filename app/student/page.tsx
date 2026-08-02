@@ -12,10 +12,10 @@ import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
-export default function StudentPage({ user }: { user: any }) {
+export default function StudentPage() {
   const { t } = useI18n()
   const router = useRouter()
-
+  const [user, setUser] = useState<any>(null)
   const [showJoin, setShowJoin] = useState(false)
   const [classCode, setClassCode] = useState('')
   const [showLangModal, setShowLangModal] = useState(false)
@@ -39,33 +39,43 @@ export default function StudentPage({ user }: { user: any }) {
     '/images/savatar6.png',
   ]
 
-  // 自动补全逻辑：检查 students 表是否有记录，没有就插入
+  // 加载用户并初始化
   useEffect(() => {
-    async function ensureProfile() {
-      if (!user?.id) return
-
-      const { data } = await supabase
-        .from('students')
-        .select('user_id, name, avatar')
-        .eq('user_id', user.id)
-        .single()
-
-      if (!data) {
-        await supabase.from('students').insert({
-          user_id: user.id,
-          name: user.email ?? user.id,
-          avatar: '/images/default-avatar.png',
-        })
-        setName(user.email ?? user.id)
-        setAvatar('/images/default-avatar.png')
+    const loadUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUser(user)
+        ensureProfile(user)
       } else {
-        setName(data.name)
-        setAvatar(data.avatar)
+        router.push("/sign-in")
       }
     }
+    loadUser()
+  }, [])
 
-    ensureProfile()
-  }, [user])
+  // 自动补全逻辑：检查 students 表是否有记录，没有就插入
+  async function ensureProfile(user: any) {
+    const { data } = await supabase
+      .from('students')
+      .select('user_id, name, avatar')
+      .eq('user_id', user.id)
+      .single()
+
+    if (!data) {
+      await supabase.from('students').insert({
+        user_id: user.id,
+        name: user.email ?? user.id,
+        avatar: '/images/default-avatar.png',
+      })
+      setName(user.email ?? user.id)
+      setAvatar('/images/default-avatar.png')
+    } else {
+      setName(data.name)
+      setAvatar(data.avatar)
+    }
+    setTempName(name)
+    setTempAvatar(avatar)
+  }
 
   // 更新名字或头像
   async function updateProfile(updates: { name?: string; avatar?: string }) {
@@ -97,7 +107,7 @@ export default function StudentPage({ user }: { user: any }) {
               size="sm"
               onClick={async () => {
                 await supabase.auth.signOut()
-                router.push('/')   // 用 router.push 替代 window.location.href
+                router.push('/')
               }}
             >
               {t('nav.logout')}
@@ -128,6 +138,53 @@ export default function StudentPage({ user }: { user: any }) {
           </div>
         </div>
       </header>
+
+      {/* 编辑头像弹窗 */}
+      {editAvatarOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="font-bold mb-4">{t('editAvatar')}</h2>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              {avatarOptions.map((src) => (
+                <Image
+                  key={src}
+                  src={src}
+                  alt="avatar option"
+                  width={64}
+                  height={64}
+                  className={`rounded-full cursor-pointer border-4 transition ${
+                    tempAvatar === src ? 'border-primary' : 'border-gray-300'
+                  }`}
+                  onClick={() => setTempAvatar(src)}
+                />
+              ))}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>Cancel</Button>
+              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>Save</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 编辑名字弹窗 */}
+      {editNameOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="font-bold mb-4">{t('editUserName')}</h2>
+            <input
+              type="text"
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              className="border rounded px-2 py-1 w-full mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>Cancel</Button>
+              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>Save</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 页面主体 */}
       <main className="flex-1">
