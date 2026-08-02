@@ -51,8 +51,8 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           })
         }
 
-        alert(`Sign-up successful! A confirmation email has been sent to ${email}. Please check your inbox and reload the page after verification.`)
-        window.location.reload()
+        alert(`Sign-up successful! A confirmation email has been sent to ${email}. Please check your inbox to verify your account. After confirming, please log in again.`)
+        router.push('/sign-in')
       } else {
         // 登录
         const { error } = await supabase.auth.signInWithPassword({ email, password })
