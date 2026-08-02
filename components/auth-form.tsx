@@ -1,4 +1,3 @@
-// AuthForm.tsx
 'use client'
 
 import { Eye, EyeOff, GraduationCap, School } from 'lucide-react'
@@ -33,8 +32,14 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     try {
       if (mode === 'sign-up') {
-        // 注册到 Supabase Auth
-        const { error } = await supabase.auth.signUp({ email, password })
+        // 注册到 Supabase Auth，并指定 redirectTo
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: 'https://microbot-x.vercel.app/confirm-email'
+          }
+        })
         if (error) throw new Error(error.message)
 
         // 提示用户去邮箱确认
