@@ -32,20 +32,18 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     try {
       if (mode === 'sign-up') {
-        // 注册到 Supabase Auth
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin,
-            data: { name }
+            emailRedirectTo: `${window.location.origin}/confirm-email`, // 跳到确认页面
+            data: { name, role } // 保存名字和角色到 metadata
           }
         })
         if (error) throw new Error(error.message)
 
         const user = data.user
         if (user) {
-          // 插入到 teachers/students 表
           await supabase.from(role === 'teacher' ? 'teachers' : 'students').insert({
             user_id: user.id,
             name,

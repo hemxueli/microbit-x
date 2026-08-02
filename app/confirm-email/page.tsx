@@ -32,36 +32,23 @@ export default function ConfirmEmailPage() {
         }
       }
 
-      // 2. Get user info (even if verifyOtp fails, still try)
+      // 2. Get user info
       const { data: { user } } = await supabase.auth.getUser()
       if (user?.confirmed_at) {
         setUser(user)
 
         // 3. Save to teachers/students table
         if (name && role) {
-          try {
-            const res = await fetch('/api/register', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                user_id: user.id,
-                name,
-                role,
-              }),
-            })
-
-            if (!res.ok) {
-              const errData = await res.json()
-              alert(errData.error || 'Failed to save user profile')
-            }
-          } catch (err) {
-            alert('Register API error: ' + (err instanceof Error ? err.message : String(err)))
-          }
+          await supabase.from(role === 'teacher' ? 'teachers' : 'students').upsert({
+            user_id: user.id,
+            name,
+            avatar: '/images/default-avatar.png',
+          })
         }
 
-        // 4. Show success alert and reload
-        alert('Email confirmed successfully! Please reload the page to continue.')
-        window.location.reload()
+        // 4. Jump directly to role page
+        alert('Email confirmed successfully! Redirecting to your dashboard...')
+        router.replace(role === 'teacher' ? '/teacher' : '/student')
       } else {
         alert(verified ? 'Email confirmed, but user not found.' : 'Email not confirmed yet. Please check your inbox.')
       }
@@ -83,7 +70,7 @@ export default function ConfirmEmailPage() {
         <h1 className="text-2xl font-bold mb-4">Confirm Your Email</h1>
         {user ? (
           <p className="text-gray-600">
-            Your email <span className="font-semibold">{user.email}</span> has been confirmed. Please reload the page.
+            Your email <span className="font-semibold">{user.email}</span> has been confirmed. Redirecting...
           </p>
         ) : (
           <p className="text-gray-600">No user found. Please sign up again.</p>
