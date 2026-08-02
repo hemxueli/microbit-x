@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useI18n, dict } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
@@ -16,6 +16,21 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState('')
   const { lang } = useI18n()
+
+  // 确认用户已通过邮件链接进入页面
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    const token = url.searchParams.get('token')
+    const email = url.searchParams.get('email')
+
+    if (token && email) {
+      // 验证 OTP，确保用户已登录上下文
+      supabase.auth.verifyOtp({ email, token, type: 'recovery' })
+        .then(({ error }) => {
+          if (error) setMessage(error.message)
+        })
+    }
+  }, [])
 
   async function handleReset() {
     setMessage('')
@@ -37,7 +52,7 @@ export default function ResetPasswordPage() {
       <div className="flex flex-1 items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md rounded-xl shadow-lg bg-white">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-extrabold text-teal-800">
+            <CardTitle className="text-2xl font-extrabold text-red-600">
               {dict['reset.title'][lang]}
             </CardTitle>
           </CardHeader>
@@ -64,7 +79,7 @@ export default function ResetPasswordPage() {
               <Button
                 onClick={handleReset}
                 disabled={!password}
-                className="w-full"
+                className="w-full bg-red-600 hover:bg-red-700 text-white"
               >
                 {dict['common.submit'][lang]}
               </Button>
