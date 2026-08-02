@@ -82,16 +82,12 @@ export function HomeLanding() {
                 </p>
                 <div className="flex flex-wrap gap-3">
                   {/* 学生按钮 */}
-                  <Link href="/sign-in?role=student">
+                  <Link href="/sign-up?role=student">
                     <Button size="lg">{t('home.ctaStudent')}</Button>
                   </Link>
                   {/* 老师按钮 */}
-                  <Link href="/sign-in?role=teacher">
+                  <Link href="/sign-up?role=teacher">
                     <Button size="lg" variant="outline">{t('home.ctaTeacher')}</Button>
-                  </Link>
-                  {/* Get started 保持注册逻辑 */}
-                  <Link href="/sign-up">
-                    <Button size="lg" variant="secondary">{t('home.ctaStudent')}</Button>
                   </Link>
                 </div>
               </div>
