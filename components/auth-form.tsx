@@ -32,32 +32,54 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 
     try {
       if (mode === 'sign-up') {
-        // 注册到 Supabase Auth，并写入 fullname 到 user_metadata
-        const { error } = await supabase.auth.signUp({
+        // 注册到 Supabase Auth
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: 'https://microbot-x.vercel.app/confirm-email',
-            data: { name }   // 👈 保存 fullname
+            emailRedirectTo: window.location.origin,
+            data: { name }
           }
         })
         if (error) throw new Error(error.message)
 
-        // 提示用户去邮箱确认
-        alert(`We have sent a confirmation email to ${email}. Please check your inbox.`)
+        const user = data.user
+        if (user) {
+          // 插入到 teachers/students 表
+          await supabase.from(role === 'teacher' ? 'teachers' : 'students').insert({
+            user_id: user.id,
+            name,
+            avatar: '/images/default-avatar.png',
+          })
+        }
 
-        // 跳转到确认邮箱页面，并带上注册信息
-        router.push(`/confirm-email?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&role=${role}`)
+        alert(`Sign-up successful! A confirmation email has been sent to ${email}. Please check your inbox and reload the page after verification.`)
+        window.location.reload()
       } else {
         // 登录
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw new Error(error.message)
 
-        router.push('/')
+        // 登录成功后查询角色
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: teacher } = await supabase
+            .from('teachers')
+            .select('user_id')
+            .eq('user_id', user.id)
+            .single()
+
+          if (teacher) {
+            router.push('/teacher')
+          } else {
+            router.push('/student')
+          }
+        }
       }
-      router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
+      setLoading(false)
+    } finally {
       setLoading(false)
     }
   }
@@ -123,7 +145,7 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
           >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
           </button>
         </div>
       </div>

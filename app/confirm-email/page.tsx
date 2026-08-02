@@ -20,7 +20,7 @@ export default function ConfirmEmailPage() {
 
       let verified = false
 
-      // 1. 尝试验证邮箱（只在有 token 时）
+      // 1. Try to verify email (only if token exists)
       if (token && email) {
         const { error } = await supabase.auth.verifyOtp({
           email,
@@ -32,12 +32,12 @@ export default function ConfirmEmailPage() {
         }
       }
 
-      // 2. 获取用户信息（即使 verifyOtp 失败也尝试）
+      // 2. Get user info (even if verifyOtp fails, still try)
       const { data: { user } } = await supabase.auth.getUser()
       if (user?.confirmed_at) {
         setUser(user)
 
-        // 3. 保存到 teachers/students 表
+        // 3. Save to teachers/students table
         if (name && role) {
           try {
             const res = await fetch('/api/register', {
@@ -59,12 +59,9 @@ export default function ConfirmEmailPage() {
           }
         }
 
-        // 4. 跳转到角色页面
-        if (role === 'teacher') {
-          router.push('/teacher')
-        } else {
-          router.push('/student')
-        }
+        // 4. Show success alert and reload
+        alert('Email confirmed successfully! Please reload the page to continue.')
+        window.location.reload()
       } else {
         alert(verified ? 'Email confirmed, but user not found.' : 'Email not confirmed yet. Please check your inbox.')
       }
@@ -86,7 +83,7 @@ export default function ConfirmEmailPage() {
         <h1 className="text-2xl font-bold mb-4">Confirm Your Email</h1>
         {user ? (
           <p className="text-gray-600">
-            Your email <span className="font-semibold">{user.email}</span> has been confirmed. Redirecting...
+            Your email <span className="font-semibold">{user.email}</span> has been confirmed. Please reload the page.
           </p>
         ) : (
           <p className="text-gray-600">No user found. Please sign up again.</p>
