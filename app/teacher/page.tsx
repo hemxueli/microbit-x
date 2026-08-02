@@ -14,6 +14,7 @@ export default function TeacherPage() {
   const { t } = useI18n()
   const router = useRouter()
 
+  // 保留你的 const
   const [user, setUser] = useState<any>(null)
   const [name, setName] = useState("")
   const [avatar, setAvatar] = useState("/images/default-avatar.png")
@@ -42,8 +43,8 @@ export default function TeacherPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
-        ensureProfile(user)
-        loadClasses(user)
+        await ensureProfile(user)   // 👈 确保 profile 存在并加载
+        await loadClasses(user)
       } else {
         router.push("/sign-in")
       }
@@ -51,6 +52,7 @@ export default function TeacherPage() {
     loadUser()
   }, [])
 
+  // 确保用户 profile 存在并加载
   async function ensureProfile(user: any) {
     const { data } = await supabase
       .from('teachers')
@@ -59,19 +61,23 @@ export default function TeacherPage() {
       .single()
 
     if (!data) {
+      // 如果没有记录，插入默认值
       await supabase.from('teachers').insert({
         user_id: user.id,
-        name: user.email ?? user.id,
+        name: user.user_metadata?.name || user.email || user.id,
         avatar: '/images/default-avatar.png',
       })
-      setName(user.email ?? user.id)
+      setName(user.user_metadata?.name || user.email || user.id)
       setAvatar('/images/default-avatar.png')
+      setTempName(user.user_metadata?.name || user.email || user.id)
+      setTempAvatar('/images/default-avatar.png')
     } else {
+      // 如果有记录，直接用数据库里的值
       setName(data.name)
       setAvatar(data.avatar)
+      setTempName(data.name)
+      setTempAvatar(data.avatar)
     }
-    setTempName(name)
-    setTempAvatar(avatar)
   }
 
   async function loadClasses(user: any) {
