@@ -130,28 +130,39 @@ export default function ClassDetailPage({ user }: { user: any }) {
             <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowJoinCodeModal(true)}>
               {t('teacher.joinStudent')}
             </Button>
-              
           </div>
+
           {students.length === 0 ? (
             <p className="text-gray-500 italic">{t('teacher.noStudents')}</p>
           ) : (
-            <ul className="space-y-3">
-              {students.map((s) => (
-                <li key={s.user_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-teal-100">
-                  <div className="flex items-center gap-3">
-                    <img src={s.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-teal-300" />
-                    <span className="font-medium">{s.name}</span>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="bg-teal-500 hover:bg-teal-600 text-white"
-                    onClick={() => loadQuizResults(s.user_id)}
-                  >
-                    {t('teacher.viewResults')}
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
+              <thead className="bg-teal-100 text-teal-700">
+                <tr>
+                  <th className="px-4 py-2 text-center">{t('teacher.avatar')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.name')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.actions')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map((s, idx) => (
+                  <tr key={s.user_id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
+                    <td className="px-4 py-2 text-center">
+                      <img src={s.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-teal-300 mx-auto" />
+                    </td>
+                    <td className="px-4 py-2 text-center font-medium">{s.name}</td>
+                    <td className="px-4 py-2 text-center">
+                      <Button
+                        size="sm"
+                        className="bg-teal-500 hover:bg-teal-600 text-white"
+                        onClick={() => loadQuizResults(s.user_id)}
+                      >
+                        {t('teacher.viewResults')}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </section>
 
@@ -162,18 +173,18 @@ export default function ClassDetailPage({ user }: { user: any }) {
             {quizResults.length === 0 ? (
               <p className="text-gray-500 italic">{t('teacher.noQuiz')}</p>
             ) : (
-              <table className="w-full border-collapse border rounded-lg overflow-hidden shadow-sm">
-                <thead>
-                  <tr className="bg-teal-50 text-left">
+              <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
+                <thead className="bg-teal-100 text-teal-700">
+                  <tr>
                     <th className="border px-4 py-2">{t('teacher.score')}</th>
                     <th className="border px-4 py-2">{t('teacher.feedback')}</th>
                     <th className="border px-4 py-2">{t('teacher.date')}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {quizResults.map((qr) => (
-                    <tr key={qr.id} className="hover:bg-gray-50">
-                      <td className="border px-4 py-2">{qr.score}</td>
+                  {quizResults.map((qr, idx) => (
+                    <tr key={qr.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
+                      <td className="border px-4 py-2 text-center">{qr.score}</td>
                       <td className="border px-4 py-2 flex items-center gap-2">
                         <span>{qr.feedback || t('teacher.noFeedback')}</span>
                         <Button
@@ -188,7 +199,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
                           ✏️
                         </Button>
                       </td>
-                      <td className="border px-4 py-2">{new Date(qr.created_at).toLocaleDateString()}</td>
+                      <td className="border px-4 py-2 text-center">{new Date(qr.created_at).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -203,23 +214,36 @@ export default function ClassDetailPage({ user }: { user: any }) {
           {assignments.length === 0 ? (
             <p className="text-gray-500 italic">{t('teacher.noAssignments')}</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {assignments.map((a) => (
-                <div key={a.id} className="border rounded-lg p-4 shadow-sm bg-white border-teal-200">
-                  <h3 className="font-bold text-lg mb-2 text-teal-700">{a.title}</h3>
-                  <p className="text-gray-600 mb-2">{a.description}</p>
-                  {a.file_url && (
-                    <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
-                      {t('teacher.viewFile')}
-                    </a>
-                                    )}
-                </div>
-              ))}
-            </div>
+            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
+              <thead className="bg-teal-100 text-teal-700">
+                <tr>
+                  <th className="px-4 py-2 text-center">{t('teacher.title')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.description')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.file')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {assignments.map((a, idx) => (
+                  <tr key={a.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
+                    <td className="px-4 py-2 text-center font-bold text-teal-700">{a.title}</td>
+                    <td className="px-4 py-2 text-center text-gray-600">{a.description}</td>
+                    <td className="px-4 py-2 text-center">
+                      {a.file_url ? (
+                        <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
+                          {t('teacher.viewFile')}
+                        </a>
+                      ) : (
+                        <span className="text-gray-400 italic">{t('teacher.noFile')}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
 
           {/* 布置作业按钮 */}
-          <div className="mt-6">
+          <div className="mt-6 flex justify-end">
             <Button
               className="bg-teal-500 hover:bg-teal-600 text-white"
               onClick={() => setShowAssignmentModal(true)}
@@ -229,6 +253,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
           </div>
         </section>
       </main>
+
       {/* 作业弹窗 */}
       {showAssignmentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
