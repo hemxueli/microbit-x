@@ -397,9 +397,10 @@ export default function StudentPage() {
         </section>
 
         {/* Class 区块 */}
-        <section className="border border-teal-300 rounded-lg shadow-sm p-4 bg-white mt-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-teal-600">{t('student.classes')}</h2>
+        <section className="mt-12 px-6">
+          {/* 标题 + 按钮在同一行 */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">{t('student.classes')}</h2>
             <Button
               className="bg-teal-500 hover:bg-teal-600 text-white"
               onClick={() => setShowJoinClassModal(true)}
@@ -408,38 +409,38 @@ export default function StudentPage() {
             </Button>
           </div>
 
-          {classes.length === 0 ? (
-            <p className="text-gray-500 italic">{t('student.noClasses')}</p>
-          ) : (
-            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
-              <thead className="bg-teal-100 text-teal-700">
-                <tr>
-                  <th className="px-4 py-2 text-center">{t('student.className')}</th>
-                  <th className="px-4 py-2 text-center">{t('student.assignments')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {classes.map((cls, idx) => (
-                  <tr key={cls.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
-                    <td className="px-4 py-2 text-center font-medium">{cls.name}</td>
-                    <td className="px-4 py-2 text-center">
-                      {cls.assignments.length === 0 ? (
-                        <span className="text-gray-400 italic">{t('student.noAssignments')}</span>
-                      ) : (
-                        <ul className="list-disc list-inside text-left">
-                          {cls.assignments.map((a) => (
-                            <li key={a.id}>
-                              <span className="font-semibold text-teal-700">{a.title}</span> – {a.description}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          {/* 班级卡片区 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {classes.length === 0 ? (
+              <div className="col-span-3 text-gray-500 italic text-center">
+                {t('student.noClasses')}
+              </div>
+            ) : (
+              classes.map((cls) => (
+                <div
+                  key={cls.id}
+                  className="relative h-[280px] rounded-lg shadow-md overflow-hidden cursor-pointer group bg-teal-100"
+                >
+                  <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4">
+                    <span className="text-white text-2xl font-bold mb-2 group-hover:scale-110 transition">
+                      {cls.name}
+                    </span>
+                    {cls.assignments.length === 0 ? (
+                      <span className="text-gray-200 italic">{t('student.noAssignments')}</span>
+                    ) : (
+                      <ul className="text-white text-sm list-disc list-inside text-left">
+                        {cls.assignments.map((a) => (
+                          <li key={a.id}>
+                            <span className="font-semibold">{a.title}</span> – {a.description}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </section>
       </main>
 
