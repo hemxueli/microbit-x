@@ -94,7 +94,7 @@ export default function StudentPage() {
     const { data, error } = await supabase
       .from('classes')
       .select('id, name')
-      .eq('join_code', joinCode.trim().toUpperCase())
+      .eq('join_code', joinCode.trim().toUpperCase()) // 👈 统一大小写
       .maybeSingle()
 
     if (error || !data) {
@@ -109,7 +109,7 @@ export default function StudentPage() {
 
     setShowJoinClassModal(false)
     setJoinCode('')
-    await loadClasses(user) // 刷新班级列表
+    await loadClasses(user)
   }
 
   // 确保 profile 存在并加载
