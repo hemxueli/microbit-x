@@ -197,7 +197,6 @@ export default function TeacherPage() {
               <th className="px-4 py-2 text-center">{t('teacher.classList')}</th>
               <th className="px-4 py-2 text-center">{t('teacher.studentsCount')}</th>
               <th className="px-4 py-2 text-center">{t('teacher.createtime')}</th>
-              <th className="px-4 py-2 text-center">Join Code</th>
               <th className="px-4 py-2 text-center">{t('teacher.checkClass')}</th>
             </tr>
           </thead>
@@ -207,7 +206,6 @@ export default function TeacherPage() {
               <td className="px-4 py-2 text-center">{cls.name}</td>
               <td className="px-4 py-2 text-center">{cls.student_count}</td>
               <td className="px-4 py-2 text-center">{new Date(cls.created_at).toLocaleDateString()}</td>
-              <td className="px-4 py-2 text-center font-mono text-teal-700">{cls.join_code}</td>
               <td className="px-4 py-2 text-center">
                 <Button
                   variant="outline"
