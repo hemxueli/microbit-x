@@ -200,53 +200,6 @@ export default function TeacherPage() {
         </div>
       </header>
 
-      {/* 编辑头像弹窗 */}
-      {editAvatarOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="font-bold mb-4">{t('editAvatar')}</h2>
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              {avatarOptions.map((src) => (
-                <Image
-                  key={src}
-                  src={src}
-                  alt="avatar option"
-                  width={64}
-                  height={64}
-                  className={`rounded-full cursor-pointer border-4 transition ${
-                    tempAvatar === src ? 'border-primary' : 'border-gray-300'
-                  }`}
-                  onClick={() => setTempAvatar(src)}
-                />
-              ))}
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>{t('common.cancel')}</Button>
-              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>{t('common.save')}</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 编辑名字弹窗 */}
-      {editNameOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="font-bold mb-4">{t('editUserName')}</h2>
-            <input
-              type="text"
-              value={tempName}
-              onChange={(e) => setTempName(e.target.value)}
-              className="border rounded px-2 py-1 w-full mb-4"
-            />
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>{t('common.cancel')}</Button>
-              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>{t('common.save')}</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 页面主体 */}
       <main className="flex-1 p-6 max-w-5xl mx-auto">
         <h1 className="text-3xl font-bold mb-4">{t('teacher.welcomeTitle')}</h1>
@@ -306,6 +259,54 @@ export default function TeacherPage() {
         )}
       </main>
 
+        
+      {/* 编辑头像弹窗 */}
+      {editAvatarOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="font-bold mb-4">{t('editAvatar')}</h2>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              {avatarOptions.map((src) => (
+                <Image
+                  key={src}
+                  src={src}
+                  alt="avatar option"
+                  width={64}
+                  height={64}
+                  className={`rounded-full cursor-pointer border-4 transition ${
+                    tempAvatar === src ? 'border-primary' : 'border-gray-300'
+                  }`}
+                  onClick={() => setTempAvatar(src)}
+                />
+              ))}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>{t('common.cancel')}</Button>
+              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>{t('common.save')}</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 编辑名字弹窗 */}
+      {editNameOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="font-bold mb-4">{t('editUserName')}</h2>
+            <input
+              type="text"
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
+              className="border rounded px-2 py-1 w-full mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>{t('common.cancel')}</Button>
+              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>{t('common.save')}</Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* 底部版权栏 */}
       <footer className="border-t border-border py-6">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
