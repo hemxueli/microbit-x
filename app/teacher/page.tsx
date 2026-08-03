@@ -194,11 +194,11 @@ export default function TeacherPage() {
         <table className="w-full border border-teal-300 rounded-lg overflow-hidden">
           <thead className="bg-teal-100 text-teal-700">
             <tr>
-              <th className="px-4 py-2 text-left">{t('teacher.classList')}</th>
-              <th className="px-4 py-2 text-left">{t('teacher.studentsCount')}</th>
-              <th className="px-4 py-2 text-left">{t('teacher.createtime')}</th>
-              <th className="px-4 py-2 text-left">Join Code</th>
-              <th className="px-4 py-2 text-left">{t('teacher.enterClass')}</th>
+              <th className="px-4 py-2 text-center">{t('teacher.classList')}</th>
+              <th className="px-4 py-2 text-center">{t('teacher.studentsCount')}</th>
+              <th className="px-4 py-2 text-center">{t('teacher.createtime')}</th>
+              <th className="px-4 py-2 text-center">Join Code</th>
+              <th className="px-4 py-2 text-center">{t('teacher.checkClass')}</th>
             </tr>
           </thead>
           <tbody>
