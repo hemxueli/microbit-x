@@ -230,7 +230,8 @@ export default function ClassDetailPage({ user }: { user: any }) {
       {/* 作业弹窗 */}
       {showAssignmentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+          <div className="bg-white p-6 rounded shadow-lg w-96 h-[500px] relative flex flex-col">
+            {/* 关闭按钮 */}
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               onClick={() => setShowAssignmentModal(false)}
@@ -241,34 +242,74 @@ export default function ClassDetailPage({ user }: { user: any }) {
             <h2 className="text-xl font-bold mb-4 text-teal-700">
               {t('teacher.newAssignment')}
             </h2>
-            <input
-              type="text"
-              value={newAssignmentTitle}
-              onChange={(e) => setNewAssignmentTitle(e.target.value)}
-              placeholder={t('teacher.assignmentTitle')}
-              className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
-            />
-            <textarea
-              value={newAssignmentDesc}
-              onChange={(e) => setNewAssignmentDesc(e.target.value)}
-              placeholder={t('teacher.assignmentDesc')}
-              className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
-            />
-            <input
-              type="text"
-              value={newAssignmentFile}
-              onChange={(e) => setNewAssignmentFile(e.target.value)}
-              placeholder={t('teacher.uploadFile')}
-              className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
-            />
-            <input
-              type="text"
-              value={newAssignmentLink}
-              onChange={(e) => setNewAssignmentLink(e.target.value)}
-              placeholder={t('teacher.uploadLink')}
-              className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
-            />
-            <div className="flex justify-end gap-2">
+
+            {/* 内容区可滚动 */}
+            <div className="flex-1 overflow-y-auto pr-2">
+              <input
+                type="text"
+                value={newAssignmentTitle}
+                onChange={(e) => setNewAssignmentTitle(e.target.value)}
+                placeholder={t('teacher.assignmentTitle')}
+                className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
+              />
+              <textarea
+                value={newAssignmentDesc}
+                onChange={(e) => setNewAssignmentDesc(e.target.value)}
+                placeholder={t('teacher.assignmentDesc')}
+                className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
+              />
+
+              {/* 上传按钮区 */}
+              <div className="flex gap-4 mb-4">
+                {/* 上传文件按钮 */}
+                <label className="flex flex-col items-center justify-center w-16 h-16 border border-teal-300 rounded-lg cursor-pointer hover:bg-teal-50 relative group">
+                  📁
+                  <span className="absolute bottom-[-1.5rem] text-xs text-gray-500 opacity-0 group-hover:opacity-100">
+                    {t('teacher.uploadFile')}
+                  </span>
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        setNewAssignmentFile(`${file.name} (${(file.size / 1024).toFixed(1)} KB, ${file.type})`)
+                      }
+                    }}
+                  />
+                </label>
+
+                {/* 上传链接按钮 */}
+                <button
+                  type="button"
+                  className="flex flex-col items-center justify-center w-16 h-16 border border-teal-300 rounded-lg cursor-pointer hover:bg-teal-50 relative group"
+                  onClick={() => {
+                    const link = prompt(t('teacher.uploadLink'), 'https://')
+                    if (link) setNewAssignmentLink(link)
+                  }}
+                >
+                  🔗
+                  <span className="absolute bottom-[-1.5rem] text-xs text-gray-500 opacity-0 group-hover:opacity-100">
+                    {t('teacher.uploadLink')}
+                  </span>
+                </button>
+              </div>
+
+              {/* 显示已选择的文件或链接 */}
+              {newAssignmentFile && (
+                <p className="text-sm text-gray-600 mb-2">
+                  {t('teacher.uploadFile')}: {newAssignmentFile}
+                </p>
+              )}
+              {newAssignmentLink && (
+                <p className="text-sm text-gray-600 mb-2">
+                  {t('teacher.uploadLink')}: {newAssignmentLink}
+                </p>
+              )}
+            </div>
+
+            {/* 底部按钮 */}
+            <div className="flex justify-end gap-2 mt-4">
               <Button variant="ghost" onClick={() => setShowAssignmentModal(false)}>
                 {t('common.cancel')}
               </Button>
