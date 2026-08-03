@@ -882,9 +882,154 @@ export const dict: Dict = {
     en: 'Edit User Name',
     zh: '编辑用户名字',
     ms: 'Sunting Nama Pengguna',
-  }
+  },
+    'teacher.classDetail': {
+    en: 'Class Details',
+    zh: '班级详情',
+    ms: 'Butiran Kelas',
+  },
+
+  'teacher.students': {
+    en: 'Student List',
+    zh: '学生列表',
+    ms: 'Senarai Pelajar',
+  },
+
+  'teacher.joinStudent': {
+    en: 'Add Student',
+    zh: '加入学生',
+    ms: 'Tambah Pelajar',
+  },
+
+  'teacher.viewResults': {
+    en: 'View Results',
+    zh: '查询成绩',
+    ms: 'Lihat Keputusan',
+  },
+
+  'teacher.quizResults': {
+    en: 'Quiz Results',
+    zh: '学生测验成绩',
+    ms: 'Keputusan Kuiz',
+  },
+
+  'teacher.noQuiz': {
+    en: 'This student has not completed any quiz',
+    zh: '该学生还没有完成任何测验',
+    ms: 'Pelajar ini belum menyiapkan sebarang kuiz',
+  },
+
+  'teacher.score': {
+    en: 'Score',
+    zh: '分数',
+    ms: 'Markah',
+  },
+
+  'teacher.feedback': {
+    en: 'Feedback',
+    zh: '评语',
+    ms: 'Maklum Balas',
+  },
+
+  'teacher.date': {
+    en: 'Date',
+    zh: '时间',
+    ms: 'Tarikh',
+  },
+
+  'teacher.noFeedback': {
+    en: 'No feedback yet',
+    zh: '暂无评语',
+    ms: 'Tiada maklum balas',
+  },
+
+  'teacher.enterFeedback': {
+    en: 'Enter feedback',
+    zh: '输入评语',
+    ms: 'Masukkan maklum balas',
+  },
+
+  'teacher.assignments': {
+    en: 'Assignments',
+    zh: '布置作业',
+    ms: 'Tugasan',
+  },
+
+  'teacher.noAssignments': {
+    en: 'No assignments yet',
+    zh: '暂时没有布置任何作业',
+    ms: 'Tiada tugasan lagi',
+  },
+
+  'teacher.viewFile': {
+    en: 'View File',
+    zh: '查看文件',
+    ms: 'Lihat Fail',
+  },
+
+  'teacher.addAssignment': {
+    en: 'Add Assignment',
+    zh: '布置作业',
+    ms: 'Tambah Tugasan',
+  },
+
+  'teacher.newAssignment': {
+    en: 'New Assignment',
+    zh: '布置新作业',
+    ms: 'Tugasan Baharu',
+  },
+
+  'teacher.assignmentTitle': {
+    en: 'Enter assignment title',
+    zh: '输入作业标题',
+    ms: 'Masukkan tajuk tugasan',
+  },
+
+  'teacher.assignmentDesc': {
+    en: 'Enter assignment description',
+    zh: '输入作业内容',
+    ms: 'Masukkan penerangan tugasan',
+  },
+
+  'teacher.uploadFile': {
+    en: 'Upload file path',
+    zh: '上传文件路径',
+    ms: 'Muat naik laluan fail',
+  },
+
+  'teacher.uploadLink': {
+    en: 'Upload link',
+    zh: '上传链接',
+    ms: 'Muat naik pautan',
+  },
+
+  'teacher.joinCode': {
+    en: 'Class Join Code',
+    zh: '班级加入码',
+    ms: 'Kod Sertai Kelas',
+  },
+
+  'teacher.noJoinCode': {
+    en: 'No join code generated yet',
+    zh: '尚未生成加入码',
+    ms: 'Belum ada kod sertai',
+  },
+
+  'teacher.copied': {
+    en: 'Join code copied',
+    zh: '已复制加入码',
+    ms: 'Kod sertai disalin',
+  },
+
+  'common.copy': {
+    en: 'Copy',
+    zh: '复制',
+    ms: 'Salin',
+  },
+
 }
 
+  
 type UIStrings = {
   widgetTitle: string
   widgetSubtitle: string
