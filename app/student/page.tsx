@@ -98,7 +98,7 @@ export default function StudentPage() {
       .maybeSingle()
 
     if (clsError || !cls) {
-      alert(('Invalid class code.'))
+      alert('Invalid class code.')
       return
     }
 
