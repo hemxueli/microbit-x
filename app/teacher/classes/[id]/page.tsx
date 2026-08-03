@@ -124,14 +124,13 @@ export default function ClassDetailPage({ user }: { user: any }) {
         <h1 className="text-3xl font-bold mb-6 text-teal-700">{t('teacher.classDetail')}</h1>
 
         {/* 学生列表 */}
-        <section className="mb-8">
+        <section className="mb-8 border border-teal-300 rounded-lg shadow-sm p-4 bg-white">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold text-teal-600">{t('teacher.students')}</h2>
             <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowJoinCodeModal(true)}>
               {t('teacher.joinStudent')}
             </Button>
           </div>
-
           {students.length === 0 ? (
             <p className="text-gray-500 italic">{t('teacher.noStudents')}</p>
           ) : (
@@ -166,51 +165,18 @@ export default function ClassDetailPage({ user }: { user: any }) {
           )}
         </section>
 
-        {/* 学生成绩 */}
-        {selectedStudent && (
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4 text-teal-600">{t('teacher.quizResults')}</h2>
-            {quizResults.length === 0 ? (
-              <p className="text-gray-500 italic">{t('teacher.noQuiz')}</p>
-            ) : (
-              <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
-                <thead className="bg-teal-100 text-teal-700">
-                  <tr>
-                    <th className="border px-4 py-2">{t('teacher.score')}</th>
-                    <th className="border px-4 py-2">{t('teacher.feedback')}</th>
-                    <th className="border px-4 py-2">{t('teacher.date')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {quizResults.map((qr, idx) => (
-                    <tr key={qr.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
-                      <td className="border px-4 py-2 text-center">{qr.score}</td>
-                      <td className="border px-4 py-2 flex items-center gap-2">
-                        <span>{qr.feedback || t('teacher.noFeedback')}</span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-teal-600"
-                          onClick={() => {
-                            const fb = prompt(t('teacher.enterFeedback'), qr.feedback || '')
-                            if (fb) giveFeedback(qr.id, fb)
-                          }}
-                        >
-                          ✏️
-                        </Button>
-                      </td>
-                      <td className="border px-4 py-2 text-center">{new Date(qr.created_at).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </section>
-        )}
-
         {/* 作业区 */}
-        <section>
-          <h2 className="text-2xl font-semibold mt-10 mb-4 text-teal-600">{t('teacher.assignments')}</h2>
+        <section className="border border-teal-300 rounded-lg shadow-sm p-4 bg-white">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-teal-600">{t('teacher.assignments')}</h2>
+            <Button
+              className="bg-teal-500 hover:bg-teal-600 text-white"
+              onClick={() => setShowAssignmentModal(true)}
+            >
+              {t('teacher.addAssignment')}
+            </Button>
+          </div>
+
           {assignments.length === 0 ? (
             <p className="text-gray-500 italic">{t('teacher.noAssignments')}</p>
           ) : (
@@ -241,16 +207,6 @@ export default function ClassDetailPage({ user }: { user: any }) {
               </tbody>
             </table>
           )}
-
-          {/* 布置作业按钮 */}
-          <div className="mt-6 flex justify-end">
-            <Button
-              className="bg-teal-500 hover:bg-teal-600 text-white"
-              onClick={() => setShowAssignmentModal(true)}
-            >
-              {t('teacher.addAssignment')}
-            </Button>
-          </div>
         </section>
       </main>
 
