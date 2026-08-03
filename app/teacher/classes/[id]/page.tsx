@@ -124,102 +124,51 @@ export default function ClassDetailPage({ user }: { user: any }) {
         <h1 className="text-3xl font-bold mb-6 text-teal-700">{t('teacher.classDetail')}</h1>
 
         {/* 学生列表 */}
-        <section className="mb-8">
+        <section className="mb-8 border border-teal-300 rounded-lg shadow-sm p-4 bg-white">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold text-teal-600">{t('teacher.students')}</h2>
             <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowJoinCodeModal(true)}>
               {t('teacher.joinStudent')}
             </Button>
-              
           </div>
           {students.length === 0 ? (
             <p className="text-gray-500 italic">{t('teacher.noStudents')}</p>
           ) : (
-            <ul className="space-y-3">
-              {students.map((s) => (
-                <li key={s.user_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-teal-100">
-                  <div className="flex items-center gap-3">
-                    <img src={s.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-teal-300" />
-                    <span className="font-medium">{s.name}</span>
-                  </div>
-                  <Button
-                    size="sm"
-                    className="bg-teal-500 hover:bg-teal-600 text-white"
-                    onClick={() => loadQuizResults(s.user_id)}
-                  >
-                    {t('teacher.viewResults')}
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
+              <thead className="bg-teal-100 text-teal-700">
+                <tr>
+                  <th className="px-4 py-2 text-center">{t('teacher.avatar')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.name')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.actions')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map((s, idx) => (
+                  <tr key={s.user_id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
+                    <td className="px-4 py-2 text-center">
+                      <img src={s.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-teal-300 mx-auto" />
+                    </td>
+                    <td className="px-4 py-2 text-center font-medium">{s.name}</td>
+                    <td className="px-4 py-2 text-center">
+                      <Button
+                        size="sm"
+                        className="bg-teal-500 hover:bg-teal-600 text-white"
+                        onClick={() => loadQuizResults(s.user_id)}
+                      >
+                        {t('teacher.viewResults')}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </section>
 
-        {/* 学生成绩 */}
-        {selectedStudent && (
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4 text-teal-600">{t('teacher.quizResults')}</h2>
-            {quizResults.length === 0 ? (
-              <p className="text-gray-500 italic">{t('teacher.noQuiz')}</p>
-            ) : (
-              <table className="w-full border-collapse border rounded-lg overflow-hidden shadow-sm">
-                <thead>
-                  <tr className="bg-teal-50 text-left">
-                    <th className="border px-4 py-2">{t('teacher.score')}</th>
-                    <th className="border px-4 py-2">{t('teacher.feedback')}</th>
-                    <th className="border px-4 py-2">{t('teacher.date')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {quizResults.map((qr) => (
-                    <tr key={qr.id} className="hover:bg-gray-50">
-                      <td className="border px-4 py-2">{qr.score}</td>
-                      <td className="border px-4 py-2 flex items-center gap-2">
-                        <span>{qr.feedback || t('teacher.noFeedback')}</span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-teal-600"
-                          onClick={() => {
-                            const fb = prompt(t('teacher.enterFeedback'), qr.feedback || '')
-                            if (fb) giveFeedback(qr.id, fb)
-                          }}
-                        >
-                          ✏️
-                        </Button>
-                      </td>
-                      <td className="border px-4 py-2">{new Date(qr.created_at).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </section>
-        )}
-
         {/* 作业区 */}
-        <section>
-          <h2 className="text-2xl font-semibold mt-10 mb-4 text-teal-600">{t('teacher.assignments')}</h2>
-          {assignments.length === 0 ? (
-            <p className="text-gray-500 italic">{t('teacher.noAssignments')}</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {assignments.map((a) => (
-                <div key={a.id} className="border rounded-lg p-4 shadow-sm bg-white border-teal-200">
-                  <h3 className="font-bold text-lg mb-2 text-teal-700">{a.title}</h3>
-                  <p className="text-gray-600 mb-2">{a.description}</p>
-                  {a.file_url && (
-                    <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
-                      {t('teacher.viewFile')}
-                    </a>
-                                    )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 布置作业按钮 */}
-          <div className="mt-6">
+        <section className="border border-teal-300 rounded-lg shadow-sm p-4 bg-white">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-teal-600">{t('teacher.assignments')}</h2>
             <Button
               className="bg-teal-500 hover:bg-teal-600 text-white"
               onClick={() => setShowAssignmentModal(true)}
@@ -227,8 +176,40 @@ export default function ClassDetailPage({ user }: { user: any }) {
               {t('teacher.addAssignment')}
             </Button>
           </div>
+
+          {assignments.length === 0 ? (
+            <p className="text-gray-500 italic">{t('teacher.noAssignments')}</p>
+          ) : (
+            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
+              <thead className="bg-teal-100 text-teal-700">
+                <tr>
+                  <th className="px-4 py-2 text-center">{t('teacher.title')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.description')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.file')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {assignments.map((a, idx) => (
+                  <tr key={a.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
+                    <td className="px-4 py-2 text-center font-bold text-teal-700">{a.title}</td>
+                    <td className="px-4 py-2 text-center text-gray-600">{a.description}</td>
+                    <td className="px-4 py-2 text-center">
+                      {a.file_url ? (
+                        <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
+                          {t('teacher.viewFile')}
+                        </a>
+                      ) : (
+                        <span className="text-gray-400 italic">{t('teacher.noFile')}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </section>
       </main>
+
       {/* 作业弹窗 */}
       {showAssignmentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
