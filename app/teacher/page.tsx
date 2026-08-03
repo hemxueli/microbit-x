@@ -85,7 +85,7 @@ export default function TeacherPage() {
   async function loadClasses(user: any) {
     const { data: classesData, error } = await supabase
       .from('classes')
-      .select('id, name, created_at')
+      .select('id, name, created_at, join_code')
       .eq('teacher_user_id', user.id)
 
     if (error) {
@@ -108,17 +108,37 @@ export default function TeacherPage() {
     setClasses(classesWithCount)
   }
 
+  function generateCode(length = 6) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+  }
+
+  async function createClass() {
+    if (!newClassName.trim()) return
+    const code = generateCode()
+    const { error } = await supabase.from('classes').insert({
+      name: newClassName,
+      teacher_user_id: user.id,
+      created_at: new Date().toISOString(),
+      join_code: code,
+    })
+    if (error) {
+      alert(error.message)
+    } else {
+      setShowCreateModal(false)
+      setNewClassName('')
+      await loadClasses(user)
+    }
+  }
+
   async function updateProfile(updates: { name?: string; avatar?: string }) {
     if (!user) return
-
     const payload = {
       user_id: user.id,
       name: updates.name ?? name,
       avatar: updates.avatar ?? avatar,
     }
-
     const { error } = await supabase.from('teachers').upsert(payload)
-
     if (error) {
       alert(error.message)
     } else {
@@ -130,22 +150,6 @@ export default function TeacherPage() {
         setAvatar(updates.avatar)
         setTempAvatar(updates.avatar)
       }
-    }
-  }
-
-  async function createClass() {
-    if (!newClassName.trim()) return
-    const { error } = await supabase.from('classes').insert({
-      name: newClassName,
-      teacher_user_id: user.id,
-      created_at: new Date().toISOString(),
-    })
-    if (error) {
-      alert(error.message)
-    } else {
-      setShowCreateModal(false)
-      setNewClassName('')
-      await loadClasses(user)
     }
   }
 
@@ -180,27 +184,31 @@ export default function TeacherPage() {
         <h1 className="text-3xl font-bold mb-4 text-teal-700">{t('teacher.welcomeTitle')}</h1>
         <p className="text-gray-600 mb-6">{t('teacher.welcomeSubtitle')}</p>
 
-        <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowCreateModal(true)}>
-          {t('teacher.createClass')}
-        </Button>
+        <div className="flex items-center justify-between mt-8 mb-4">
+          <h2 className="text-2xl font-semibold text-teal-700">{t('teacher.classesTable')}</h2>
+          <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowCreateModal(true)}>
+            {t('teacher.enterClass')}
+          </Button>
+        </div>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-teal-700">{t('teacher.classesTable')}</h2>
-        <table className="w-full border-collapse border border-teal-300">
-          <thead>
-            <tr className="bg-teal-100 text-teal-700">
-              <th className="border border-teal-300 px-4 py-2">{t('teacher.classList')}</th>
-              <th className="border border-teal-300 px-4 py-2">{t('teacher.studentsCount')}</th>
-              <th className="border border-teal-300 px-4 py-2">{t('teacher.createtime')}</th>
-              <th className="border border-teal-300 px-4 py-2">{t('teacher.enterClass')}</th>
+        <table className="w-full border border-teal-300 rounded-lg overflow-hidden">
+          <thead className="bg-teal-100 text-teal-700">
+            <tr>
+              <th className="px-4 py-2 text-left">{t('teacher.classList')}</th>
+              <th className="px-4 py-2 text-left">{t('teacher.studentsCount')}</th>
+              <th className="px-4 py-2 text-left">{t('teacher.createtime')}</th>
+              <th className="px-4 py-2 text-left">Join Code</th>
+              <th className="px-4 py-2 text-left">{t('teacher.enterClass')}</th>
             </tr>
           </thead>
           <tbody>
-            {classes.map((cls) => (
-              <tr key={cls.id} className="hover:bg-teal-50">
-                <td className="border border-teal-300 px-4 py-2">{cls.name}</td>
-                <td className="border border-teal-300 px-4 py-2">{cls.student_count}</td>
-                <td className="border border-teal-300 px-4 py-2">{new Date(cls.created_at).toLocaleDateString()}</td>
-                <td className="border border-teal-300 px-4 py-2">
+            {classes.map((cls, idx) => (
+              <tr key={cls.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
+                <td className="px-4 py-2">{cls.name}</td>
+                <td className="px-4 py-2">{cls.student_count}</td>
+                <td className="px-4 py-2">{new Date(cls.created_at).toLocaleDateString()}</td>
+                <td className="px-4 py-2 font-mono text-teal-700">{cls.join_code}</td>
+                <td className="px-4 py-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -209,7 +217,7 @@ export default function TeacherPage() {
                   >
                     {t('teacher.enterClass')}
                   </Button>
-                </td>
+                                </td>
               </tr>
             ))}
           </tbody>
@@ -246,7 +254,7 @@ export default function TeacherPage() {
           </div>
         )}
       </main>
-        
+
       {/* 编辑头像弹窗 */}
       {editAvatarOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -261,7 +269,7 @@ export default function TeacherPage() {
                   width={64}
                   height={64}
                   className={`rounded-full cursor-pointer border-4 transition ${
-                    tempAvatar === src ? 'border-primary' : 'border-gray-300'
+                    tempAvatar === src ? 'border-teal-500' : 'border-gray-300'
                   }`}
                   onClick={() => setTempAvatar(src)}
                 />
@@ -284,7 +292,7 @@ export default function TeacherPage() {
               type="text"
               value={tempName}
               onChange={(e) => setTempName(e.target.value)}
-              className="border rounded px-2 py-1 w-full mb-4"
+              className="border border-teal-300 rounded px-2 py-1 w-full mb-4"
             />
             <div className="flex justify-end gap-2">
               <Button variant="ghost" onClick={() => setEditNameOpen(false)}>{t('common.cancel')}</Button>
@@ -295,10 +303,10 @@ export default function TeacherPage() {
       )}
 
       {/* 底部版权栏 */}
-      <footer className="border-t border-border py-6">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
+      <footer className="border-t border-teal-200 py-6 bg-teal-50">
+        <div className="flex w-full items-center justify-between px-6 text-sm text-gray-600">
           <Logo showText={false} />
-          <span>{'\u00A9'} 2026 MicroBOT-X</span>
+          <span>© 2026 MicroBOT-X</span>
         </div>
       </footer>
     </div>
