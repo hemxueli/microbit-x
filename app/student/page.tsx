@@ -86,31 +86,45 @@ export default function StudentPage() {
     }
   }
 
-
-  // 加入班级逻辑
+  // 加入班级逻辑（带调试打印）
   async function handleJoinClass() {
-    if (!joinCode) return alert("Please enter a class code.")
+    if (!joinCode) {
+      alert("Please enter a class code.")
+      return
+    }
+
+    // 调试打印输入的代码
+    console.log("输入的 joinCode:", joinCode.trim().toUpperCase())
 
     const { data, error } = await supabase
       .from('classes')
-      .select('id, name')
+      .select('id, name, join_code') // 👈 先查出 join_code 一起看
       .eq('join_code', joinCode.trim().toUpperCase())
       .maybeSingle()
+
+    console.log("数据库返回:", data, "错误:", error)
 
     if (error || !data) {
       alert("Invalid class code.")
       return
     }
 
-    await supabase.from('student_classes').insert({
+    // 插入学生班级关系
+    const { error: insertError } = await supabase.from('student_classes').insert({
       student_id: user.id,
       class_id: data.id,
     })
+
+    if (insertError) {
+      alert("加入失败: " + insertError.message)
+      return
+    }
 
     setShowJoinClassModal(false)
     setJoinCode('')
     await loadClasses(user) // 刷新班级列表
   }
+
 
   // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
