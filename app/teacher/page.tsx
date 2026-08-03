@@ -85,12 +85,26 @@ export default function TeacherPage() {
     }
   }
 
-  async function loadClasses(user: any) {
-    const { data } = await supabase
+    async function loadClasses(user: any) {
+    const { data: classesData } = await supabase
       .from('classes')
-      .select('id, name, created_at, students(count)')
-      .eq('teacher_id', user.id)
-    setClasses(data || [])
+      .select('id, name, created_at')
+      .eq('teacher_user_id', user.id)
+
+    if (!classesData) return
+
+    // 查询每个班级的学生人数
+    const classesWithCount = await Promise.all(
+      classesData.map(async (cls) => {
+        const { count } = await supabase
+          .from('students')
+          .select('*', { count: 'exact', head: true })
+          .eq('class_id', cls.id)
+        return { ...cls, student_count: count ?? 0 }
+      })
+    )
+
+    setClasses(classesWithCount)
   }
 
   async function updateProfile(updates: { name?: string; avatar?: string }) {
