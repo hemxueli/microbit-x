@@ -122,7 +122,7 @@ export default function StudentPage() {
 
     setShowJoinClassModal(false)
     setJoinCode('')
-    await loadClasses(user) // 刷新班级列表
+    await loadClasses(user)
   }
 
 
