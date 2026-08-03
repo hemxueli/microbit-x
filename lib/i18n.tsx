@@ -878,6 +878,11 @@ export const dict: Dict = {
     zh:'进入班级',
     ms:'Masuk Kelas',
   },
+  'teacher.editClass':{
+    en:"Edit",
+    zh:"编辑",
+    ms:"Sunting",
+  },
   'editAvatar': {
     en: 'Edit Avatar',
     zh: '编辑头像',
@@ -1031,7 +1036,11 @@ export const dict: Dict = {
     zh: '复制',
     ms: 'Salin',
   },
-
+  'teacher.deleteClass': {
+    en: 'Delete',
+    zh: '删除',
+    ms: 'Hapus',
+  }
 }
 
   

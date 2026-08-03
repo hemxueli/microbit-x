@@ -130,6 +130,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
             <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowJoinCodeModal(true)}>
               {t('teacher.joinStudent')}
             </Button>
+              
           </div>
           {students.length === 0 ? (
             <p className="text-gray-500 italic">{t('teacher.noStudents')}</p>
@@ -418,8 +419,6 @@ export default function ClassDetailPage({ user }: { user: any }) {
           </div>
         </div>
       )}
-
-      {/* 加入码弹窗 */}
       {showJoinCodeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96 relative">
@@ -429,9 +428,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
             >
               <X className="w-5 h-5" />
             </button>
-            <h2 className="text-xl font-bold mb-4 text-teal-700">
-              {t('teacher.joinCode')}
-            </h2>
+            <h2 className="text-xl font-bold mb-4 text-teal-700">{t('teacher.joinCode')}</h2>
             <p className="text-lg font-mono text-center text-teal-600 border rounded p-3 bg-teal-50">
               {joinCode || t('teacher.noJoinCode')}
             </p>
