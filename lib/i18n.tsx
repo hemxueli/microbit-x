@@ -873,7 +873,7 @@ export const dict: Dict = {
     zh:'创建日期',
     ms:'Tarikh Penciptaan',
   },
-  'teacher.checkClass':{
+  'teacher.clickClass':{
     en:'Enter Class',
     zh:'进入班级',
     ms:'Masuk Kelas',
