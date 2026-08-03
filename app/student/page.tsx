@@ -62,6 +62,9 @@ export default function StudentPage() {
   const [classes, setClasses] = useState<StudentClass[]>([])
   const [showJoinClassModal, setShowJoinClassModal] = useState(false)
   const [joinCode, setJoinCode] = useState('')
+  const [selectedAssignment, setSelectedAssignment] = useState<any>(null)
+  const [fileUrl, setFileUrl] = useState('')
+  const [textContent, setTextContent] = useState('')
 
   // 名字和头像状态（保留你的 const）
   const [name, setName] = useState("")
@@ -175,6 +178,24 @@ export default function StudentPage() {
     }
   }
 
+  // 学生提交作业
+  async function submitAssignment() {
+    if (!selectedAssignment) return
+    const { error } = await supabase.from('submissions').insert({
+      assignment_id: selectedAssignment.id,
+      student_id: user.id, // ⚠️ 这里要替换成 students 表里的真实 student_id
+      file_url: fileUrl,
+      feedback: textContent
+    })
+    if (!error) {
+      alert("提交成功！")
+      setSelectedAssignment(null)
+      setFileUrl('')
+      setTextContent('')
+    } else {
+      alert("提交失败: " + error.message)
+    }
+  }
 
   // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
@@ -431,14 +452,14 @@ export default function StudentPage() {
           </div>
           
           {/* Class 区块 */}
-          <div className="mt-12">  
+          <div className="mt-12">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">{t('student.classes')}</h2>
+              <h2 className="text-2xl font-bold">班级</h2>
               <Button
                 className="bg-teal-500 hover:bg-teal-600 text-white"
                 onClick={() => setShowJoinClassModal(true)}
               >
-                {t('student.joinClass')}
+                加入班级
               </Button>
             </div>
 
@@ -446,7 +467,7 @@ export default function StudentPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {classes.length === 0 ? (
                 <div className="col-span-3 text-gray-500 italic text-center">
-                  {t('student.noClasses')}
+                  你还没有加入班级
                 </div>
               ) : (
                 classes.map((cls) => (
@@ -459,12 +480,17 @@ export default function StudentPage() {
                         {cls.name}
                       </span>
                       {cls.assignments.length === 0 ? (
-                        <span className="text-gray-200 italic">{t('student.noAssignments')}</span>
+                        <span className="text-gray-200 italic">老师尚未布置作业</span>
                       ) : (
                         <ul className="text-white text-sm list-disc list-inside text-left">
                           {cls.assignments.map((a) => (
                             <li key={a.id}>
-                              <span className="font-semibold">{a.title}</span> – {a.description}
+                              <button
+                                className="font-semibold underline hover:text-teal-300"
+                                onClick={() => setSelectedAssignment(a)}
+                              >
+                                {a.title}
+                              </button>
                             </li>
                           ))}
                         </ul>
@@ -489,6 +515,50 @@ export default function StudentPage() {
       {/* AI Chatbot */}
       <AiChatWidget defaultLanguage="en"
       />
+
+      {/* 作业弹窗 */}
+      {selectedAssignment && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setSelectedAssignment(null)}
+            >
+              ✕
+            </button>
+
+            <h2 className="text-xl font-bold mb-2">{selectedAssignment.title}</h2>
+            <p className="mb-2">{selectedAssignment.description}</p>
+            {selectedAssignment.file_url && (
+              <a
+                href={selectedAssignment.file_url}
+                target="_blank"
+                className="text-teal-600 underline mb-4 block"
+              >
+                下载老师文件
+              </a>
+            )}
+
+            {/* 学生提交区 */}
+            <input
+              type="text"
+              value={fileUrl}
+              onChange={(e) => setFileUrl(e.target.value)}
+              placeholder="上传文件路径"
+              className="border rounded px-2 py-1 w-full mb-3"
+            />
+            <textarea
+              value={textContent}
+              onChange={(e) => setTextContent(e.target.value)}
+              placeholder="输入文字内容"
+              className="border rounded px-2 py-1 w-full mb-3"
+            />
+            <Button className="bg-teal-500 text-white w-full" onClick={submitAssignment}>
+              提交作业
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* 语言选择弹窗 */}
       {showLangModal && (
