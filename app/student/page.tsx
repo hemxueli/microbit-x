@@ -411,8 +411,7 @@ export default function StudentPage() {
         </section>
 
         {/* Class 区块 */}
-        <section className="mt-12 px-6">
-          {/* 标题 + 按钮在同一行 */}
+        <section className="mt-12 mx-auto w-full max-w-6xl px-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">{t('student.classes')}</h2>
             <Button
