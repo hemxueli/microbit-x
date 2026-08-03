@@ -98,7 +98,7 @@ export default function StudentPage() {
       .maybeSingle()
 
     if (clsError || !cls) {
-      alert(t('student.classNotFound'))
+      alert(('Invalid class code.'))
       return
     }
 
