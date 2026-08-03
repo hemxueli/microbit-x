@@ -122,7 +122,7 @@ export default function TeacherPage() {
     if (!newClassName.trim()) return
     const { error } = await supabase.from('classes').insert({
       name: newClassName,
-      teacher_id: user.id,
+      teacher_user_id: user.id,
       created_at: new Date().toISOString(),
     })
     if (error) {
@@ -133,7 +133,7 @@ export default function TeacherPage() {
       const { data } = await supabase
         .from('classes')
         .select('id, name, created_at, students(count)')
-        .eq('teacher_id', user.id)
+        .eq('teacher_user_id', user.id)
       setClasses(data || [])
     }
   }
