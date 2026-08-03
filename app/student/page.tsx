@@ -1,5 +1,17 @@
 'use client'
 
+interface Assignment {
+  id: string
+  title: string
+  description: string
+}
+
+interface StudentClass {
+  id: string
+  name: string
+  assignments: Assignment[]
+}
+
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -20,6 +32,9 @@ export default function StudentPage() {
   const [classCode, setClassCode] = useState('')
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
+  const [classes, setClasses] = useState<StudentClass[]>([])
+  const [showJoinClassModal, setShowJoinClassModal] = useState(false)
+  const [joinCode, setJoinCode] = useState('')
 
   // 名字和头像状态（保留你的 const）
   const [name, setName] = useState("")
@@ -45,13 +60,57 @@ export default function StudentPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
-        await ensureProfile(user)   // 👈 确保 profile 存在并加载
+        await ensureProfile(user)   // 👈 确保 profile 存在
+        await loadClasses(user)     // 👈 加载班级
       } else {
         router.push("/sign-in")
       }
     }
     loadUser()
   }, [])
+
+  // 加载学生已加入的班级
+  async function loadClasses(user: any) {
+    const { data, error } = await supabase
+      .from('student_classes')
+      .select('classes(id, name, assignments(id, title, description))')
+      .eq('student_id', user.id)
+
+    if (!error && data) {
+      const formatted: StudentClass[] = data.map((sc: any) => ({
+        id: sc.classes.id,
+        name: sc.classes.name,
+        assignments: sc.classes.assignments || []
+      }))
+      setClasses(formatted)
+    }
+  }
+
+
+  // 加入班级逻辑
+  async function handleJoinClass() {
+    if (!joinCode) return alert("Please enter a class code.")
+
+    const { data, error } = await supabase
+      .from('classes')
+      .select('id, name')
+      .eq('join_code', joinCode.trim().toUpperCase())
+      .maybeSingle()
+
+    if (error || !data) {
+      alert("Invalid class code.")
+      return
+    }
+
+    await supabase.from('student_classes').insert({
+      student_id: user.id,
+      class_id: data.id,
+    })
+
+    setShowJoinClassModal(false)
+    setJoinCode('')
+    await loadClasses(user) // 刷新班级列表
+  }
 
   // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
@@ -233,6 +292,39 @@ export default function StudentPage() {
         </div>
       )}
 
+      {/* 加入班级弹窗 */}
+      {showJoinClassModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl"
+              onClick={() => setShowJoinClassModal(false)}
+            >
+              ×
+            </button>
+            <h2 className="text-xl font-bold mb-4 text-teal-700">{t('student.enterJoinCode')}</h2>
+            <input
+              type="text"
+              value={joinCode}
+              onChange={(e) => setJoinCode(e.target.value)}
+              placeholder="Enter class code"
+              className="border border-teal-300 rounded px-2 py-1 w-full mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setShowJoinClassModal(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                className="bg-teal-500 hover:bg-teal-600 text-white"
+                onClick={handleJoinClass}
+              >
+                {t('student.confirmJoin')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 页面主体 */}
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 py-12 md:py-20">
@@ -302,6 +394,52 @@ export default function StudentPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Class 区块 */}
+        <section className="border border-teal-300 rounded-lg shadow-sm p-4 bg-white mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-teal-600">{t('student.classes')}</h2>
+            <Button
+              className="bg-teal-500 hover:bg-teal-600 text-white"
+              onClick={() => setShowJoinClassModal(true)}
+            >
+              {t('student.joinClass')}
+            </Button>
+          </div>
+
+          {classes.length === 0 ? (
+            <p className="text-gray-500 italic">{t('student.noClasses')}</p>
+          ) : (
+            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
+              <thead className="bg-teal-100 text-teal-700">
+                <tr>
+                  <th className="px-4 py-2 text-center">{t('student.className')}</th>
+                  <th className="px-4 py-2 text-center">{t('student.assignments')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {classes.map((cls, idx) => (
+                  <tr key={cls.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
+                    <td className="px-4 py-2 text-center font-medium">{cls.name}</td>
+                    <td className="px-4 py-2 text-center">
+                      {cls.assignments.length === 0 ? (
+                        <span className="text-gray-400 italic">{t('student.noAssignments')}</span>
+                      ) : (
+                        <ul className="list-disc list-inside text-left">
+                          {cls.assignments.map((a) => (
+                            <li key={a.id}>
+                              <span className="font-semibold text-teal-700">{a.title}</span> – {a.description}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </section>
       </main>
 
