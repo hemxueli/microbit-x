@@ -495,49 +495,6 @@ export default function StudentPage() {
           </div>
         </div>
       )}
-            
-      {/* 加入班级按钮 */}
-      <div className="absolute bottom-4 right-4">
-        <Button variant="default" size="sm" onClick={() => setShowJoin(true)}>
-          {t('student.joinClass')}
-        </Button>
-      </div>
-
-      {/* 加入班级弹窗 */}
-      {showJoin && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
-            <button
-              onClick={() => setShowJoin(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-            <h2 className="text-lg font-bold mb-4">{t('student.joinClass')}</h2>
-            <input
-              type="text"
-              placeholder={t('student.enterCode')}
-              value={classCode}
-              onChange={(e) => setClassCode(e.target.value)}
-              className="border rounded px-2 py-1 w-full mb-4"
-              onKeyDown={async (e) => {
-                if (e.key === 'Enter') {
-                  await joinClass()
-                }
-              }}
-            />
-            <div className="flex justify-end">
-              <Button
-                variant="default"
-                size="sm"
-                onClick={joinClass}
-              >
-                {t('student.confirm')}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
