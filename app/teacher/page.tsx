@@ -14,7 +14,6 @@ export default function TeacherPage() {
   const { t } = useI18n()
   const router = useRouter()
 
-  // 保留你的 const
   const [user, setUser] = useState<any>(null)
   const [name, setName] = useState("")
   const [avatar, setAvatar] = useState("/images/default-avatar.png")
@@ -37,13 +36,12 @@ export default function TeacherPage() {
   const [newClassName, setNewClassName] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
 
-  // 加载用户并初始化
   useEffect(() => {
     const loadUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
-        await ensureProfile(user)   // 👈 确保 profile 存在并加载
+        await ensureProfile(user)
         await loadClasses(user)
       } else {
         router.push("/sign-in")
@@ -52,7 +50,6 @@ export default function TeacherPage() {
     loadUser()
   }, [])
 
-  // 确保用户 profile 存在并加载
   async function ensureProfile(user: any) {
     const { data, error } = await supabase
       .from('teachers')
@@ -85,15 +82,19 @@ export default function TeacherPage() {
     }
   }
 
-    async function loadClasses(user: any) {
-    const { data: classesData } = await supabase
+  async function loadClasses(user: any) {
+    const { data: classesData, error } = await supabase
       .from('classes')
       .select('id, name, created_at')
       .eq('teacher_user_id', user.id)
 
+    if (error) {
+      console.error(error)
+      return
+    }
+
     if (!classesData) return
 
-    // 查询每个班级的学生人数
     const classesWithCount = await Promise.all(
       classesData.map(async (cls) => {
         const { count } = await supabase
@@ -112,7 +113,7 @@ export default function TeacherPage() {
 
     const payload = {
       user_id: user.id,
-      name: updates.name ?? name,   // 👈 保证 name 永远有值
+      name: updates.name ?? name,
       avatar: updates.avatar ?? avatar,
     }
 
@@ -144,28 +145,25 @@ export default function TeacherPage() {
     } else {
       setShowCreateModal(false)
       setNewClassName('')
-      const { data } = await supabase
-        .from('classes')
-        .select('id, name, created_at, students(count)')
-        .eq('teacher_user_id', user.id)
-      setClasses(data || [])
+      await loadClasses(user)
     }
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-teal-50">
       {/* 顶部导航栏 */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
+      <header className="sticky top-0 z-50 border-b border-teal-300 bg-teal-100 backdrop-blur">
+        <div className="flex w-full items-center justify-between px-6 py-3">
           <Logo />
           <div className="flex items-center gap-2 relative">
             <LanguageSwitcher />
-            <Image src={avatar} alt="avatar" width={36} height={36} className="rounded-full border" />
-            <span className="font-medium">{name}</span>
-            <ChevronDown className="w-4 h-4 cursor-pointer text-gray-600" onClick={() => setMenuOpen(!menuOpen)} />
+            <Image src={avatar} alt="avatar" width={36} height={36} className="rounded-full border border-teal-400" />
+            <span className="font-medium text-teal-700">{name}</span>
+            <ChevronDown className="w-4 h-4 cursor-pointer text-teal-600" onClick={() => setMenuOpen(!menuOpen)} />
             <Button
               variant="ghost"
               size="sm"
+              className="text-teal-700 hover:bg-teal-200"
               onClick={async () => {
                 await supabase.auth.signOut()
                 router.push('/')
@@ -173,59 +171,40 @@ export default function TeacherPage() {
             >
               {t('nav.logout')}
             </Button>
-
-            {menuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-40 bg-white border rounded shadow">
-                <button
-                  className="w-full text-left px-3 py-2 hover:bg-gray-100"
-                  onClick={() => {
-                    setEditAvatarOpen(true)
-                    setMenuOpen(false)
-                  }}
-                >
-                  {t('editAvatar')}
-                </button>
-                <button
-                  className="w-full text-left px-3 py-2 hover:bg-gray-100"
-                  onClick={() => {
-                    setEditNameOpen(true)
-                    setMenuOpen(false)
-                  }}
-                >
-                  {t('editUserName')}
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </header>
 
       {/* 页面主体 */}
-      <main className="flex-1 p-6 max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-4">{t('teacher.welcomeTitle')}</h1>
+      <main className="flex-1 p-6">
+        <h1 className="text-3xl font-bold mb-4 text-teal-700">{t('teacher.welcomeTitle')}</h1>
         <p className="text-gray-600 mb-6">{t('teacher.welcomeSubtitle')}</p>
 
-        <Button onClick={() => setShowCreateModal(true)}>{t('teacher.createClass')}</Button>
+        <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowCreateModal(true)}>
+          {t('teacher.createClass')}
+        </Button>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">{t('teacher.classesTable')}</h2>
-        <table className="w-full border-collapse border">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-teal-700">{t('teacher.classesTable')}</h2>
+        <table className="w-full border-collapse border border-teal-300">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2">{t('teacher.classList')}</th>
-              <th className="border px-4 py-2">{t('teacher.studentsCount')}</th>
-              <th className="border px-4 py-2">{t('teacher.createtime')}</th>
+            <tr className="bg-teal-100 text-teal-700">
+              <th className="border border-teal-300 px-4 py-2">{t('teacher.classList')}</th>
+              <th className="border border-teal-300 px-4 py-2">{t('teacher.studentsCount')}</th>
+              <th className="border border-teal-300 px-4 py-2">{t('teacher.createtime')}</th>
+              <th className="border border-teal-300 px-4 py-2">{t('teacher.enterClass')}</th>
             </tr>
           </thead>
           <tbody>
             {classes.map((cls) => (
-              <tr key={cls.id}>
-                <td className="border px-4 py-2">{cls.name}</td>
-                <td className="border px-4 py-2">{cls.students?.[0]?.count ?? 0}</td>
-                <td className="border px-4 py-2">{new Date(cls.created_at).toLocaleDateString()}</td>
-                <td className="border px-4 py-2">
+              <tr key={cls.id} className="hover:bg-teal-50">
+                <td className="border border-teal-300 px-4 py-2">{cls.name}</td>
+                <td className="border border-teal-300 px-4 py-2">{cls.student_count}</td>
+                <td className="border border-teal-300 px-4 py-2">{new Date(cls.created_at).toLocaleDateString()}</td>
+                <td className="border border-teal-300 px-4 py-2">
                   <Button
                     variant="outline"
                     size="sm"
+                    className="border-teal-500 text-teal-600 hover:bg-teal-100"
                     onClick={() => router.push(`/teacher/classes/${cls.id}`)}
                   >
                     {t('teacher.enterClass')}
@@ -240,25 +219,33 @@ export default function TeacherPage() {
         {showCreateModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded shadow-lg w-96">
-              <h2 className="font-bold mb-4">{t('teacher.createClass')}</h2>
+              <h2 className="font-bold mb-4 text-teal-700">{t('teacher.createClass')}</h2>
               <input
                 type="text"
                 value={newClassName}
                 onChange={(e) => setNewClassName(e.target.value)}
                 placeholder={t('teacher.enterClass')}
-                className="border rounded px-2 py-1 w-full mb-4"
+                className="border border-teal-300 rounded px-2 py-1 w-full mb-4"
               />
               <div className="flex justify-end gap-2">
-                <Button variant="ghost" onClick={() => setShowCreateModal(false)}>
+                <Button
+                  variant="ghost"
+                  className="text-teal-700 hover:bg-teal-100"
+                  onClick={() => setShowCreateModal(false)}
+                >
                   {t('common.cancel')}
                 </Button>
-                <Button onClick={createClass}>{t('common.save')}</Button>
+                <Button
+                  className="bg-teal-500 hover:bg-teal-600 text-white"
+                  onClick={createClass}
+                >
+                  {t('common.save')}
+                </Button>
               </div>
             </div>
           </div>
         )}
       </main>
-
         
       {/* 编辑头像弹窗 */}
       {editAvatarOpen && (
@@ -306,7 +293,7 @@ export default function TeacherPage() {
           </div>
         </div>
       )}
-      
+
       {/* 底部版权栏 */}
       <footer className="border-t border-border py-6">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-muted-foreground">
