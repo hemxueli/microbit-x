@@ -93,7 +93,7 @@ export default function StudentPage() {
     // 查询班级是否存在（用 join_code）
     const { data: cls, error: clsError } = await supabase
       .from('classes')
-      .select('id, name, join_code')
+      .select('id, name, created_at, join_code')
       .eq('join_code', joinCode.trim().toUpperCase())
       .maybeSingle()
 
