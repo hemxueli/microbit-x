@@ -57,7 +57,7 @@ export function AuthForm({ mode, role }: AuthFormProps) {
           })
         }
 
-        alert(`注册成功！确认邮件已发送到 ${email}，请查收并验证后再登录。`)
+        alert(`Sign-up successful! A confirmation email has been sent to ${email}. Please check your inbox and verify your account before logging in.`)
         router.push('/sign-in')
       } else {
         // 登录
