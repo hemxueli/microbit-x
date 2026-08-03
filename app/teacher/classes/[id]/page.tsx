@@ -419,6 +419,14 @@ export default function ClassDetailPage({ user }: { user: any }) {
         </div>
       )}
 
+      {/* 显示加入码按钮 */}
+      <Button
+        className="mt-4 bg-teal-500 hover:bg-teal-600 text-white"
+        onClick={() => setShowJoinCodeModal(true)}
+      >
+        {t('teacher.showJoinCode')}
+      </Button>
+
       {/* 加入码弹窗 */}
       {showJoinCodeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
