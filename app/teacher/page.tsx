@@ -332,36 +332,42 @@ export default function TeacherPage() {
           </div>
         </div>
       )}
-
-      {editClassId && (
+      
+      {editClassId !== null && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+            {/* 关闭按钮 */}
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               onClick={() => setEditClassId(null)}
             >
-              <X className="w-5 h-5" />
+              {/* 如果 X 图标有问题，可以直接写 × */}
+              {/* <X className="w-5 h-5" /> */}
+              ×
             </button>
+
             <h2 className="text-xl font-bold mb-4 text-teal-700">{t('teacher.editClass')}</h2>
+
             <input
               type="text"
               value={editClassName}
               onChange={(e) => setEditClassName(e.target.value)}
               className="border border-teal-300 rounded px-2 py-1 w-full mb-4"
             />
+
             <div className="flex justify-end gap-2">
               <Button variant="ghost" onClick={() => setEditClassId(null)}>
                 {t('common.cancel')}
               </Button>
               <Button
                 className="bg-teal-500 hover:bg-teal-600 text-white"
-                onClick={() => updateClassName(editClassId, editClassName)}
+                onClick={() => updateClassName(editClassId!, editClassName)}
               >
                 {t('common.save')}
               </Button>
               <Button
                 className="bg-red-500 hover:bg-red-600 text-white"
-                onClick={() => deleteClass(editClassId)}
+                onClick={() => deleteClass(editClassId!)}
               >
                 {t('teacher.deleteClass')}
               </Button>
