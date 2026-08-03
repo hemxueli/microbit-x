@@ -28,8 +28,6 @@ export default function StudentPage() {
   const { t } = useI18n()
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
-  const [showJoin, setShowJoin] = useState(false)
-  const [classCode, setClassCode] = useState('')
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [classes, setClasses] = useState<StudentClass[]>([])
@@ -85,44 +83,39 @@ export default function StudentPage() {
       setClasses(formatted)
     }
   }
-
-  // 加入班级逻辑（带调试打印）
-  async function handleJoinClass() {
-    if (!joinCode) {
+  // 加入班级逻辑
+  async function joinClass() {
+    if (!joinCode.trim() || !user?.id) {
       alert("Please enter a class code.")
       return
     }
 
-    // 调试打印输入的代码
-    console.log("输入的 joinCode:", joinCode.trim().toUpperCase())
-
-    const { data, error } = await supabase
+    // 查询班级是否存在（用 join_code）
+    const { data: cls, error: clsError } = await supabase
       .from('classes')
-      .select('id, name, join_code') // 👈 先查出 join_code 一起看
+      .select('id, name, join_code')
       .eq('join_code', joinCode.trim().toUpperCase())
       .maybeSingle()
 
-    console.log("数据库返回:", data, "错误:", error)
-
-    if (error || !data) {
-      alert("Invalid class code.")
+    if (clsError || !cls) {
+      alert(t('student.classNotFound'))
       return
     }
 
-    // 插入学生班级关系
-    const { error: insertError } = await supabase.from('student_classes').insert({
-      student_id: user.id,
-      class_id: data.id,
-    })
+    // 更新学生表，把 class_id 写进去
+    const { error } = await supabase
+      .from('students')
+      .update({ class_id: cls.id })
+      .eq('user_id', user.id)   // 假设 students 表里有 user_id 字段
 
-    if (insertError) {
-      alert("加入失败: " + insertError.message)
-      return
+    if (error) {
+      alert(error.message)
+    } else {
+      alert(`${t('student.joinedClass')}: ${cls.name}`)
+      setShowJoinClassModal(false)
+      setJoinCode('')
+      await loadClasses(user) // 刷新班级列表
     }
-
-    setShowJoinClassModal(false)
-    setJoinCode('')
-    await loadClasses(user)
   }
 
 
@@ -181,35 +174,6 @@ export default function StudentPage() {
       }
     }
   }
-  
-  async function joinClass() {
-  if (!classCode.trim() || !user?.id) return
-
-  // 查询班级是否存在
-  const { data: cls, error: clsError } = await supabase
-    .from('classes')
-    .select('id, name')
-    .eq('id', classCode)
-    .single()
-
-  if (clsError || !cls) {
-    alert(t('student.classNotFound'))
-    return
-  }
-
-  // 更新学生的 class_id
-  const { error } = await supabase
-    .from('students')
-    .update({ class_id: cls.id })
-    .eq('user_id', user.id)
-
-  if (error) {
-    alert(error.message)
-  } else {
-    alert(`${t('student.joinedClass')}: ${cls.name}`)
-    setShowJoin(false)
-  }
-}
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -330,7 +294,7 @@ export default function StudentPage() {
               </Button>
               <Button
                 className="bg-teal-500 hover:bg-teal-600 text-white"
-                onClick={handleJoinClass}
+                onClick={joinClass}
               >
                 {t('student.confirmJoin')}
               </Button>
