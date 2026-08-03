@@ -94,8 +94,8 @@ export default function StudentPage() {
     const { data, error } = await supabase
       .from('classes')
       .select('id, name')
-      .eq('join_code', joinCode)
-      .single()
+      .eq('join_code', joinCode.trim().toUpperCase())
+      .maybeSingle()
 
     if (error || !data) {
       alert("Invalid class code.")
