@@ -102,41 +102,42 @@ export default function StudentPage() {
     // 加载学生已加入的班级
   async function loadClasses(user: any) {
     const { data, error } = await supabase
-    .from('students')
-    .select(`
-      class_id,
-      classes (
-        id,
-        name,
-        assignments (
+      .from('students')
+      .select(`
+        class_id,
+        classes (
           id,
-          title,
-          description,
-          file_url,
-          submissions (
+          name,
+          assignments (
             id,
+            title,
+            description,
             file_url,
-            feedback,
-            created_at
+            submissions (
+              id,
+              file_url,
+              feedback,
+              created_at
+            )
           )
         )
-      )
-    `)
-    .eq('user_id', user.id)
-    .maybeSingle<ClassesResponse>()
+      `)
+      .eq('user_id', user.id)   // ⚠️ 确认 students 表里是 user_id
 
-    if (!error && data && data.classes) {
-      const formatted: StudentClass[] = [{
-        id: data.classes.id,
-        name: data.classes.name,
-        assignments: data.classes.assignments.map((a: any) => ({
+    console.log("Supabase返回:", data, error)
+
+    if (!error && data && data.length > 0) {
+      const formatted: StudentClass[] = data.map((row: any) => ({
+        id: row.classes.id,
+        name: row.classes.name,
+        assignments: row.classes.assignments.map((a: any) => ({
           id: a.id,
           title: a.title,
           description: a.description,
           file_url: a.file_url,
           submissions: a.submissions || []
         }))
-      }]
+      }))
       setClasses(formatted)
     } else {
       setClasses([])
@@ -452,14 +453,14 @@ export default function StudentPage() {
           </div>
           
           {/* Class 区块 */}
-          <div className="mt-12">
+          <div className="mt-12">  
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">班级</h2>
+              <h2 className="text-2xl font-bold">{t('student.classes')}</h2>
               <Button
                 className="bg-teal-500 hover:bg-teal-600 text-white"
                 onClick={() => setShowJoinClassModal(true)}
               >
-                加入班级
+                {t('student.joinClass')}
               </Button>
             </div>
 
@@ -467,7 +468,7 @@ export default function StudentPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {classes.length === 0 ? (
                 <div className="col-span-3 text-gray-500 italic text-center">
-                  你还没有加入班级
+                  {t('student.noClasses')}
                 </div>
               ) : (
                 classes.map((cls) => (
@@ -480,17 +481,12 @@ export default function StudentPage() {
                         {cls.name}
                       </span>
                       {cls.assignments.length === 0 ? (
-                        <span className="text-gray-200 italic">老师尚未布置作业</span>
+                        <span className="text-gray-200 italic">{t('student.noAssignments')}</span>
                       ) : (
                         <ul className="text-white text-sm list-disc list-inside text-left">
                           {cls.assignments.map((a) => (
                             <li key={a.id}>
-                              <button
-                                className="font-semibold underline hover:text-teal-300"
-                                onClick={() => setSelectedAssignment(a)}
-                              >
-                                {a.title}
-                              </button>
+                              <span className="font-semibold">{a.title}</span> – {a.description}
                             </li>
                           ))}
                         </ul>
