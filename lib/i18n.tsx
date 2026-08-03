@@ -869,9 +869,14 @@ export const dict: Dict = {
     ms: 'Bilangan Murid',
   },
   'teacher.createtime':{
-    en:'Creation Time',
-    zh:'创建时间',
-    ms:'Masa Penciptaan',
+    en:'Creation Date',
+    zh:'创建日期',
+    ms:'Tarikh Penciptaan',
+  },
+  'teacher.checkClass':{
+    en:'Enter Class',
+    zh:'进入班级',
+    ms:'Masuk Kelas',
   },
   'editAvatar': {
     en: 'Edit Avatar',
