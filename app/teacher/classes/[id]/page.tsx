@@ -28,7 +28,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [newAssignmentLink, setNewAssignmentLink] = useState('')
   const [joinCode, setJoinCode] = useState('')
 
-  // 加载学生和作业
+  // 加载班级数据
   useEffect(() => {
     async function loadData() {
       const { data: studentData } = await supabase
@@ -54,7 +54,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
     loadData()
   }, [classId])
 
-  // 查询某个学生的成绩
+  // 查询学生成绩
   async function loadQuizResults(studentId: string) {
     const { data } = await supabase
       .from('quiz_results')
@@ -65,7 +65,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
     setSelectedStudent(studentId)
   }
 
-  // 老师写评语
+  // 保存评语
   async function giveFeedback(resultId: string, feedback: string) {
     await supabase.from('quiz_results').update({ feedback }).eq('id', resultId)
     if (selectedStudent) {
@@ -122,37 +122,39 @@ export default function ClassDetailPage({ user }: { user: any }) {
         <h1 className="text-3xl font-bold mb-6 text-teal-700">{t('teacher.classDetail')}</h1>
 
         {/* 学生列表 */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-teal-600">{t('teacher.students')}</h2>
-          <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowJoinCodeModal(true)}>
-            {t('teacher.joinStudent')}
-          </Button>
-        </div>
-        {students.length === 0 ? (
-          <p className="text-gray-500 italic">{t('teacher.noStudents')}</p>
-        ) : (
-          <ul className="space-y-3">
-            {students.map((s) => (
-              <li key={s.user_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-teal-100">
-                <div className="flex items-center gap-3">
-                  <img src={s.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-teal-300" />
-                  <span className="font-medium">{s.name}</span>
-                </div>
-                <Button
-                  size="sm"
-                  className="bg-teal-500 hover:bg-teal-600 text-white"
-                  onClick={() => loadQuizResults(s.user_id)}
-                >
-                  {t('teacher.viewResults')}
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <section className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-teal-600">{t('teacher.students')}</h2>
+            <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowJoinCodeModal(true)}>
+              {t('teacher.joinStudent')}
+            </Button>
+          </div>
+          {students.length === 0 ? (
+            <p className="text-gray-500 italic">{t('teacher.noStudents')}</p>
+          ) : (
+            <ul className="space-y-3">
+              {students.map((s) => (
+                <li key={s.user_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border border-teal-100">
+                  <div className="flex items-center gap-3">
+                    <img src={s.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-teal-300" />
+                    <span className="font-medium">{s.name}</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-teal-500 hover:bg-teal-600 text-white"
+                    onClick={() => loadQuizResults(s.user_id)}
+                  >
+                    {t('teacher.viewResults')}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
 
         {/* 学生成绩 */}
         {selectedStudent && (
-          <div className="mt-8">
+          <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4 text-teal-600">{t('teacher.quizResults')}</h2>
             {quizResults.length === 0 ? (
               <p className="text-gray-500 italic">{t('teacher.noQuiz')}</p>
@@ -189,113 +191,130 @@ export default function ClassDetailPage({ user }: { user: any }) {
                 </tbody>
               </table>
             )}
-          </div>
+          </section>
         )}
 
         {/* 作业区 */}
-        <h2 className="text-2xl font-semibold mt-10 mb-4 text-teal-600">{t('teacher.assignments')}</h2>
-        {assignments.length === 0 ? (
-          <p className="text-gray-500 italic">{t('teacher.noAssignments')}</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {assignments.map((a) => (
-              <div key={a.id} className="border rounded-lg p-4 shadow-sm bg-white border-teal-200">
-                <h3 className="font-bold text-lg mb-2 text-teal-700">{a.title}</h3>
-                <p className="text-gray-600 mb-2">{a.description}</p>
-                {a.file_url && (
-                  <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
-                    {t('teacher.viewFile')}
-                  </a>
-                )}
-              </div>
-            ))}
-        {/* 布置作业按钮 */}
-        <div className="mt-6">
-          <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowAssignmentModal(true)}>
-            {t('teacher.addAssignment')}
-          </Button>
-        </div>
-
-        {/* 作业弹窗 */}
-        {showAssignmentModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded shadow-lg w-96 relative">
-              <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                onClick={() => setShowAssignmentModal(false)}
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <h2 className="text-xl font-bold mb-4 text-teal-700">{t('teacher.newAssignment')}</h2>
-              <input
-                type="text"
-                value={newAssignmentTitle}
-                onChange={(e) => setNewAssignmentTitle(e.target.value)}
-                placeholder={t('teacher.assignmentTitle')}
-                className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
-              />
-              <textarea
-                value={newAssignmentDesc}
-                onChange={(e) => setNewAssignmentDesc(e.target.value)}
-                placeholder={t('teacher.assignmentDesc')}
-                className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
-              />
-              <input
-                type="text"
-                value={newAssignmentFile}
-                onChange={(e) => setNewAssignmentFile(e.target.value)}
-                placeholder={t('teacher.uploadFile')}
-                className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
-              />
-              <input
-                type="text"
-                value={newAssignmentLink}
-                onChange={(e) => setNewAssignmentLink(e.target.value)}
-                placeholder={t('teacher.uploadLink')}
-                className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
-              />
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" onClick={() => setShowAssignmentModal(false)}>
-                  {t('common.cancel')}
-                </Button>
-                <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={createAssignment}>
-                  {t('common.save')}
-                </Button>
-              </div>
+        <section>
+          <h2 className="text-2xl font-semibold mt-10 mb-4 text-teal-600">{t('teacher.assignments')}</h2>
+          {assignments.length === 0 ? (
+            <p className="text-gray-500 italic">{t('teacher.noAssignments')}</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {assignments.map((a) => (
+                <div key={a.id} className="border rounded-lg p-4 shadow-sm bg-white border-teal-200">
+                  <h3 className="font-bold text-lg mb-2 text-teal-700">{a.title}</h3>
+                  <p className="text-gray-600 mb-2">{a.description}</p>
+                  {a.file_url && (
+                    <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
+                      {t('teacher.viewFile')}
+                    </a>
+                  )}
+                </
+                                  )}
+                </div>
+              ))}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 加入码弹窗 */}
-        {showJoinCodeModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded shadow-lg w-96 relative">
-              <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                onClick={() => setShowJoinCodeModal(false)}
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <h2 className="text-xl font-bold mb-4 text-teal-700">{t('teacher.joinCode')}</h2>
-              <p className="text-lg font-mono text-center text-teal-600 border rounded p-3 bg-teal-50">
-                {joinCode || t('teacher.noJoinCode')}
-              </p>
-              <div className="flex justify-end mt-4">
-                <Button 
-                  className="bg-teal-500 hover:bg-teal-600 text-white" 
-                  onClick={() => {
-                    navigator.clipboard.writeText(joinCode)
-                    alert(t('teacher.copied'))
-                  }}
-                >
-                  {t('common.copy')}
-                </Button>
-              </div>
-            </div>
+          {/* 布置作业按钮 */}
+          <div className="mt-6">
+            <Button
+              className="bg-teal-500 hover:bg-teal-600 text-white"
+              onClick={() => setShowAssignmentModal(true)}
+            >
+              {t('teacher.addAssignment')}
+            </Button>
           </div>
-        )}
+        </section>
       </main>
+
+      {/* 作业弹窗 */}
+      {showAssignmentModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowAssignmentModal(false)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h2 className="text-xl font-bold mb-4 text-teal-700">
+              {t('teacher.newAssignment')}
+            </h2>
+            <input
+              type="text"
+              value={newAssignmentTitle}
+              onChange={(e) => setNewAssignmentTitle(e.target.value)}
+              placeholder={t('teacher.assignmentTitle')}
+              className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
+            />
+            <textarea
+              value={newAssignmentDesc}
+              onChange={(e) => setNewAssignmentDesc(e.target.value)}
+              placeholder={t('teacher.assignmentDesc')}
+              className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
+            />
+            <input
+              type="text"
+              value={newAssignmentFile}
+              onChange={(e) => setNewAssignmentFile(e.target.value)}
+              placeholder={t('teacher.uploadFile')}
+              className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
+            />
+            <input
+              type="text"
+              value={newAssignmentLink}
+              onChange={(e) => setNewAssignmentLink(e.target.value)}
+              placeholder={t('teacher.uploadLink')}
+              className="border rounded px-2 py-1 w-full mb-3 border-teal-300"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setShowAssignmentModal(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                className="bg-teal-500 hover:bg-teal-600 text-white"
+                onClick={createAssignment}
+              >
+                {t('common.save')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 加入码弹窗 */}
+      {showJoinCodeModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowJoinCodeModal(false)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold mb-4 text-teal-700">
+              {t('teacher.joinCode')}
+            </h2>
+            <p className="text-lg font-mono text-center text-teal-600 border rounded p-3 bg-teal-50">
+              {joinCode || t('teacher.noJoinCode')}
+            </p>
+            <div className="flex justify-end mt-4">
+              <Button
+                className="bg-teal-500 hover:bg-teal-600 text-white"
+                onClick={() => {
+                  navigator.clipboard.writeText(joinCode)
+                  alert(t('teacher.copied'))
+                }}
+              >
+                {t('common.copy')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 底部版权栏 */}
       <footer className="border-t border-border py-6">
