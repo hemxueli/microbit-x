@@ -22,6 +22,8 @@ export default function TeacherPage() {
   const [editNameOpen, setEditNameOpen] = useState(false)
   const [tempName, setTempName] = useState("")
   const [tempAvatar, setTempAvatar] = useState("/images/default-avatar.png")
+  const [editClassId, setEditClassId] = useState<string | null>(null)
+  const [editClassName, setEditClassName] = useState('')
 
   const avatarOptions = [
     '/images/tavatar1.png',
@@ -49,6 +51,26 @@ export default function TeacherPage() {
     }
     loadUser()
   }, [])
+
+  async function updateClassName(classId: string, newName: string) {
+    const { error } = await supabase.from('classes').update({ name: newName }).eq('id', classId)
+    if (error) {
+      alert(error.message)
+    } else {
+      setEditClassId(null)
+      await loadClasses(user)
+    }
+  }
+
+  async function deleteClass(classId: string) {
+    if (!confirm("确定要删除这个班级吗？")) return
+    const { error } = await supabase.from('classes').delete().eq('id', classId)
+    if (error) {
+      alert(error.message)
+    } else {
+      await loadClasses(user)
+    }
+  }
 
   async function ensureProfile(user: any) {
     const { data, error } = await supabase
@@ -215,6 +237,17 @@ export default function TeacherPage() {
                 >
                   {t('teacher.clickClass')}
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-500 text-gray-600 hover:bg-gray-100"
+                  onClick={() => {
+                    setEditClassId(cls.id)
+                    setEditClassName(cls.name)
+                  }}
+                >
+                  {t('teacher.editClass')}
+                </Button>
               </td>
             </tr>
           ))}
@@ -295,6 +328,43 @@ export default function TeacherPage() {
             <div className="flex justify-end gap-2">
               <Button variant="ghost" onClick={() => setEditNameOpen(false)}>{t('common.cancel')}</Button>
               <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>{t('common.save')}</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editClassId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setEditClassId(null)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold mb-4 text-teal-700">{t('teacher.editClass')}</h2>
+            <input
+              type="text"
+              value={editClassName}
+              onChange={(e) => setEditClassName(e.target.value)}
+              className="border border-teal-300 rounded px-2 py-1 w-full mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setEditClassId(null)}>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                className="bg-teal-500 hover:bg-teal-600 text-white"
+                onClick={() => updateClassName(editClassId, editClassName)}
+              >
+                {t('common.save')}
+              </Button>
+              <Button
+                className="bg-red-500 hover:bg-red-600 text-white"
+                onClick={() => deleteClass(editClassId)}
+              >
+                {t('teacher.deleteClass')}
+              </Button>
             </div>
           </div>
         </div>
