@@ -1040,6 +1040,47 @@ export const dict: Dict = {
     en: 'Delete',
     zh: '删除',
     ms: 'Hapus',
+  },
+  'student.classes': {
+  en: 'Classes',
+  zh: '班级',
+    ms: 'Kelas',
+  },
+
+  'student.noClasses': {
+    en: 'No classes yet',
+    zh: '目前没有班级',
+    ms: 'Tiada kelas lagi',
+  },
+
+  'student.className': {
+    en: 'Class Name',
+    zh: '班级名称',
+    ms: 'Nama Kelas',
+  },
+
+  'student.assignments': {
+    en: 'Assignments',
+    zh: '作业',
+    ms: 'Kerja Rumah',
+  },
+
+  'student.noAssignments': {
+    en: 'No assignments yet',
+    zh: '暂无作业',
+    ms: 'Tiada kerja rumah lagi',
+  },
+
+  'student.enterJoinCode': {
+    en: 'Enter class code',
+    zh: '输入班级代码',
+    ms: 'Masukkan kod kelas',
+  },
+
+  'student.confirmJoin': {
+    en: 'Confirm Join',
+    zh: '确认加入',
+    ms: 'Sahkan Sertai',
   }
 }
 

@@ -86,31 +86,45 @@ export default function StudentPage() {
     }
   }
 
-
-  // 加入班级逻辑
+  // 加入班级逻辑（带调试打印）
   async function handleJoinClass() {
-    if (!joinCode) return alert("Please enter a class code.")
+    if (!joinCode) {
+      alert("Please enter a class code.")
+      return
+    }
+
+    // 调试打印输入的代码
+    console.log("输入的 joinCode:", joinCode.trim().toUpperCase())
 
     const { data, error } = await supabase
       .from('classes')
-      .select('id, name')
-      .eq('join_code', joinCode.trim().toUpperCase()) // 👈 统一大小写
+      .select('id, name, join_code') // 👈 先查出 join_code 一起看
+      .eq('join_code', joinCode.trim().toUpperCase())
       .maybeSingle()
+
+    console.log("数据库返回:", data, "错误:", error)
 
     if (error || !data) {
       alert("Invalid class code.")
       return
     }
 
-    await supabase.from('student_classes').insert({
+    // 插入学生班级关系
+    const { error: insertError } = await supabase.from('student_classes').insert({
       student_id: user.id,
       class_id: data.id,
     })
+
+    if (insertError) {
+      alert("加入失败: " + insertError.message)
+      return
+    }
 
     setShowJoinClassModal(false)
     setJoinCode('')
     await loadClasses(user)
   }
+
 
   // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
@@ -397,9 +411,10 @@ export default function StudentPage() {
         </section>
 
         {/* Class 区块 */}
-        <section className="border border-teal-300 rounded-lg shadow-sm p-4 bg-white mt-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-teal-600">{t('student.classes')}</h2>
+        <section className="mt-12 px-6">
+          {/* 标题 + 按钮在同一行 */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">{t('student.classes')}</h2>
             <Button
               className="bg-teal-500 hover:bg-teal-600 text-white"
               onClick={() => setShowJoinClassModal(true)}
@@ -408,38 +423,38 @@ export default function StudentPage() {
             </Button>
           </div>
 
-          {classes.length === 0 ? (
-            <p className="text-gray-500 italic">{t('student.noClasses')}</p>
-          ) : (
-            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
-              <thead className="bg-teal-100 text-teal-700">
-                <tr>
-                  <th className="px-4 py-2 text-center">{t('student.className')}</th>
-                  <th className="px-4 py-2 text-center">{t('student.assignments')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {classes.map((cls, idx) => (
-                  <tr key={cls.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
-                    <td className="px-4 py-2 text-center font-medium">{cls.name}</td>
-                    <td className="px-4 py-2 text-center">
-                      {cls.assignments.length === 0 ? (
-                        <span className="text-gray-400 italic">{t('student.noAssignments')}</span>
-                      ) : (
-                        <ul className="list-disc list-inside text-left">
-                          {cls.assignments.map((a) => (
-                            <li key={a.id}>
-                              <span className="font-semibold text-teal-700">{a.title}</span> – {a.description}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          {/* 班级卡片区 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {classes.length === 0 ? (
+              <div className="col-span-3 text-gray-500 italic text-center">
+                {t('student.noClasses')}
+              </div>
+            ) : (
+              classes.map((cls) => (
+                <div
+                  key={cls.id}
+                  className="relative h-[280px] rounded-lg shadow-md overflow-hidden cursor-pointer group bg-teal-100"
+                >
+                  <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4">
+                    <span className="text-white text-2xl font-bold mb-2 group-hover:scale-110 transition">
+                      {cls.name}
+                    </span>
+                    {cls.assignments.length === 0 ? (
+                      <span className="text-gray-200 italic">{t('student.noAssignments')}</span>
+                    ) : (
+                      <ul className="text-white text-sm list-disc list-inside text-left">
+                        {cls.assignments.map((a) => (
+                          <li key={a.id}>
+                            <span className="font-semibold">{a.title}</span> – {a.description}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </section>
       </main>
 
@@ -490,49 +505,6 @@ export default function StudentPage() {
                 }}
               >
                 中文
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-            
-      {/* 加入班级按钮 */}
-      <div className="absolute bottom-4 right-4">
-        <Button variant="default" size="sm" onClick={() => setShowJoin(true)}>
-          {t('student.joinClass')}
-        </Button>
-      </div>
-
-      {/* 加入班级弹窗 */}
-      {showJoin && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
-            <button
-              onClick={() => setShowJoin(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-            <h2 className="text-lg font-bold mb-4">{t('student.joinClass')}</h2>
-            <input
-              type="text"
-              placeholder={t('student.enterCode')}
-              value={classCode}
-              onChange={(e) => setClassCode(e.target.value)}
-              className="border rounded px-2 py-1 w-full mb-4"
-              onKeyDown={async (e) => {
-                if (e.key === 'Enter') {
-                  await joinClass()
-                }
-              }}
-            />
-            <div className="flex justify-end">
-              <Button
-                variant="default"
-                size="sm"
-                onClick={joinClass}
-              >
-                {t('student.confirm')}
               </Button>
             </div>
           </div>
