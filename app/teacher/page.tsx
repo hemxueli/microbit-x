@@ -202,25 +202,25 @@ export default function TeacherPage() {
             </tr>
           </thead>
           <tbody>
-            {classes.map((cls, idx) => (
-              <tr key={cls.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
-                <td className="px-4 py-2">{cls.name}</td>
-                <td className="px-4 py-2">{cls.student_count}</td>
-                <td className="px-4 py-2">{new Date(cls.created_at).toLocaleDateString()}</td>
-                <td className="px-4 py-2 font-mono text-teal-700">{cls.join_code}</td>
-                <td className="px-4 py-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-teal-500 text-teal-600 hover:bg-teal-100"
-                    onClick={() => router.push(`/teacher/classes/${cls.id}`)}
-                  >
-                    {t('teacher.enterClass')}
-                  </Button>
-                                </td>
-              </tr>
-            ))}
-          </tbody>
+          {classes.map((cls, idx) => (
+            <tr key={cls.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
+              <td className="px-4 py-2 text-center">{cls.name}</td>
+              <td className="px-4 py-2 text-center">{cls.student_count}</td>
+              <td className="px-4 py-2 text-center">{new Date(cls.created_at).toLocaleDateString()}</td>
+              <td className="px-4 py-2 text-center font-mono text-teal-700">{cls.join_code}</td>
+              <td className="px-4 py-2 text-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-teal-500 text-teal-600 hover:bg-teal-100"
+                  onClick={() => router.push(`/teacher/classes/${cls.id}`)}
+                >
+                  {t('teacher.clickClass')}
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
         </table>
 
         {/* 创建班级弹窗 */}
