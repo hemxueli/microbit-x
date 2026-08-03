@@ -209,9 +209,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
                     <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
                       {t('teacher.viewFile')}
                     </a>
-                  )}
-                </
-                                  )}
+                                    )}
                 </div>
               ))}
             </div>
