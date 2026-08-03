@@ -1036,7 +1036,11 @@ export const dict: Dict = {
     zh: '复制',
     ms: 'Salin',
   },
-
+  'teacher.deleteClass': {
+    en: 'Delete',
+    zh: '删除',
+    ms: 'Hapus',
+  }
 }
 
   

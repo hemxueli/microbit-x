@@ -332,7 +332,7 @@ export default function TeacherPage() {
           </div>
         </div>
       )}
-      
+
       {editClassId !== null && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96 relative">
@@ -342,7 +342,7 @@ export default function TeacherPage() {
               onClick={() => setEditClassId(null)}
             >
               {/* 如果 X 图标有问题，可以直接写 × */}
-              {/* <X className="w-5 h-5" /> */}
+              {/* <X className="w-10 h-10" /> */}
               ×
             </button>
 
