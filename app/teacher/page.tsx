@@ -63,12 +63,16 @@ export default function TeacherPage() {
   }
 
   async function deleteClass(classId: string) {
-    if (!confirm("确定要删除这个班级吗？")) return
+    if (!confirm("Are you sure you want to delete this class?")) return
+
     const { error } = await supabase.from('classes').delete().eq('id', classId)
+
     if (error) {
       alert(error.message)
     } else {
-      await loadClasses(user)
+      // 删除成功后关闭弹窗
+      setEditClassId(null)
+      await loadClasses(user) // 刷新班级列表
     }
   }
 
