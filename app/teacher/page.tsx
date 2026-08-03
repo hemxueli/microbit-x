@@ -197,7 +197,7 @@ export default function TeacherPage() {
               <th className="px-4 py-2 text-center">{t('teacher.classList')}</th>
               <th className="px-4 py-2 text-center">{t('teacher.studentsCount')}</th>
               <th className="px-4 py-2 text-center">{t('teacher.createtime')}</th>
-              <th className="px-4 py-2 text-center">{t('teacher.checkClass')}</th>
+              <th className="px-4 py-2 text-center"></th>
             </tr>
           </thead>
           <tbody>
