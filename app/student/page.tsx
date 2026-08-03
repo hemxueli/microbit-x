@@ -1,15 +1,44 @@
 'use client'
 
+interface Submission {
+  id: string;
+  file_url: string;
+  feedback: string | null;
+  created_at: string;
+}
+
 interface Assignment {
-  id: string
-  title: string
-  description: string
+  id: string;
+  title: string;
+  description: string;
+  file_url: string | null;
+  submissions: Submission[];
 }
 
 interface StudentClass {
-  id: string
-  name: string
-  assignments: Assignment[]
+  id: string;
+  name: string;
+  assignments: Assignment[];
+}
+
+interface ClassesResponse {
+  class_id: string;
+  classes: {
+    id: string;
+    name: string;
+    assignments: {
+      id: string;
+      title: string;
+      description: string;
+      file_url: string | null;
+      submissions: {
+        id: string;
+        file_url: string;
+        feedback: string | null;
+        created_at: string;
+      }[];
+    }[];
+  };
 }
 
 import { useState, useEffect } from 'react'
@@ -67,22 +96,50 @@ export default function StudentPage() {
     loadUser()
   }, [])
 
-  // 加载学生已加入的班级
+    // 加载学生已加入的班级
   async function loadClasses(user: any) {
     const { data, error } = await supabase
-      .from('student_classes')
-      .select('classes(id, name, assignments(id, title, description))')
-      .eq('student_id', user.id)
+    .from('students')
+    .select(`
+      class_id,
+      classes (
+        id,
+        name,
+        assignments (
+          id,
+          title,
+          description,
+          file_url,
+          submissions (
+            id,
+            file_url,
+            feedback,
+            created_at
+          )
+        )
+      )
+    `)
+    .eq('user_id', user.id)
+    .maybeSingle<ClassesResponse>()
 
-    if (!error && data) {
-      const formatted: StudentClass[] = data.map((sc: any) => ({
-        id: sc.classes.id,
-        name: sc.classes.name,
-        assignments: sc.classes.assignments || []
-      }))
+    if (!error && data && data.classes) {
+      const formatted: StudentClass[] = [{
+        id: data.classes.id,
+        name: data.classes.name,
+        assignments: data.classes.assignments.map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          description: a.description,
+          file_url: a.file_url,
+          submissions: a.submissions || []
+        }))
+      }]
       setClasses(formatted)
+    } else {
+      setClasses([])
     }
   }
+
   // 加入班级逻辑
   async function joinClass() {
     if (!joinCode.trim() || !user?.id) {
