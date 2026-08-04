@@ -2,30 +2,38 @@
 export const dynamic = "force-dynamic"
 export const fetchCache = "force-no-store"
 
-
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 
 export default function StudentAnalysisListClient() {
   const [analyses, setAnalyses] = useState<any[]>([])
 
+  // 加载分析记录
   useEffect(() => {
     const loadAnalyses = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data, error } = await supabase
-        .from('quiz_results')
-        .select('id, quiz_theme, score, created_at, ai_feedback')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (!error && data) {
-        setAnalyses(data.filter(r => r.ai_feedback))
+      const res = await fetch('/api/getQuizResults')
+      const data = await res.json()
+      if (data.results) {
+        setAnalyses(data.results.filter((r: any) => r.ai_feedback))
       }
     }
     loadAnalyses()
   }, [])
+
+  // 删除分析记录
+  const deleteAnalysis = async (id: string) => {
+    const res = await fetch('/api/deleteQuizResult', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      alert('删除成功')
+      setAnalyses(analyses.filter(r => r.id !== id))
+    } else {
+      alert(data.error || '删除失败')
+    }
+  }
 
   return (
     <div className="p-8">
@@ -46,9 +54,15 @@ export default function StudentAnalysisListClient() {
               <p className="text-xs text-gray-400 mb-3">
                 保存时间: {new Date(a.created_at).toLocaleString()}
               </p>
-              <div className="bg-gray-50 p-3 rounded text-sm whitespace-pre-line">
+              <div className="bg-gray-50 p-3 rounded text-sm whitespace-pre-line mb-3">
                 {a.ai_feedback}
               </div>
+              <button
+                onClick={() => deleteAnalysis(a.id)}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+              >
+                删除
+              </button>
             </div>
           ))}
         </div>

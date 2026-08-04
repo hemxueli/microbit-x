@@ -35,17 +35,23 @@ export default function StudentAnalysisClient() {
   }, [quizTheme, score])
 
   const saveAnalysis = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return alert('请先登录')
-
-    await supabase.from('quiz_results').insert({
-      user_id: user.id,
-      quiz_theme: quizTheme,
-      score,
-      ai_feedback: feedback,
+    const res = await fetch('/api/saveQuizResult', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        quiz_theme: quizTheme,
+        score,
+        ai_feedback: feedback,
+      }),
     })
-    alert('AI 分析已保存！')
-    window.location.href = '/student/analysis-list'
+
+    const data = await res.json()
+    if (data.success) {
+      alert('AI 分析已保存！')
+      window.location.href = '/student/analysis-list'
+    } else {
+      alert(data.error || '保存失败')
+    }
   }
 
   return (
