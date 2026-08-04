@@ -12,13 +12,16 @@ export async function POST(req: Request) {
     const prompt = `The student scored ${score}/10 in the quiz on theme "${quiz_theme}". 
 Please analyze which knowledge points are weak and provide improvement suggestions.`
 
-    // 返回流式响应，前端 useChat 可以直接消费
+    // ✅ 使用 prompt 而不是 messages
     return streamText({
       model,
       prompt,
     })
   } catch (error) {
     console.error('AI analysis error:', error)
-    return NextResponse.json({ error: 'AI analysis failed, please check configuration.' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'AI analysis failed, please check configuration.' },
+      { status: 500 }
+    )
   }
 }
