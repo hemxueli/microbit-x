@@ -1153,7 +1153,7 @@ export const UI: Record<Lang, UIStrings> = {
     errorMessage: "Something went wrong. Please try again.",
     billingMessage:
       "The AI service isn't active yet. The site owner needs to add a free Google Gemini API key (GOOGLE_GENERATIVE_AI_API_KEY) to the project. Once that's done, I'll be able to reply.",
-    suggestions: ["How do I use the button?", "What is an accelerometer?", "Evaluate my quiz results"],
+    suggestions: ["How do I use the button?", "What is an accelerometer?"],
   },
   ms: {
     widgetTitle: "Pembantu micro:bit",
