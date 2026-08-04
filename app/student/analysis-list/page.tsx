@@ -1,20 +1,14 @@
 'use client'
-export const dynamic = "force-dynamic"
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabaseClient'
 
 export default function StudentAnalysisListPage() {
+  const router = useRouter()
   const [analyses, setAnalyses] = useState<any[]>([])
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!mounted) return
-
     const loadAnalyses = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -30,9 +24,7 @@ export default function StudentAnalysisListPage() {
       }
     }
     loadAnalyses()
-  }, [mounted])
-
-  if (!mounted) return null
+  }, [])
 
   return (
     <div className="p-8">
