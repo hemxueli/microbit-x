@@ -3,6 +3,7 @@ import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
+import { useSearchParams } from 'next/navigation'
 
 // 定义消息类型
 type ChatMessage = {
@@ -11,13 +12,11 @@ type ChatMessage = {
   parts: { type: 'text'; text: string }[]
 }
 
-export default function StudentAnalysisClient({
-  quizTheme,
-  score,
-}: {
-  quizTheme: string
-  score: string
-}) {
+export default function StudentAnalysisClient() {
+  const searchParams = useSearchParams()
+  const quizTheme = searchParams.get('quizTheme') || ''
+  const score = searchParams.get('score') || ''
+
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
