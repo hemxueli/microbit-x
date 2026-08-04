@@ -1,14 +1,21 @@
 'use client'
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabaseClient'
 
 export default function StudentAnalysisListPage() {
-  const router = useRouter()
   const [analyses, setAnalyses] = useState<any[]>([])
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
     const loadAnalyses = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -16,15 +23,17 @@ export default function StudentAnalysisListPage() {
       const { data, error } = await supabase
         .from('quiz_results')
         .select('id, quiz_theme, score, created_at, ai_feedback')
-        .eq('user_id', user.id) // ✅ 只显示当前学生的分析
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
       if (!error && data) {
-        setAnalyses(data.filter(r => r.ai_feedback)) // 只显示保存过的分析
+        setAnalyses(data.filter(r => r.ai_feedback))
       }
     }
     loadAnalyses()
-  }, [])
+  }, [mounted])
+
+  if (!mounted) return null
 
   return (
     <div className="p-8">
