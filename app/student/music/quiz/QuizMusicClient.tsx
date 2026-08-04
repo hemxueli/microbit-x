@@ -7,11 +7,10 @@ import { useI18n } from '@/lib/i18n'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { useRouter } from 'next/navigation'
 
-// 在组件里
-const router = useRouter()
-
 export default function QuizMusicPage() {
+  const router = useRouter()   // ✅ 必须写在这里
   const { t } = useI18n()
+
   const questions = [
     'quiz.music.q1',
     'quiz.music.q2',

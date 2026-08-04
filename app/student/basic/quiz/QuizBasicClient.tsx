@@ -7,10 +7,10 @@ import { useI18n } from '@/lib/i18n'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { useRouter } from 'next/navigation'
 
-// 在组件里
-const router = useRouter()
 export default function QuizBasicPage() {
+  const router = useRouter()   // ✅ 必须写在这里
   const { t } = useI18n()
+
   const questions = [
     'quiz.basic.q1',
     'quiz.basic.q2',
@@ -32,7 +32,6 @@ export default function QuizBasicPage() {
   const [muted, setMuted] = useState(false)
   const [bgm, setBgm] = useState<HTMLAudioElement | null>(null)
 
-  // 背景音乐
   useEffect(() => {
     const audio = new Audio('/music/quiz.mp3')
     audio.loop = true
