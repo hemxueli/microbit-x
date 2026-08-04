@@ -3,7 +3,7 @@ import { google } from '@ai-sdk/google'
 import { streamText } from 'ai'
 import { NextResponse } from 'next/server'
 
-const model = google('gemini-1.5-flash')
+const model = google('gemini-flash-latest')
 
 export async function POST(req: Request) {
   try {
