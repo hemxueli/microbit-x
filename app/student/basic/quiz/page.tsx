@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n'
 import { LanguageSwitcher } from '@/components/language-switcher'
+import { useRouter } from 'next/navigation'
 
+// 在组件里
+const router = useRouter()
 export default function QuizBasicPage() {
   const { t } = useI18n()
   const questions = [
@@ -185,7 +188,7 @@ export default function QuizBasicPage() {
                 🔄 {t('quiz.retry')}
               </button>
               <button
-                onClick={() => (window.location.href = '/student/evaluation')}
+                onClick={() => router.push('/student/analysis')}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
               >
                 📊 {t('quiz.aiEvaluation')}

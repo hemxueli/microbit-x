@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n'
 import { LanguageSwitcher } from '@/components/language-switcher'
+import { useRouter } from 'next/navigation'
 
-const icons = ['🎶','💡','🔲','🎹','🔊','🎼','⏱️','🤫','😂','🎵']
+// 在组件里
+const router = useRouter()
 
 export default function QuizMusicPage() {
   const { t } = useI18n()
@@ -187,7 +189,7 @@ export default function QuizMusicPage() {
                 🔄 {t('quiz.retry')}
               </button>
               <button
-                onClick={() => (window.location.href = '/student/evaluation')}
+                onClick={() => router.push('/student/analysis')}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
               >
                 📊 {t('quiz.aiEvaluation')}
