@@ -65,7 +65,7 @@ export default function StudentAnalysisClient() {
         <Button className="bg-teal-500 text-white" onClick={saveAnalysis} disabled={!completion}>
           {t('analysis.save')}
         </Button>
-        <Button className="bg-gray-400 text-white" onClick={() => (window.location.href = '/student/home')}>
+        <Button className="bg-gray-400 text-white" onClick={() => (window.location.href = '/student')}>
           {t('analysis.exit')}
         </Button>
         {isLoading && (
