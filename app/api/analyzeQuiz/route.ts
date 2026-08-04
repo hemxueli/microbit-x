@@ -1,29 +1,33 @@
-import { NextResponse } from 'next/server'
-import { streamText } from 'ai'
+// app/api/analyzeQuiz/route.ts
 import { google } from '@ai-sdk/google'
+import { streamText } from 'ai'
+import { NextResponse } from 'next/server'
 
-// 初始化 Gemini 模型
-const model = google('gemini-1.5-flash') // 你可以换成 gemini-1.5-pro
+// 初始化 Gemini 模型，手动指定你的环境变量
+const model = google('gemini-1.5-flash')
 
 export async function POST(req: Request) {
   try {
-    const { prompt } = await req.json()
+    const { quiz_theme, score } = await req.json()
 
-    // 调用 Gemini 生成分析
-    const result = await streamText({
+    const prompt = `学生在主题 ${quiz_theme} 的 Quiz 中得分 ${score}/10。请分析学生在哪些知识点上有不足，并给出改进建议。`
+
+    // 返回流式响应，前端 useChat 可以直接消费
+    return streamText({
       model,
-      prompt,
+      messages: [
+        {
+          role: 'system',
+          content: '你是一位教育专家，请根据学生的 quiz 表现给出详细分析和改进建议。',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
     })
-
-    // 把结果拼成字符串返回
-    let text = ''
-    for await (const chunk of result.textStream) {
-      text += chunk
-    }
-
-    return NextResponse.json({ text })
   } catch (error) {
     console.error('AI 分析错误:', error)
-    return NextResponse.json({ text: 'AI 分析出错，请检查配置。' }, { status: 500 })
+    return NextResponse.json({ error: 'AI 分析出错，请检查配置。' }, { status: 500 })
   }
 }
