@@ -197,6 +197,37 @@ export const dict: Dict = {
   ms: 'Cabaran Pembelajaran',
   },
 
+  'analysis.title': {
+  en: 'AI Analysis Result',
+  zh: 'AI 分析结果',
+  ms: 'Hasil Analisis AI',
+  },
+  'analysis.save': {
+    en: 'Save Analysis',
+    zh: '保存分析',
+    ms: 'Simpan Analisis',
+  },
+  'analysis.exit': {
+    en: 'Exit',
+    zh: '退出',
+    ms: 'Keluar',
+  },
+  'analysis.stop': {
+    en: 'Stop Generation',
+    zh: '停止生成',
+    ms: 'Hentikan Penjanaan',
+  },
+  'analysis.error': {
+    en: 'AI analysis failed, please check configuration.',
+    zh: 'AI 分析失败，请检查配置。',
+    ms: 'Analisis AI gagal, sila semak konfigurasi.',
+  },
+  'analysis.success': {
+    en: 'AI analysis saved successfully!',
+    zh: 'AI 分析已保存！',
+    ms: 'Analisis AI berjaya disimpan!',
+  },
+
   "makecode.open": { "en": "Open MakeCode", "zh": "打开 MakeCode", "ms": "Buka MakeCode" },
   "makecode.title": { "en": "MakeCode Editor", "zh": "MakeCode 编辑器", "ms": "Editor MakeCode" },
   "makecode.confirmText": { "en": "Do you want to jump to MakeCode official editor?", "zh": "要跳转到 MakeCode 官方编辑器吗？", "ms": "Adakah anda mahu pergi ke editor rasmi MakeCode?" },
