@@ -32,9 +32,10 @@ export default function StudentAnalysisClient() {
         ai_feedback: completion,
       }),
     })
+
     const data = await res.json()
     if (data.success) {
-      alert(t('analysis.success'))
+      // ✅ 保存成功后直接跳转
       window.location.href = '/student/analysis-list'
     } else {
       alert(data.error || t('analysis.error'))
