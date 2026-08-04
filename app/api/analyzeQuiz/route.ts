@@ -1,10 +1,9 @@
-// app/api/analyzeQuiz/route.ts
 import { google } from "@ai-sdk/google"
 import { streamText } from "ai"
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
-const model = google("gemini-1.5-flash-latest")
+const model = google("gemini-flash-latest")
 
 // 初始化 Supabase 客户端
 const supabase = createClient(
