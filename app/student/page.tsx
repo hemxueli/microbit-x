@@ -426,7 +426,16 @@ export default function StudentPage() {
           </div>
 
           {/* Learning Challenge 卡片区 */}
-          <h2 className="text-2xl font-bold mt-12 mb-6">{t('student.learningChallenge')}</h2>
+          <div className="flex justify-between items-center mt-12 mb-6">
+            <h2 className="text-2xl font-bold">{t('student.learningChallenge')}</h2>
+            <button
+              onClick={() => window.location.href = '/student/analysis-list'}
+              className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
+            >
+              📊 {t('student.viewAnalysis')}
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { key: 'basic', image: '/images/quiz-basic.png' },
