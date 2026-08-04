@@ -12,7 +12,6 @@ export async function POST(req: Request) {
     const prompt = `The student scored ${score}/10 in the quiz on theme "${quiz_theme}". 
 Please analyze which knowledge points are weak and provide improvement suggestions.`
 
-    // ✅ 使用 prompt 而不是 messages
     return streamText({
       model,
       prompt,

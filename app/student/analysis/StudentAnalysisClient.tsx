@@ -1,17 +1,9 @@
 'use client'
-import { useChat } from '@ai-sdk/react'
-import { DefaultChatTransport } from 'ai'
-import { useEffect, useMemo } from 'react'
+import { useCompletion } from '@ai-sdk/react'
 import { Button } from '@/components/ui/button'
 import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 import { useI18n } from '@/lib/i18n'
-
-// 定义消息类型
-type ChatMessage = {
-  id: string
-  role: 'user' | 'assistant'
-  parts: { type: 'text'; text: string }[]
-}
 
 export default function StudentAnalysisClient() {
   const { t } = useI18n()
@@ -19,28 +11,16 @@ export default function StudentAnalysisClient() {
   const quizTheme = searchParams.get('quizTheme') || ''
   const score = searchParams.get('score') || ''
 
-  const transport = useMemo(
-    () =>
-      new DefaultChatTransport({
-        api: '/api/analyzeQuiz',
-        body: () => ({ quiz_theme: quizTheme, score }),
-      }),
-    [quizTheme, score]
-  )
-
-  const { messages, sendMessage, status, error, stop } = useChat({ transport })
+  const { completion, complete, isLoading, error, stop } = useCompletion({
+    api: '/api/analyzeQuiz',
+  })
 
   useEffect(() => {
     if (quizTheme && score) {
-      const prompt = `学生在主题 ${quizTheme} 的 Quiz 中得分 ${score}/10。请分析学生在哪些知识点上有不足，并给出改进建议。`
-      sendMessage({ text: prompt })
+      const prompt = `The student scored ${score}/10 in the quiz on theme "${quizTheme}". Please analyze which knowledge points are weak and provide improvement suggestions.`
+      complete(prompt)
     }
-  }, [quizTheme, score, sendMessage])
-
-  const feedback = (messages as ChatMessage[])
-    .filter((m) => m.role === 'assistant')
-    .map((m) => m.parts.map((p) => p.text).join(''))
-    .join('\n')
+  }, [quizTheme, score, complete])
 
   const saveAnalysis = async () => {
     const res = await fetch('/api/saveQuizResult', {
@@ -49,26 +29,26 @@ export default function StudentAnalysisClient() {
       body: JSON.stringify({
         quiz_theme: quizTheme,
         score,
-        ai_feedback: feedback,
+        ai_feedback: completion,
       }),
     })
     const data = await res.json()
     if (data.success) {
-      alert('AI 分析已保存！')
+      alert(t('analysis.success'))
       window.location.href = '/student/analysis-list'
     } else {
-      alert(data.error || '保存失败')
+      alert(data.error || t('analysis.error'))
     }
   }
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">{t('analysis.title')}</h1>
-      
-      <div className="whitespace-pre-line bg-gray-100 p-4 rounded min-h-[10rem]">
-        {feedback && feedback.length > 0 && feedback}
 
-        {status === 'submitted' && (
+      <div className="whitespace-pre-line bg-gray-100 p-4 rounded min-h-[10rem]">
+        {completion}
+
+        {isLoading && (
           <div className="flex justify-start mt-2">
             <div className="flex items-center gap-1.5 rounded-xl bg-gray-100 px-3.5 py-3">
               <span className="h-2 w-2 animate-bounce rounded-full bg-gray-500 [animation-delay:-0.3s]" />
@@ -78,28 +58,18 @@ export default function StudentAnalysisClient() {
           </div>
         )}
 
-        {error && <p className="text-red-500">出错了: {String(error.message)}</p>}
+        {error && <p className="text-red-500">{t('analysis.error')}</p>}
       </div>
 
       <div className="flex gap-4 mt-6">
-        <Button
-          className="bg-teal-500 text-white"
-          onClick={saveAnalysis}
-          disabled={!feedback}
-        >
+        <Button className="bg-teal-500 text-white" onClick={saveAnalysis} disabled={!completion}>
           {t('analysis.save')}
         </Button>
-        <Button
-          className="bg-gray-400 text-white"
-          onClick={() => (window.location.href = '/student')}
-        >
-         {t('analysis.exit')}  
+        <Button className="bg-gray-400 text-white" onClick={() => (window.location.href = '/student/home')}>
+          {t('analysis.exit')}
         </Button>
-        {status === 'submitted' && (
-          <Button
-            className="bg-gray-200 text-gray-700"
-            onClick={() => stop()}
-          >
+        {isLoading && (
+          <Button className="bg-gray-200 text-gray-700" onClick={() => stop()}>
             {t('analysis.stop')}
           </Button>
         )}
