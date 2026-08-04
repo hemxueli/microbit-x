@@ -4,6 +4,7 @@ import { DefaultChatTransport } from 'ai'
 import { useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { useSearchParams } from 'next/navigation'
+import { useI18n } from '@/lib/i18n'
 
 // 定义消息类型
 type ChatMessage = {
@@ -13,6 +14,7 @@ type ChatMessage = {
 }
 
 export default function StudentAnalysisClient() {
+  const { t } = useI18n()
   const searchParams = useSearchParams()
   const quizTheme = searchParams.get('quizTheme') || ''
   const score = searchParams.get('score') || ''
@@ -61,8 +63,8 @@ export default function StudentAnalysisClient() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">AI 分析结果</h1>
-
+      <h1 className="text-2xl font-bold mb-4">{t('analysis.title')}</h1>
+      
       <div className="whitespace-pre-line bg-gray-100 p-4 rounded min-h-[10rem]">
         {feedback && feedback.length > 0 && feedback}
 
@@ -85,20 +87,20 @@ export default function StudentAnalysisClient() {
           onClick={saveAnalysis}
           disabled={!feedback}
         >
-          保存分析
+          {t('analysis.save')}
         </Button>
         <Button
           className="bg-gray-400 text-white"
-          onClick={() => (window.location.href = '/student/home')}
+          onClick={() => (window.location.href = '/student')}
         >
-          退出
+         {t('analysis.exit')}  
         </Button>
         {status === 'submitted' && (
           <Button
             className="bg-gray-200 text-gray-700"
             onClick={() => stop()}
           >
-            停止生成
+            {t('analysis.stop')}
           </Button>
         )}
       </div>
