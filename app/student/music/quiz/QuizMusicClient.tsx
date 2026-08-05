@@ -6,10 +6,45 @@ import { useState, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function QuizMusicPage() {
-  const router = useRouter()   // ✅ 必须写在这里
+  const router = useRouter()
   const { t } = useI18n()
+
+  // 保存结果到 Supabase
+  const saveResult = async (theme: string, answers: number[], score: number) => {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      console.error('Failed to get user info:', userError)
+      alert('Please log in first to save results')
+      return
+    }
+
+    const { data, error } = await supabase
+      .from('quiz_results')
+      .insert([
+        {
+          user_id: user.id,
+          quiz_theme: theme,
+          answers: answers,
+          score: score,
+          created_at: new Date().toISOString(),
+        },
+      ])
+
+    if (error) {
+      console.error('Save failed:', error)
+      alert('Save failed, please check configuration')
+    } else {
+      console.log('Save successful:', data)
+      alert('Quiz result saved successfully!')
+    }
+  }
 
   const questions = [
     'quiz.music.q1',
@@ -49,7 +84,7 @@ export default function QuizMusicPage() {
     }
   }
 
-  const submitQuiz = () => {
+  const submitQuiz = async () => {
     let s = 0
     questions.forEach((q, i) => {
       const correct = t(`${q}.answer`)
@@ -59,6 +94,8 @@ export default function QuizMusicPage() {
     setScore(s)
     setShowResult(true)
     // ❌ 不再播放赢家音乐
+
+    await saveResult('Music Quiz', answers, s)
   }
 
     if (!started) {
@@ -189,8 +226,12 @@ export default function QuizMusicPage() {
               >
                 🔄 {t('quiz.retry')}
               </button>
-              <button
-                onClick={() => router.push('/student/analysis')}
+                            <button
+                onClick={() => {
+                  if (score !== null) {
+                    router.push(`/student/analysis?quizTheme=Basic Quiz&score=${score}`)
+                  }
+                }}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
               >
                 📊 {t('quiz.aiEvaluation')}
