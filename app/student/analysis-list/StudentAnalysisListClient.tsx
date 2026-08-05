@@ -1,26 +1,20 @@
 'use client'
-export const dynamic = "force-dynamic"
-export const fetchCache = "force-no-store"
-
 import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
 
-export default function StudentAnalysisListClient() {
-  const [analyses, setAnalyses] = useState<any[]>([])
+export default function StudentAnalysisList({ userId }: { userId: string }) {
+  const [results, setResults] = useState<any[]>([])
 
-  // 加载分析记录
   useEffect(() => {
-    const loadAnalyses = async () => {
-      const res = await fetch('/api/getQuizResults')
+    const fetchResults = async () => {
+      const res = await fetch(`/api/getQuizResults?user_id=${userId}`)
       const data = await res.json()
-      if (data.results) {
-        setAnalyses(data.results.filter((r: any) => r.ai_feedback))
-      }
+      if (data.results) setResults(data.results)
     }
-    loadAnalyses()
-  }, [])
+    fetchResults()
+  }, [userId])
 
-  // 删除分析记录
-  const deleteAnalysis = async (id: string) => {
+  const deleteResult = async (id: string) => {
     const res = await fetch('/api/deleteQuizResult', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -28,44 +22,30 @@ export default function StudentAnalysisListClient() {
     })
     const data = await res.json()
     if (data.success) {
-      alert('删除成功')
-      setAnalyses(analyses.filter(r => r.id !== id))
+      setResults(results.filter(r => r.id !== id))
     } else {
-      alert(data.error || '删除失败')
+      alert(data.error || "删除失败")
     }
   }
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">📊 我的 AI 分析记录</h1>
-
-      {analyses.length === 0 ? (
-        <p className="text-gray-500">目前还没有保存的 AI 分析</p>
+      <h1 className="text-2xl font-bold mb-4">我的分析记录</h1>
+      {results.length === 0 ? (
+        <p>暂无分析记录</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {analyses.map((a) => (
-            <div key={a.id} className="border rounded-lg shadow p-4 bg-white">
-              <h2 className="text-lg font-bold text-teal-700 mb-2">
-                {a.quiz_theme} Quiz
-              </h2>
-              <p className="text-sm text-gray-600 mb-2">
-                分数: {a.score}/10
-              </p>
-              <p className="text-xs text-gray-400 mb-3">
-                保存时间: {new Date(a.created_at).toLocaleString()}
-              </p>
-              <div className="bg-gray-50 p-3 rounded text-sm whitespace-pre-line mb-3">
-                {a.ai_feedback}
-              </div>
-              <button
-                onClick={() => deleteAnalysis(a.id)}
-                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-              >
+        <ul className="space-y-4">
+          {results.map(r => (
+            <li key={r.id} className="p-4 bg-gray-100 rounded">
+              <h2 className="font-semibold">{r.quiz_theme} - 得分 {r.score}/10</h2>
+              <p className="whitespace-pre-line mt-2">{r.analysis_feedback}</p>
+              <p className="text-sm text-gray-500 mt-1">保存时间: {new Date(r.created_at).toLocaleString()}</p>
+              <Button className="bg-red-500 text-white mt-2" onClick={() => deleteResult(r.id)}>
                 删除
-              </button>
-            </div>
+              </Button>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   )
