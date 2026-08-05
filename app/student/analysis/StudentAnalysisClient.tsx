@@ -1,7 +1,9 @@
 'use client'
+
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
+import { supabase } from '@/lib/supabaseClient'
 
 type Lang = 'en' | 'zh' | 'ms'
 
@@ -29,15 +31,35 @@ interface QuizAnalysis {
   }
 }
 
-export default function StudentAnalysisClient({ userId }: { userId: string }) {
+export default function StudentAnalysisClient() {
   const { t } = useI18n()
+  const [userId, setUserId] = useState<string | null>(null)
   const [analysis, setAnalysis] = useState<QuizAnalysis | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [lang, setLang] = useState<Lang>('en') // default English
+  const [lang, setLang] = useState<Lang>('en')
 
+  // ✅ Get current logged-in user ID
+  useEffect(() => {
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser()
+      if (error) {
+        console.error('Auth error:', error.message)
+      }
+      setUserId(data?.user?.id ?? null)
+    }
+    getUser()
+  }, [])
+
+  // ✅ Fetch analysis when userId is available
   useEffect(() => {
     const fetchAnalysis = async () => {
+      if (!userId) {
+        setError('MISSING_USER_ID')
+        setLoading(false)
+        return
+      }
+
       setLoading(true)
       try {
         const res = await fetch('/api/analyzeQuiz', {
@@ -54,17 +76,17 @@ export default function StudentAnalysisClient({ userId }: { userId: string }) {
           setAnalysis(data)
           setError(null)
         }
-      } catch (err) {
+      } catch {
         setError('NETWORK_ERROR')
         setAnalysis(null)
       }
       setLoading(false)
     }
-    fetchAnalysis()
+    if (userId) fetchAnalysis()
   }, [userId])
 
   const saveAnalysis = async () => {
-    if (!analysis) return
+    if (!analysis || !userId) return
     const res = await fetch('/api/saveQuizResult', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
