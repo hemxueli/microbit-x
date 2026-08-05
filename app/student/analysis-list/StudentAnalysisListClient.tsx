@@ -70,12 +70,12 @@ export default function StudentAnalysisListClient() {
   if (!userId) return <p className="text-white">Please log in to view your analysis list.</p>
 
   return (
-    <div className="flex min-h-screen flex-col bg-teal-900">
-      {/* 顶部导航栏：白色透明 */}
-      <header className="sticky top-0 z-50 border-b border-white/30 bg-white/20 backdrop-blur">
+    <div className="flex min-h-screen flex-col bg-teal-700">
+      {/* 顶部导航栏：白色半透明 */}
+      <header className="sticky top-0 z-50 border-b border-white/20 bg-white/90 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
-          <span className="font-medium text-white">{t('analysis.listTitle')}</span>
+          <span className="font-medium text-teal-800">{t('analysis.listTitle')}</span>
         </div>
       </header>
 
@@ -86,7 +86,7 @@ export default function StudentAnalysisListClient() {
         ) : (
           <ul className="space-y-6">
             {results.map(r => (
-              <li key={r.id} className="p-6 bg-teal-100 border border-teal-200 rounded-lg shadow-sm">
+              <li key={r.id} className="p-6 bg-teal-100 border border-teal-200 rounded-lg shadow">
                 <h2 className="font-semibold text-teal-800">
                   {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.answers ? r.answers.length : '-'}
                 </h2>
@@ -114,7 +114,7 @@ export default function StudentAnalysisListClient() {
                 </p>
 
                 <Button
-                  className="bg-teal-600 hover:bg-teal-700 text-white mt-3"
+                  className="bg-teal-500 hover:bg-teal-600 text-white mt-3"
                   onClick={() => deleteResult(r.id)}
                 >
                   {t('common.delete')}
@@ -125,9 +125,9 @@ export default function StudentAnalysisListClient() {
         )}
       </main>
 
-      {/* 底部版权栏：白色透明 */}
-      <footer className="border-t border-white/30 py-6 bg-white/20 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-white">
+      {/* 底部版权栏：白色半透明 */}
+      <footer className="border-t border-white/20 py-6 bg-white/90 backdrop-blur-sm">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-teal-800">
           <Logo showText={false} />
           <span>{'\u00A9'} 2026 MicroBOT-X</span>
         </div>
