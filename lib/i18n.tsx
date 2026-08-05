@@ -350,7 +350,22 @@ export const dict: Dict = {
   'common.loading': { en: 'Loading...', zh: '加载中……', ms: 'Memuatkan...' },
   'common.submit': { en: 'Submit', zh: '提交', ms: 'Hantar' },
   'common.close': { en: 'Close', zh: '关闭', ms: 'Tutup' },
-
+  'common.delete': { en: 'Delete', zh: '删除', ms: 'Hapus' },
+  "common.english": {
+      "en": "English",
+      "zh": "英语",
+      "ms": "Bahasa Inggeris"
+    },
+    "common.chinese": {
+      "en": "Chinese",
+      "zh": "中文",
+      "ms": "Bahasa Cina"
+    },
+    "common.malay": {
+      "en": "Malay",
+      "zh": "马来语",
+      "ms": "Bahasa Melayu"
+    },
   // Student
   'student.welcome': { en: 'Welcome', zh: '欢迎', ms: 'Selamat datang' },
   'student.myProgress': { en: 'My progress', zh: '我的进度', ms: 'Kemajuan saya' },
@@ -467,22 +482,22 @@ export const dict: Dict = {
     zh: '保存失败',
     ms: 'Simpan gagal'},
 
-    "basic": {
+    "quiz.basic": {
       "en": "Basic Quiz",
       "zh": "基础测验",
       "ms": "Kuiz Asas"
     },
-    "music": {
+    "quiz.music": {
       "en": "Music Quiz",
       "zh": "音乐测验",
       "ms": "Kuiz Muzik"
     },
-    "input": {
+    "quiz.input": {
       "en": "Input Quiz",
       "zh": "输入测验",
       "ms": "Kuiz Input"
     },
-    
+
   // Quiz
   'quiz.question': { en: 'Question', zh: '题目', ms: 'Soalan' },
   'quiz.of': { en: 'of', zh: '/', ms: 'daripada' },

@@ -72,7 +72,7 @@ export default function StudentAnalysisListClient() {
   if (!userId) return <p className="text-teal-700">Please log in to view your analysis list.</p>
 
   return (
-    <div className="flex min-h-screen flex-col bg-teal-300">
+    <div className="flex min-h-screen flex-col bg-teal-200">
       {/* 顶部导航栏 */}
       <header className="sticky top-0 z-50 border-b border-white/20 bg-white/95 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
@@ -89,11 +89,24 @@ export default function StudentAnalysisListClient() {
         ) : (
           <ul className="space-y-6">
             {results.map(r => (
-              <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow">
+              <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow relative">
                 {/* ✅ Quiz 标题三语言版本，分数固定 /10 */}
                 <h2 className="font-bold text-2xl text-teal-800">
-                  {t(`quiz.${r.quiz_theme}.${lang}`)} - {t('analysis.score')} {r.score}/10
+                  {t(`quiz.${r.quiz_theme}`)} - {t('analysis.score')} {r.score}/10
                 </h2>
+
+                {/* ✅ 翻译选择器放在右上角 */}
+                <div className="absolute top-4 right-4">
+                  <select
+                    value={lang}
+                    onChange={(e) => setLang(e.target.value as Lang)}
+                    className="border border-teal-300 rounded p-2 text-teal-800 bg-white text-sm"
+                  >
+                    <option value="en">{t('common.english')}</option>
+                    <option value="zh">{t('common.chinese')}</option>
+                    <option value="ms">{t('common.malay')}</option>
+                  </select>
+                </div>
 
                 {/* AI feedback 三语言版本 */}
                 <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
