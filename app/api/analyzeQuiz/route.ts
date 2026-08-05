@@ -13,18 +13,29 @@ export async function POST(req: Request) {
   try {
     const { user_id } = await req.json()
 
+    // Debug log
+    console.log("🔍 Received user_id:", user_id)
+
     // 1. Get latest quiz result
-    const { data: quizResult, error: resultError } = await supabase
+    const { data: quizResults, error: resultError } = await supabase
       .from("quiz_results")
-      .select("quiz_theme, answers, score, created_at")
+      .select("id, user_id, quiz_theme, answers, score, created_at")
       .eq("user_id", user_id)
       .order("created_at", { ascending: false })
       .limit(1)
-      .single()
 
-    if (resultError || !quizResult) {
+    console.log("📊 Supabase query error:", resultError)
+    console.log("📊 Supabase query results:", quizResults)
+
+    if (resultError) {
+      return NextResponse.json({ error: "DB_ERROR", details: resultError.message }, { status: 500 })
+    }
+
+    if (!quizResults || quizResults.length === 0) {
       return NextResponse.json({ error: "NO_QUIZ_DATA" }, { status: 404 })
     }
+
+    const quizResult = quizResults[0]
 
     // 2. Get questions
     const { data: questions, error: questionError } = await supabase
@@ -33,7 +44,10 @@ export async function POST(req: Request) {
       .eq("quiz_theme", quizResult.quiz_theme)
       .order("id")
 
-    if (questionError || !questions) {
+    console.log("📊 Questions query error:", questionError)
+    console.log("📊 Questions query results:", questions)
+
+    if (questionError || !questions || questions.length === 0) {
       return NextResponse.json({ error: "NO_QUESTIONS" }, { status: 404 })
     }
 
@@ -52,7 +66,7 @@ export async function POST(req: Request) {
       is_correct: quizResult.answers?.[idx] === q.correct_answer,
     }))
 
-    // 4. AI Prompt (force JSON output)
+    // 4. AI Prompt
     const prompt = `
 The student scored ${quizResult.score}/${questions.length} in the quiz on theme "${quizResult.quiz_theme}".
 Here are the answers:
@@ -64,11 +78,6 @@ Please provide analysis in THREE languages:
 2. Chinese (中文)
 3. Malay (Bahasa Melayu)
 
-Include:
-- Incorrect questions
-- Weak knowledge points
-- Improvement suggestions
-
 Output STRICT JSON format:
 {
   "en": "English feedback here",
@@ -77,7 +86,7 @@ Output STRICT JSON format:
 }
 `
 
-    // 5. Call AI and parse JSON safely
+    // 5. Call AI
     const aiResult = await generateText({ model, prompt })
     const aiText = aiResult.text
     let ai_feedback
@@ -98,7 +107,7 @@ Output STRICT JSON format:
       ai_feedback,
     })
   } catch (error) {
-    console.error("AI analysis error:", error)
+    console.error("❌ AI analysis error:", error)
     return NextResponse.json({ error: "AI_ANALYSIS_FAILED" }, { status: 500 })
   }
 }
