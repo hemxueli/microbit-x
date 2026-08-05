@@ -10,6 +10,10 @@ export async function POST(req: Request) {
   try {
     const { id } = await req.json()
 
+    if (!id) {
+      return NextResponse.json({ success: false, error: "MISSING_ID" })
+    }
+
     const { error } = await supabase.from("quiz_results").delete().eq("id", id)
 
     if (error) {
@@ -17,7 +21,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, id })
-  } catch (err) {
+  } catch {
     return NextResponse.json({ success: false, error: "SERVER_ERROR" })
   }
 }

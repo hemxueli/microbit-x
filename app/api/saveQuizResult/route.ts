@@ -10,6 +10,10 @@ export async function POST(req: Request) {
   try {
     const { user_id, quiz_theme, score, answers, analysis_feedback } = await req.json()
 
+    if (!user_id) {
+      return NextResponse.json({ success: false, error: "MISSING_USER_ID" })
+    }
+
     const { data, error } = await supabase.from("quiz_results").insert([
       {
         user_id,
@@ -22,11 +26,13 @@ export async function POST(req: Request) {
     ]).select()
 
     if (error) {
+      console.error("Supabase insert error:", error)
       return NextResponse.json({ success: false, error: "SAVE_FAILED" })
     }
 
     return NextResponse.json({ success: true, id: data[0].id })
   } catch (err) {
+    console.error("Server error:", err)
     return NextResponse.json({ success: false, error: "SERVER_ERROR" })
   }
 }

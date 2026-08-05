@@ -1,7 +1,9 @@
 'use client'
+
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
+import { supabase } from '@/lib/supabaseClient'
 
 type Lang = 'en' | 'zh' | 'ms'
 
@@ -9,8 +11,8 @@ interface QuizResult {
   id: string
   quiz_theme: string
   score: number
-  total_questions: number
   created_at: string
+  answers: any[] // stored as JSONB in Supabase
   analysis_feedback: {
     en: string
     zh: string
@@ -18,21 +20,40 @@ interface QuizResult {
   }
 }
 
-export default function StudentAnalysisListClient({ userId }: { userId: string }) {
+export default function StudentAnalysisListClient() {
   const { t } = useI18n()
   const [results, setResults] = useState<QuizResult[]>([])
-  const [lang, setLang] = useState<Lang>('en') // default English
+  const [lang, setLang] = useState<Lang>('en')
   const [loading, setLoading] = useState(true)
+  const [userId, setUserId] = useState<string | null>(null)
 
+  // ✅ Get current logged-in user ID
+  useEffect(() => {
+    const getUser = async () => {
+      const { data, error } = await supabase.auth.getUser()
+      if (error) {
+        console.error('Auth error:', error.message)
+      }
+      setUserId(data?.user?.id ?? null)
+    }
+    getUser()
+  }, [])
+
+  // ✅ Fetch results when userId is available
   useEffect(() => {
     const fetchResults = async () => {
+      if (!userId) {
+        setLoading(false)
+        return
+      }
       setLoading(true)
       const res = await fetch(`/api/getQuizResults?user_id=${userId}`)
       const data = await res.json()
+      console.log("Fetched results:", data) // Debug
       if (data.results) setResults(data.results)
       setLoading(false)
     }
-    fetchResults()
+    if (userId) fetchResults()
   }, [userId])
 
   const deleteResult = async (id: string) => {
@@ -50,6 +71,7 @@ export default function StudentAnalysisListClient({ userId }: { userId: string }
   }
 
   if (loading) return <p>{t('analysis.loading')}</p>
+  if (!userId) return <p>Please log in to view your analysis list.</p>
 
   return (
     <div className="p-8">
@@ -61,7 +83,7 @@ export default function StudentAnalysisListClient({ userId }: { userId: string }
           {results.map(r => (
             <li key={r.id} className="p-4 bg-gray-100 rounded">
               <h2 className="font-semibold">
-                {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.total_questions}
+                {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.answers ? r.answers.length : '-'}
               </h2>
 
               {/* Language switcher */}
@@ -79,7 +101,7 @@ export default function StudentAnalysisListClient({ userId }: { userId: string }
 
               {/* AI feedback */}
               <p className="whitespace-pre-line mt-2">
-                {r.analysis_feedback[lang] || t('analysis.noFeedback')}
+                {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
               </p>
 
               <p className="text-sm text-gray-500 mt-1">
