@@ -383,6 +383,61 @@ export const dict: Dict = {
   ms: 'Pilih bahasa pembelajaran',
   },
 
+  'analysis.generating': {
+    en: 'Generating analysis...',
+    zh: '正在生成分析...',
+    ms: 'Sedang menjana analisis...',
+  },
+  'analysis.failed': {
+    en: 'Analysis failed',
+    zh: '分析失败',
+    ms: 'Analisis gagal',
+  },
+  'analysis.score': {
+    en: 'Score',
+    zh: '得分',
+    ms: 'Markah',
+  },
+  'analysis.completedAt': {
+    en: 'Completed at',
+    zh: '完成时间',
+    ms: 'Selesai pada',
+  },
+  'analysis.question': {
+    en: 'Question',
+    zh: '题目',
+    ms: 'Soalan',
+  },
+  'analysis.yourAnswer': {
+    en: 'Your answer',
+    zh: '你的答案',
+    ms: 'Jawapan anda',
+  },
+  'analysis.correctAnswer': {
+    en: 'Correct answer',
+    zh: '正确答案',
+    ms: 'Jawapan betul',
+  },
+  'analysis.correct': {
+    en: 'Correct',
+    zh: '答对了',
+    ms: 'Betul',
+  },
+  'analysis.incorrect': {
+    en: 'Incorrect',
+    zh: '答错了',
+    ms: 'Salah',
+  },
+  'analysis.aiFeedback': {
+    en: 'AI Feedback',
+    zh: 'AI 分析反馈',
+    ms: 'Maklum balas AI',
+  },
+ 
+  'analysis.saveFailed': {
+    en: 'Save failed',
+    zh: '保存失败',
+    ms: 'Simpan gagal'},
   // Quiz
   'quiz.question': { en: 'Question', zh: '题目', ms: 'Soalan' },
   'quiz.of': { en: 'of', zh: '/', ms: 'daripada' },
