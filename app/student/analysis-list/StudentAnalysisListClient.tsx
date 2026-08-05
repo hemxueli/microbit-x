@@ -86,17 +86,17 @@ export default function StudentAnalysisListClient() {
                 {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.answers ? r.answers.length : '-'}
               </h2>
 
-              {/* Language switcher */}
-              <div className="mt-2 flex gap-2">
-                <Button onClick={() => setLang('en')} className={lang === 'en' ? 'bg-teal-500 text-white' : 'bg-gray-200'}>
-                  {t('common.english')}
-                </Button>
-                <Button onClick={() => setLang('zh')} className={lang === 'zh' ? 'bg-teal-500 text-white' : 'bg-gray-200'}>
-                  {t('common.chinese')}
-                </Button>
-                <Button onClick={() => setLang('ms')} className={lang === 'ms' ? 'bg-teal-500 text-white' : 'bg-gray-200'}>
-                  {t('common.malay')}
-                </Button>
+              {/* Language switcher (dropdown) */}
+              <div className="mt-2">
+                <select
+                  value={lang}
+                  onChange={(e) => setLang(e.target.value as Lang)}
+                  className="border rounded p-2"
+                >
+                  <option value="en">{t('common.english')}</option>
+                  <option value="zh">{t('common.chinese')}</option>
+                  <option value="ms">{t('common.malay')}</option>
+                </select>
               </div>
 
               {/* AI feedback */}
