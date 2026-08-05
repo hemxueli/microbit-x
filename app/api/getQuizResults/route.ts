@@ -11,6 +11,10 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const user_id = searchParams.get("user_id")
 
+    if (!user_id) {
+      return NextResponse.json({ error: "MISSING_USER_ID" }, { status: 400 })
+    }
+
     const { data, error } = await supabase
       .from("quiz_results")
       .select("*")
@@ -18,11 +22,18 @@ export async function GET(req: Request) {
       .order("created_at", { ascending: false })
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ error: "GET_RESULTS_FAILED" }, { status: 500 })
     }
 
-    return NextResponse.json({ results: data })
+    const parsedData = data.map(r => ({
+      ...r,
+      analysis_feedback: typeof r.analysis_feedback === 'string'
+        ? JSON.parse(r.analysis_feedback)
+        : r.analysis_feedback
+    }))
+
+    return NextResponse.json({ results: parsedData })
   } catch (err) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
+    return NextResponse.json({ error: "SERVER_ERROR" }, { status: 500 })
   }
 }

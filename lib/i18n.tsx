@@ -383,6 +383,34 @@ export const dict: Dict = {
   ms: 'Pilih bahasa pembelajaran',
   },
 
+
+  // 分析列表页面
+  'analysis.listTitle': {
+    en: 'My Analysis Records',
+    zh: '我的分析记录',
+    ms: 'Rekod Analisis Saya',
+  },
+  'analysis.noRecords': {
+    en: 'No analysis records',
+    zh: '暂无分析记录',
+    ms: 'Tiada rekod analisis',
+  },
+  'analysis.savedAt': {
+    en: 'Saved at',
+    zh: '保存时间',
+    ms: 'Disimpan pada',
+  },
+  'analysis.deleteFailed': {
+    en: 'Delete failed',
+    zh: '删除失败',
+    ms: 'Padam gagal',
+  },
+  'analysis.loading': {
+    en: 'Loading analysis records...',
+    zh: '正在加载分析记录...',
+    ms: 'Sedang memuatkan rekod analisis...',
+  },
+
   'analysis.generating': {
     en: 'Generating analysis...',
     zh: '正在生成分析...',

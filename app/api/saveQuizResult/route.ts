@@ -8,21 +8,25 @@ const supabase = createClient(
 
 export async function POST(req: Request) {
   try {
-    const { user_id, quiz_theme, score, answers } = await req.json()
+    const { user_id, quiz_theme, score, answers, analysis_feedback } = await req.json()
 
-    const { error } = await supabase.from("quiz_results").insert({
-      user_id,
-      quiz_theme,
-      score,
-      answers, // JSONB
-    })
+    const { data, error } = await supabase.from("quiz_results").insert([
+      {
+        user_id,
+        quiz_theme,
+        score,
+        answers, // JSONB
+        analysis_feedback, // JSONB { en, zh, ms }
+        created_at: new Date().toISOString(),
+      },
+    ]).select()
 
     if (error) {
-      return NextResponse.json({ success: false, error: error.message })
+      return NextResponse.json({ success: false, error: "SAVE_FAILED" })
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, id: data[0].id })
   } catch (err) {
-    return NextResponse.json({ success: false, error: "Server error" })
+    return NextResponse.json({ success: false, error: "SERVER_ERROR" })
   }
 }

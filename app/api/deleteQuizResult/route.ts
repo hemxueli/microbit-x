@@ -13,11 +13,11 @@ export async function POST(req: Request) {
     const { error } = await supabase.from("quiz_results").delete().eq("id", id)
 
     if (error) {
-      return NextResponse.json({ success: false, error: error.message })
+      return NextResponse.json({ success: false, error: "DELETE_FAILED" })
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, id })
   } catch (err) {
-    return NextResponse.json({ success: false, error: "Server error" })
+    return NextResponse.json({ success: false, error: "SERVER_ERROR" })
   }
 }
