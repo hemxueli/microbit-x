@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
 import { Logo } from '@/components/logo'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 
 type Lang = 'en' | 'zh' | 'ms'
 
 interface QuizResult {
   id: string
-  quiz_theme: string
+  quiz_theme: 'basic' | 'music' | 'input' // ✅ 三语言 key
   score: number
   created_at: string
   answers: any[]
@@ -66,37 +68,40 @@ export default function StudentAnalysisListClient() {
     }
   }
 
-  if (loading) return <p className="text-teal-600">{t('analysis.loading')}</p>
-  if (!userId) return <p className="text-teal-600">Please log in to view your analysis list.</p>
+  if (loading) return <p className="text-teal-700">{t('analysis.loading')}</p>
+  if (!userId) return <p className="text-teal-700">Please log in to view your analysis list.</p>
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-teal-50 to-white">
+    <div className="flex min-h-screen flex-col bg-teal-200">
       {/* 顶部导航栏 */}
-      <header className="sticky top-0 z-50 border-b border-teal-300 bg-teal-100/80 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-white/20 bg-white/95 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
-          <span className="font-medium text-teal-700">{t('analysis.listTitle')}</span>
+          <LanguageSwitcher />
         </div>
       </header>
 
       {/* 主体内容 */}
       <main className="flex-1 p-8">
+        <h1 className="text-3xl font-bold mb-6 text-teal-800">{t('analysis.listTitle')}</h1>
         {results.length === 0 ? (
-          <p className="text-teal-600">{t('analysis.noRecords')}</p>
+          <p className="text-teal-700 text-lg">{t('analysis.noRecords')}</p>
         ) : (
           <ul className="space-y-6">
             {results.map(r => (
-              <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow-sm">
-                <h2 className="font-semibold text-teal-700">
-                  {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.answers ? r.answers.length : '-'}
+              <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow relative">
+                {/* ✅ Quiz 标题三语言版本，分数固定 /10 */}
+                <h2 className="font-bold text-2xl text-teal-800">
+                  {t(`quiz.${r.quiz_theme}`)} - {t('analysis.score')} {r.score}/10
                 </h2>
 
-                {/* 语言选择器 */}
-                <div className="mt-3">
+                {/* ✅ 翻译选择器放在右上角 */}
+                <div className="absolute top-4 right-4">
                   <select
                     value={lang}
                     onChange={(e) => setLang(e.target.value as Lang)}
-                    className="border border-teal-300 rounded p-2 text-teal-700 bg-white"
+                    className="border border-teal-600 rounded p-2 text-white bg-teal-600 text-sm font-medium
+                              focus:outline-none focus:ring-2 focus:ring-teal-500"
                   >
                     <option value="en">{t('common.english')}</option>
                     <option value="zh">{t('common.chinese')}</option>
@@ -104,12 +109,13 @@ export default function StudentAnalysisListClient() {
                   </select>
                 </div>
 
-                {/* AI feedback */}
-                <p className="whitespace-pre-line mt-3 text-gray-700">
+
+                {/* AI feedback 三语言版本 */}
+                <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
                   {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
                 </p>
 
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-teal-600 mt-2">
                   {t('analysis.savedAt')}: {new Date(r.created_at).toLocaleString()}
                 </p>
 
@@ -126,12 +132,15 @@ export default function StudentAnalysisListClient() {
       </main>
 
       {/* 底部版权栏 */}
-      <footer className="border-t border-teal-300 py-6 bg-teal-100">
+      <footer className="border-t border-white/20 py-6 bg-white/95 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-teal-700">
           <Logo showText={false} />
           <span>{'\u00A9'} 2026 MicroBOT-X</span>
         </div>
       </footer>
+
+      {/* ✅ AI Chat Widget 在右下角 */}
+      <AiChatWidget defaultLanguage={lang} />
     </div>
   )
 }

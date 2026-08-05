@@ -432,7 +432,7 @@ export default function StudentPage() {
               onClick={() => window.location.href = '/student/analysis-list'}
               className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
             >
-              📊 {t('student.viewAnalysis')}
+              📊 {t('student.analysis')}
             </button>
           </div>
 
