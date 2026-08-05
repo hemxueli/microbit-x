@@ -100,13 +100,15 @@ export default function StudentAnalysisListClient() {
                   <select
                     value={lang}
                     onChange={(e) => setLang(e.target.value as Lang)}
-                    className="border border-teal-300 rounded p-2 text-teal-800 bg-white text-sm"
+                    className="border border-teal-600 rounded p-2 text-white bg-teal-600 text-sm font-medium
+                              focus:outline-none focus:ring-2 focus:ring-teal-500"
                   >
                     <option value="en">{t('common.english')}</option>
                     <option value="zh">{t('common.chinese')}</option>
                     <option value="ms">{t('common.malay')}</option>
                   </select>
                 </div>
+
 
                 {/* AI feedback 三语言版本 */}
                 <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">

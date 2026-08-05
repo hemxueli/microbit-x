@@ -482,17 +482,17 @@ export const dict: Dict = {
     zh: '保存失败',
     ms: 'Simpan gagal'},
 
-    "quiz.basic": {
+    "quiz.Basic Quiz": {
       "en": "Basic Quiz",
       "zh": "基础测验",
       "ms": "Kuiz Asas"
     },
-    "quiz.music": {
+    "quiz.Music Quiz": {
       "en": "Music Quiz",
       "zh": "音乐测验",
       "ms": "Kuiz Muzik"
     },
-    "quiz.input": {
+    "quiz.Input Quiz": {
       "en": "Input Quiz",
       "zh": "输入测验",
       "ms": "Kuiz Input"
