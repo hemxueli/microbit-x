@@ -42,12 +42,14 @@ export async function POST(req: Request) {
       question_id: q.id,
       question_text: q.question_text,
       options: q.options,
-      student_answer: quizResult.answers[idx],
+      student_answer: quizResult.answers?.[idx],
       student_answer_text:
-        quizResult.answers[idx] > 0 ? q.options[quizResult.answers[idx] - 1] : null,
+        quizResult.answers && quizResult.answers[idx] > 0
+          ? q.options[quizResult.answers[idx] - 1]
+          : null,
       correct_answer: q.correct_answer,
       correct_answer_text: q.options[q.correct_answer - 1],
-      is_correct: quizResult.answers[idx] === q.correct_answer,
+      is_correct: quizResult.answers?.[idx] === q.correct_answer,
     }))
 
     // 4. AI Prompt (force JSON output)
@@ -75,12 +77,13 @@ Output STRICT JSON format:
 }
 `
 
-    // 5. Call AI and parse JSON
+    // 5. Call AI and parse JSON safely
     const aiResult = await generateText({ model, prompt })
     const aiText = aiResult.text
     let ai_feedback
     try {
-      ai_feedback = JSON.parse(aiText)
+      const match = aiText.match(/\{[\s\S]*\}/)
+      ai_feedback = match ? JSON.parse(match[0]) : { en: aiText, zh: aiText, ms: aiText }
     } catch {
       ai_feedback = { en: aiText, zh: aiText, ms: aiText }
     }
@@ -89,6 +92,7 @@ Output STRICT JSON format:
     return NextResponse.json({
       quiz_theme: quizResult.quiz_theme,
       score: quizResult.score,
+      total_questions: questions.length,
       created_at: quizResult.created_at,
       detailedAnswers,
       ai_feedback,

@@ -10,7 +10,7 @@ interface DetailedAnswer {
   question_text: string
   options: string[]
   student_answer: number
-  student_answer_text: string
+  student_answer_text: string | null
   correct_answer: number
   correct_answer_text: string
   is_correct: boolean
@@ -20,6 +20,7 @@ interface QuizAnalysis {
   quiz_theme: string
   score: number
   created_at: string
+  total_questions?: number
   detailedAnswers: DetailedAnswer[]
   ai_feedback: {
     en: string
@@ -32,18 +33,31 @@ export default function StudentAnalysisClient({ userId }: { userId: string }) {
   const { t } = useI18n()
   const [analysis, setAnalysis] = useState<QuizAnalysis | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [lang, setLang] = useState<Lang>('en') // default English
 
   useEffect(() => {
     const fetchAnalysis = async () => {
       setLoading(true)
-      const res = await fetch('/api/analyzeQuiz', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId }),
-      })
-      const data = await res.json()
-      setAnalysis(data)
+      try {
+        const res = await fetch('/api/analyzeQuiz', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: userId }),
+        })
+        const data = await res.json()
+
+        if (data.error) {
+          setError(data.error)
+          setAnalysis(null)
+        } else {
+          setAnalysis(data)
+          setError(null)
+        }
+      } catch (err) {
+        setError('NETWORK_ERROR')
+        setAnalysis(null)
+      }
       setLoading(false)
     }
     fetchAnalysis()
@@ -59,7 +73,7 @@ export default function StudentAnalysisClient({ userId }: { userId: string }) {
         quiz_theme: analysis.quiz_theme,
         score: analysis.score,
         answers: analysis.detailedAnswers.map(a => a.student_answer),
-        analysis_feedback: analysis.ai_feedback,
+        analysis_feedback: analysis.ai_feedback || { en: '', zh: '', ms: '' },
       }),
     })
 
@@ -72,12 +86,13 @@ export default function StudentAnalysisClient({ userId }: { userId: string }) {
   }
 
   if (loading) return <p>{t('analysis.generating')}</p>
+  if (error) return <p className="text-red-500">{t('analysis.failed')} ({error})</p>
   if (!analysis) return <p className="text-red-500">{t('analysis.failed')}</p>
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">
-        {analysis.quiz_theme} - {t('analysis.score')} {analysis.score}/{analysis.detailedAnswers.length}
+        {analysis.quiz_theme} - {t('analysis.score')} {analysis.score}/{analysis.total_questions || analysis.detailedAnswers.length}
       </h1>
       <p className="text-sm text-gray-500 mb-6">
         {t('analysis.completedAt')}: {new Date(analysis.created_at).toLocaleString()}
@@ -93,7 +108,7 @@ export default function StudentAnalysisClient({ userId }: { userId: string }) {
             <h2 className="font-semibold">
               {t('analysis.question')} {idx + 1}: {ans.question_text}
             </h2>
-            <p>{t('analysis.yourAnswer')}: {ans.student_answer_text}</p>
+            <p>{t('analysis.yourAnswer')}: {ans.student_answer_text || t('analysis.noAnswer')}</p>
             <p>{t('analysis.correctAnswer')}: {ans.correct_answer_text}</p>
             <p>{ans.is_correct ? '✅ ' + t('analysis.correct') : '❌ ' + t('analysis.incorrect')}</p>
           </li>
@@ -116,7 +131,7 @@ export default function StudentAnalysisClient({ userId }: { userId: string }) {
       {/* AI feedback */}
       <div className="mt-8 bg-gray-100 p-4 rounded whitespace-pre-line">
         <h2 className="text-xl font-bold mb-2">{t('analysis.aiFeedback')}</h2>
-        <p>{analysis.ai_feedback[lang]}</p>
+        <p>{analysis.ai_feedback?.[lang] || t('analysis.noFeedback')}</p>
       </div>
 
       {/* Action buttons */}
