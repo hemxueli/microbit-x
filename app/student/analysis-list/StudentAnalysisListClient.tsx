@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
+import { Logo } from '@/components/logo'
 
 type Lang = 'en' | 'zh' | 'ms'
 
@@ -12,7 +13,7 @@ interface QuizResult {
   quiz_theme: string
   score: number
   created_at: string
-  answers: any[] // stored as JSONB in Supabase
+  answers: any[]
   analysis_feedback: {
     en: string
     zh: string
@@ -27,19 +28,15 @@ export default function StudentAnalysisListClient() {
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState<string | null>(null)
 
-  // ✅ Get current logged-in user ID
   useEffect(() => {
     const getUser = async () => {
       const { data, error } = await supabase.auth.getUser()
-      if (error) {
-        console.error('Auth error:', error.message)
-      }
+      if (error) console.error('Auth error:', error.message)
       setUserId(data?.user?.id ?? null)
     }
     getUser()
   }, [])
 
-  // ✅ Fetch results when userId is available
   useEffect(() => {
     const fetchResults = async () => {
       if (!userId) {
@@ -49,7 +46,6 @@ export default function StudentAnalysisListClient() {
       setLoading(true)
       const res = await fetch(`/api/getQuizResults?user_id=${userId}`)
       const data = await res.json()
-      console.log("Fetched results:", data) // Debug
       if (data.results) setResults(data.results)
       setLoading(false)
     }
@@ -70,51 +66,72 @@ export default function StudentAnalysisListClient() {
     }
   }
 
-  if (loading) return <p>{t('analysis.loading')}</p>
-  if (!userId) return <p>Please log in to view your analysis list.</p>
+  if (loading) return <p className="text-teal-600">{t('analysis.loading')}</p>
+  if (!userId) return <p className="text-teal-600">Please log in to view your analysis list.</p>
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">{t('analysis.listTitle')}</h1>
-      {results.length === 0 ? (
-        <p>{t('analysis.noRecords')}</p>
-      ) : (
-        <ul className="space-y-4">
-          {results.map(r => (
-            <li key={r.id} className="p-4 bg-gray-100 rounded">
-              <h2 className="font-semibold">
-                {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.answers ? r.answers.length : '-'}
-              </h2>
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-teal-50 to-white">
+      {/* 顶部导航栏 */}
+      <header className="sticky top-0 z-50 border-b border-teal-300 bg-teal-100/80 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
+          <Logo />
+          <span className="font-medium text-teal-700">{t('analysis.listTitle')}</span>
+        </div>
+      </header>
 
-              {/* Language switcher */}
-              <div className="mt-2 flex gap-2">
-                <Button onClick={() => setLang('en')} className={lang === 'en' ? 'bg-teal-500 text-white' : 'bg-gray-200'}>
-                  {t('common.english')}
+      {/* 主体内容 */}
+      <main className="flex-1 p-8">
+        {results.length === 0 ? (
+          <p className="text-teal-600">{t('analysis.noRecords')}</p>
+        ) : (
+          <ul className="space-y-6">
+            {results.map(r => (
+              <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow-sm">
+                <h2 className="font-semibold text-teal-700">
+                  {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.answers ? r.answers.length : '-'}
+                </h2>
+
+                {/* 语言选择器 */}
+                <div className="mt-3">
+                  <select
+                    value={lang}
+                    onChange={(e) => setLang(e.target.value as Lang)}
+                    className="border border-teal-300 rounded p-2 text-teal-700 bg-white"
+                  >
+                    <option value="en">{t('common.english')}</option>
+                    <option value="zh">{t('common.chinese')}</option>
+                    <option value="ms">{t('common.malay')}</option>
+                  </select>
+                </div>
+
+                {/* AI feedback */}
+                <p className="whitespace-pre-line mt-3 text-gray-700">
+                  {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
+                </p>
+
+                <p className="text-sm text-gray-500 mt-2">
+                  {t('analysis.savedAt')}: {new Date(r.created_at).toLocaleString()}
+                </p>
+
+                <Button
+                  className="bg-teal-500 hover:bg-teal-600 text-white mt-3"
+                  onClick={() => deleteResult(r.id)}
+                >
+                  {t('common.delete')}
                 </Button>
-                <Button onClick={() => setLang('zh')} className={lang === 'zh' ? 'bg-teal-500 text-white' : 'bg-gray-200'}>
-                  {t('common.chinese')}
-                </Button>
-                <Button onClick={() => setLang('ms')} className={lang === 'ms' ? 'bg-teal-500 text-white' : 'bg-gray-200'}>
-                  {t('common.malay')}
-                </Button>
-              </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </main>
 
-              {/* AI feedback */}
-              <p className="whitespace-pre-line mt-2">
-                {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
-              </p>
-
-              <p className="text-sm text-gray-500 mt-1">
-                {t('analysis.savedAt')}: {new Date(r.created_at).toLocaleString()}
-              </p>
-
-              <Button className="bg-red-500 text-white mt-2" onClick={() => deleteResult(r.id)}>
-                {t('common.delete')}
-              </Button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* 底部版权栏 */}
+      <footer className="border-t border-teal-300 py-6 bg-teal-100">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-teal-700">
+          <Logo showText={false} />
+          <span>{'\u00A9'} 2026 MicroBOT-X</span>
+        </div>
+      </footer>
     </div>
   )
 }
