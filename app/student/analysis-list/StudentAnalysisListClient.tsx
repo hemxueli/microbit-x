@@ -4,13 +4,15 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
-import {Logo } from '@/components/logo'
+import { Logo } from '@/components/logo'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 
 type Lang = 'en' | 'zh' | 'ms'
 
 interface QuizResult {
   id: string
-  quiz_theme: string
+  quiz_theme: 'basic' | 'music' | 'input' // ✅ 三语言 key
   score: number
   created_at: string
   answers: any[]
@@ -66,46 +68,35 @@ export default function StudentAnalysisListClient() {
     }
   }
 
-  if (loading) return <p className="text-white">{t('analysis.loading')}</p>
-  if (!userId) return <p className="text-white">Please log in to view your analysis list.</p>
+  if (loading) return <p className="text-teal-700">{t('analysis.loading')}</p>
+  if (!userId) return <p className="text-teal-700">Please log in to view your analysis list.</p>
 
   return (
-    <div className="flex min-h-screen flex-col bg-teal-700">
-      {/* 顶部导航栏：白色半透明 */}
-      <header className="sticky top-0 z-50 border-b border-white/20 bg-white/90 backdrop-blur-sm">
+    <div className="flex min-h-screen flex-col bg-teal-300">
+      {/* 顶部导航栏 */}
+      <header className="sticky top-0 z-50 border-b border-white/20 bg-white/95 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Logo />
-          <span className="font-medium text-teal-800">{t('analysis.listTitle')}</span>
+          <LanguageSwitcher />
         </div>
       </header>
 
       {/* 主体内容 */}
       <main className="flex-1 p-8">
+        <h1 className="text-3xl font-bold mb-6 text-teal-800">{t('analysis.listTitle')}</h1>
         {results.length === 0 ? (
-          <p className="text-white">{t('analysis.noRecords')}</p>
+          <p className="text-teal-700 text-lg">{t('analysis.noRecords')}</p>
         ) : (
           <ul className="space-y-6">
             {results.map(r => (
-              <li key={r.id} className="p-6 bg-teal-100 border border-teal-200 rounded-lg shadow">
-                <h2 className="font-semibold text-teal-800">
-                  {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.answers ? r.answers.length : '-'}
+              <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow">
+                {/* ✅ Quiz 标题三语言版本，分数固定 /10 */}
+                <h2 className="font-bold text-2xl text-teal-800">
+                  {t(`quiz.${r.quiz_theme}.${lang}`)} - {t('analysis.score')} {r.score}/10
                 </h2>
 
-                {/* 语言选择器 */}
-                <div className="mt-3">
-                  <select
-                    value={lang}
-                    onChange={(e) => setLang(e.target.value as Lang)}
-                    className="border border-teal-400 rounded p-2 text-teal-800 bg-white"
-                  >
-                    <option value="en">{t('common.english')}</option>
-                    <option value="zh">{t('common.chinese')}</option>
-                    <option value="ms">{t('common.malay')}</option>
-                  </select>
-                </div>
-
-                {/* AI feedback */}
-                <p className="whitespace-pre-line mt-3 text-teal-700">
+                {/* AI feedback 三语言版本 */}
+                <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
                   {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
                 </p>
 
@@ -125,13 +116,16 @@ export default function StudentAnalysisListClient() {
         )}
       </main>
 
-      {/* 底部版权栏：白色半透明 */}
-      <footer className="border-t border-white/20 py-6 bg-white/90 backdrop-blur-sm">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-teal-800">
+      {/* 底部版权栏 */}
+      <footer className="border-t border-white/20 py-6 bg-white/95 backdrop-blur-sm">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 text-sm text-teal-700">
           <Logo showText={false} />
           <span>{'\u00A9'} 2026 MicroBOT-X</span>
         </div>
       </footer>
+
+      {/* ✅ AI Chat Widget 在右下角 */}
+      <AiChatWidget defaultLanguage={lang} />
     </div>
   )
 }

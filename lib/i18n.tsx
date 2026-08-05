@@ -466,6 +466,23 @@ export const dict: Dict = {
     en: 'Save failed',
     zh: '保存失败',
     ms: 'Simpan gagal'},
+
+    "basic": {
+      "en": "Basic Quiz",
+      "zh": "基础测验",
+      "ms": "Kuiz Asas"
+    },
+    "music": {
+      "en": "Music Quiz",
+      "zh": "音乐测验",
+      "ms": "Kuiz Muzik"
+    },
+    "input": {
+      "en": "Input Quiz",
+      "zh": "输入测验",
+      "ms": "Kuiz Input"
+    },
+    
   // Quiz
   'quiz.question': { en: 'Question', zh: '题目', ms: 'Soalan' },
   'quiz.of': { en: 'of', zh: '/', ms: 'daripada' },
