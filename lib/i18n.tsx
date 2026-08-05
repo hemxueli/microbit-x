@@ -197,6 +197,37 @@ export const dict: Dict = {
   ms: 'Cabaran Pembelajaran',
   },
 
+  'analysis.title': {
+  en: 'AI Analysis Result',
+  zh: 'AI 分析结果',
+  ms: 'Hasil Analisis AI',
+  },
+  'analysis.save': {
+    en: 'Save Analysis',
+    zh: '保存分析',
+    ms: 'Simpan Analisis',
+  },
+  'analysis.exit': {
+    en: 'Exit',
+    zh: '退出',
+    ms: 'Keluar',
+  },
+  'analysis.stop': {
+    en: 'Stop Generation',
+    zh: '停止生成',
+    ms: 'Hentikan Penjanaan',
+  },
+  'analysis.error': {
+    en: 'AI analysis failed, please check configuration.',
+    zh: 'AI 分析失败，请检查配置。',
+    ms: 'Analisis AI gagal, sila semak konfigurasi.',
+  },
+  'analysis.success': {
+    en: 'AI analysis saved successfully!',
+    zh: 'AI 分析已保存！',
+    ms: 'Analisis AI berjaya disimpan!',
+  },
+
   "makecode.open": { "en": "Open MakeCode", "zh": "打开 MakeCode", "ms": "Buka MakeCode" },
   "makecode.title": { "en": "MakeCode Editor", "zh": "MakeCode 编辑器", "ms": "Editor MakeCode" },
   "makecode.confirmText": { "en": "Do you want to jump to MakeCode official editor?", "zh": "要跳转到 MakeCode 官方编辑器吗？", "ms": "Adakah anda mahu pergi ke editor rasmi MakeCode?" },
@@ -352,6 +383,89 @@ export const dict: Dict = {
   ms: 'Pilih bahasa pembelajaran',
   },
 
+
+  // 分析列表页面
+  'analysis.listTitle': {
+    en: 'My Analysis Records',
+    zh: '我的分析记录',
+    ms: 'Rekod Analisis Saya',
+  },
+  'analysis.noRecords': {
+    en: 'No analysis records',
+    zh: '暂无分析记录',
+    ms: 'Tiada rekod analisis',
+  },
+  'analysis.savedAt': {
+    en: 'Saved at',
+    zh: '保存时间',
+    ms: 'Disimpan pada',
+  },
+  'analysis.deleteFailed': {
+    en: 'Delete failed',
+    zh: '删除失败',
+    ms: 'Padam gagal',
+  },
+  'analysis.loading': {
+    en: 'Loading analysis records...',
+    zh: '正在加载分析记录...',
+    ms: 'Sedang memuatkan rekod analisis...',
+  },
+
+  'analysis.generating': {
+    en: 'Generating analysis...',
+    zh: '正在生成分析...',
+    ms: 'Sedang menjana analisis...',
+  },
+  'analysis.failed': {
+    en: 'Analysis failed',
+    zh: '分析失败',
+    ms: 'Analisis gagal',
+  },
+  'analysis.score': {
+    en: 'Score',
+    zh: '得分',
+    ms: 'Markah',
+  },
+  'analysis.completedAt': {
+    en: 'Completed at',
+    zh: '完成时间',
+    ms: 'Selesai pada',
+  },
+  'analysis.question': {
+    en: 'Question',
+    zh: '题目',
+    ms: 'Soalan',
+  },
+  'analysis.yourAnswer': {
+    en: 'Your answer',
+    zh: '你的答案',
+    ms: 'Jawapan anda',
+  },
+  'analysis.correctAnswer': {
+    en: 'Correct answer',
+    zh: '正确答案',
+    ms: 'Jawapan betul',
+  },
+  'analysis.correct': {
+    en: 'Correct',
+    zh: '答对了',
+    ms: 'Betul',
+  },
+  'analysis.incorrect': {
+    en: 'Incorrect',
+    zh: '答错了',
+    ms: 'Salah',
+  },
+  'analysis.aiFeedback': {
+    en: 'AI Feedback',
+    zh: 'AI 分析反馈',
+    ms: 'Maklum balas AI',
+  },
+ 
+  'analysis.saveFailed': {
+    en: 'Save failed',
+    zh: '保存失败',
+    ms: 'Simpan gagal'},
   // Quiz
   'quiz.question': { en: 'Question', zh: '题目', ms: 'Soalan' },
   'quiz.of': { en: 'of', zh: '/', ms: 'daripada' },
@@ -1122,7 +1236,7 @@ export const UI: Record<Lang, UIStrings> = {
     errorMessage: "Something went wrong. Please try again.",
     billingMessage:
       "The AI service isn't active yet. The site owner needs to add a free Google Gemini API key (GOOGLE_GENERATIVE_AI_API_KEY) to the project. Once that's done, I'll be able to reply.",
-    suggestions: ["How do I use the button?", "What is an accelerometer?", "Evaluate my quiz results"],
+    suggestions: ["How do I use the button?", "What is an accelerometer?"],
   },
   ms: {
     widgetTitle: "Pembantu micro:bit",

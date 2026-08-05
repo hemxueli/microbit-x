@@ -1,9 +1,7 @@
-// app/student/basic/quiz/page.tsx
-import QuizBasicClient from './QuizBasicClient'
-
+import StudentAnalysisListClient from './StudentAnalysisListClient'
 export const dynamic = "force-dynamic"
 export const fetchCache = "force-no-store"
 
 export default function Page() {
-  return <QuizBasicClient />
+  return <StudentAnalysisListClient />
 }
