@@ -11,8 +11,8 @@ interface QuizResult {
   id: string
   quiz_theme: string
   score: number
-  total_questions: number
   created_at: string
+  answers: any[] // stored as JSONB in Supabase
   analysis_feedback: {
     en: string
     zh: string
@@ -83,7 +83,7 @@ export default function StudentAnalysisListClient() {
           {results.map(r => (
             <li key={r.id} className="p-4 bg-gray-100 rounded">
               <h2 className="font-semibold">
-                {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.total_questions}
+                {r.quiz_theme} - {t('analysis.score')} {r.score}/{r.answers ? r.answers.length : '-'}
               </h2>
 
               {/* Language switcher */}
@@ -101,7 +101,7 @@ export default function StudentAnalysisListClient() {
 
               {/* AI feedback */}
               <p className="whitespace-pre-line mt-2">
-                {r.analysis_feedback[lang] || t('analysis.noFeedback')}
+                {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
               </p>
 
               <p className="text-sm text-gray-500 mt-1">
