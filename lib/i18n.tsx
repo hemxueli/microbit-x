@@ -497,6 +497,11 @@ export const dict: Dict = {
       "zh": "输入测验",
       "ms": "Kuiz Input"
     },
+    "student.viewanAlysis": {
+      "en": "My Analysis Record",
+      "zh": "我的分析记录",
+      "ms": "Rekod Analisis Saya"
+    },
 
   // Quiz
   'quiz.question': { en: 'Question', zh: '题目', ms: 'Soalan' },
