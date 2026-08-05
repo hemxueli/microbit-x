@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { Languages } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,12 +24,14 @@ export function LanguageSwitcher() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Languages className="size-4" />
-          <span className="hidden sm:inline">{current?.label}</span>
-        </Button>
+      {/* ✅ 直接用 DropdownMenuTrigger 渲染按钮样式，避免嵌套 */}
+      <DropdownMenuTrigger
+        className="inline-flex items-center gap-2 rounded-md border px-2 py-1 text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+      >
+        <Languages className="size-4" />
+        <span className="hidden sm:inline">{current?.label}</span>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end">
         {LANGS.map((l) => (
           <DropdownMenuItem
