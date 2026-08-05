@@ -17,7 +17,7 @@ export async function GET(req: Request) {
 
     const { data, error } = await supabase
       .from("quiz_results")
-      .select("id, quiz_theme, score, total_questions, created_at, analysis_feedback")
+      .select("id, quiz_theme, score, created_at, analysis_feedback")
       .eq("user_id", user_id)
       .order("created_at", { ascending: false })
 
