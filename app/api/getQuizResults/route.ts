@@ -17,7 +17,7 @@ export async function GET(req: Request) {
 
     const { data, error } = await supabase
       .from("quiz_results")
-      .select("*")
+      .select("id, quiz_theme, score, total_questions, created_at, analysis_feedback")
       .eq("user_id", user_id)
       .order("created_at", { ascending: false })
 
@@ -27,13 +27,13 @@ export async function GET(req: Request) {
 
     const parsedData = data.map(r => ({
       ...r,
-      analysis_feedback: typeof r.analysis_feedback === 'string'
+      analysis_feedback: typeof r.analysis_feedback === "string"
         ? JSON.parse(r.analysis_feedback)
         : r.analysis_feedback
     }))
 
     return NextResponse.json({ results: parsedData })
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "SERVER_ERROR" }, { status: 500 })
   }
 }
