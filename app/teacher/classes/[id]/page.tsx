@@ -29,10 +29,17 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [newAssignmentFile, setNewAssignmentFile] = useState<File | null>(null)
   const [newAssignmentLink, setNewAssignmentLink] = useState('')
   const [joinCode, setJoinCode] = useState('')
+  const [currentUser, setCurrentUser] = useState<any>(null)
 
   // 加载班级数据 + 实时订阅
   useEffect(() => {
-    async function loadData() {
+    async function getUser() {
+    const { data: { user } } = await supabase.auth.getUser()
+    setCurrentUser(user)
+  }
+  getUser()
+
+  async function loadData() {
       const { data: studentData } = await supabase
         .from('students')
         .select('user_id, class_id, name, avatar')
@@ -139,7 +146,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
     setNewAssignmentLink('')
     setShowAssignmentModal(false)
   }
-  
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       {/* 顶部导航栏 */}
