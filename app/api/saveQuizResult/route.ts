@@ -75,10 +75,10 @@ Format:
         }
       }
 
-      // 更新数据库
+      // 更新数据库 —— 如果列是 JSONB 可以直接传对象；如果是 text 就用 JSON.stringify
       const { error: updateError } = await supabase
         .from("quiz_results")
-        .update({ analysis_feedback: ai_feedback })
+        .update({ analysis_feedback: ai_feedback }) // 如果列是 text 改成 JSON.stringify(ai_feedback)
         .eq("id", inserted.id)
 
       if (updateError) {
