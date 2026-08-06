@@ -12,10 +12,9 @@ type Lang = 'en' | 'zh' | 'ms'
 
 interface QuizResult {
   id: string
-  quiz_theme: 'basic' | 'music' | 'input' // ✅ 三语言 key
+  quiz_theme: 'basic' | 'music' | 'input'
   score: number
   created_at: string
-  answers: any[]
   analysis_feedback: {
     en: string
     zh: string
@@ -109,8 +108,7 @@ export default function StudentAnalysisListClient() {
                   </select>
                 </div>
 
-
-                {/* AI feedback 三语言版本 */}
+                {/* ✅ AI feedback 三语言版本 */}
                 <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
                   {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
                 </p>

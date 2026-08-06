@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react'
 import { useI18n } from '@/lib/i18n'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { useRouter } from 'next/navigation'
-
 import { supabase } from '@/lib/supabaseClient'
 
 export default function QuizInputPage() {
@@ -14,35 +13,32 @@ export default function QuizInputPage() {
   const { t } = useI18n()
 
   // 保存结果到 Supabase
-  const saveResult = async (theme: string, answers: number[], score: number) => {
+  const saveResult = async (theme: string, answers: number[], score: number, details: any[]) => {
     const {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser()
 
     if (userError || !user) {
-      console.error('Failed to get user info:', userError)
       alert('Please log in first to save results')
       return
     }
 
-    const { data, error } = await supabase
-      .from('quiz_results')
-      .insert([
-        {
-          user_id: user.id,
-          quiz_theme: theme,
-          answers: answers,
-          score: score,
-          created_at: new Date().toISOString(),
-        },
-      ])
+    const { error } = await supabase.from('quiz_results').insert([
+      {
+        user_id: user.id,
+        quiz_theme: theme,
+        answers,       // ✅ 存 1-based 索引
+        score,
+        details,       // ✅ 存逐题详情 JSON
+        created_at: new Date().toISOString(),
+      },
+    ])
 
     if (error) {
       console.error('Save failed:', error)
       alert('Save failed, please check configuration')
     } else {
-      console.log('Save successful:', data)
       alert('Quiz result saved successfully!')
     }
   }
@@ -87,15 +83,32 @@ export default function QuizInputPage() {
 
   const submitQuiz = async () => {
     let s = 0
-    questions.forEach((q, i) => {
-      const correct = t(`${q}.answer`)
-      const selected = t(`${q}.options`).split(',')[answers[i]]?.trim()
-      if (selected === correct) s++
+
+    const resultData = questions.map((q, i) => {
+      const options = t(`${q}.options`).split(',').map(opt => opt.trim())
+      const correctIndex = options.findIndex(opt => opt === t(`${q}.answer`))
+      const studentIndex = answers[i]   // ✅ 1-based
+      const studentAnswerText = studentIndex > 0 ? options[studentIndex - 1] : null
+      const correctAnswerText = options[correctIndex]
+      const isCorrect = studentIndex === (correctIndex + 1)
+
+      if (isCorrect) s++
+
+      return {
+        question_key: q,
+        options,
+        student_answer: studentIndex,
+        student_answer_text: studentAnswerText,
+        correct_answer: correctIndex + 1, // ✅ 存 1-based
+        correct_answer_text: correctAnswerText,
+        is_correct: isCorrect
+      }
     })
+
     setScore(s)
     setShowResult(true)
 
-    await saveResult('Input Quiz', answers, s)
+    await saveResult('input', answers, s, resultData)
   }
 
   // ✅ Start 界面
@@ -120,7 +133,7 @@ export default function QuizInputPage() {
   return (
     <div className="p-8 min-h-screen bg-gradient-to-r from-teal-50 via-white to-teal-100 animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-teal-700 animate-bounce">🎛️ {t('quiz.title.input')}</h1>
+        <h1 className="text-3xl font-bold text-teal-700 animate-bounce">🎛️ {t('quiz.input')}</h1>
         <div className="flex gap-4">
           <button
             onClick={toggleMute}
@@ -150,11 +163,11 @@ export default function QuizInputPage() {
               key={j}
               onClick={() => {
                 const newAns = [...answers]
-                newAns[current] = j
+                newAns[current] = j + 1   // ✅ 存 1-based
                 setAnswers(newAns)
               }}
               className={`block w-full text-left px-4 py-2 mb-2 rounded-lg border transition transform hover:scale-105 ${
-                answers[current] === j
+                answers[current] === j + 1
                   ? 'bg-teal-200 border-teal-600 text-teal-900 font-bold'
                   : 'bg-gray-100 border-gray-300'
               }`}
@@ -201,7 +214,7 @@ export default function QuizInputPage() {
               🎉 {t('quiz.yourScore')}: {score}/{questions.length}
             </h2>
 
-            <p className="text-lg text-gray-700 mb-6">
+                        <p className="text-lg text-gray-700 mb-6">
               {score <= 3
                 ? `${t('quiz.feedback.tryHarder')} 😢`
                 : score <= 6
@@ -224,10 +237,10 @@ export default function QuizInputPage() {
               >
                 🔄 {t('quiz.retry')}
               </button>
-                            <button
+              <button
                 onClick={() => {
                   if (score !== null) {
-                    router.push(`/student/analysis?quizTheme=Basic Quiz&score=${score}`)
+                    router.push(`/student/analysis?quizTheme=input&score=${score}`)
                   }
                 }}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"

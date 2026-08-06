@@ -522,17 +522,17 @@ export const dict: Dict = {
   },
 
     // Quiz 标题翻译
-  'quiz.title.basic': {
+  'quiz.basic': {
     en: 'Quiz: MakeCode Basic',
     zh: '测验：MakeCode 基本',
     ms: 'Kuiz: MakeCode Asas',
   },
-  'quiz.title.input': {
+  'quiz.input': {
     en: 'Quiz: MakeCode Input',
     zh: '测验：MakeCode 输入',
     ms: 'Kuiz: MakeCode Input',
   },
-  'quiz.title.music': {
+  'quiz.music': {
     en: 'Quiz: MakeCode Music',
     zh: '测验：MakeCode 音乐',
     ms: 'Kuiz: MakeCode Muzik',
@@ -906,11 +906,11 @@ export const dict: Dict = {
     ms: 'Apakah tujuan utama kategori Music?',
   },
   'quiz.music.q10.options': {
-    en: 'To receive input from sensors, To display text and icons, To play sounds, tones, and melodies, To create LED patterns',
+    en: 'To receive input from sensors, To display text and icons, To play sounds， tones， and melodies, To create LED patterns',
     zh: '接收传感器输入, 显示文字和图示, 播放声音、音调和旋律, 制作 LED 图案',
-    ms: 'Menerima input daripada sensor, Paparkan teks dan ikon, Mainkan bunyi, nada dan melodi, Cipta corak LED',
+    ms: 'Menerima input daripada sensor, Paparkan teks dan ikon, Mainkan bunyi， nada dan melodi, Cipta corak LED',
   },
-  'quiz.music.q10.answer': { en: 'To play sounds, tones, and melodies', zh: '播放声音、音调和旋律', ms: 'Mainkan bunyi, nada dan melodi' },
+  'quiz.music.q10.answer': { en: 'To play sounds， tones， and melodies', zh: '播放声音、音调和旋律', ms: 'Mainkan bunyi， nada dan melodi' },
   
   'quiz.feedback.tryHarder': { en: 'Keep trying!', zh: '还需努力！', ms: 'Terus berusaha!' },
   'quiz.feedback.good': { en: 'Good job!', zh: '不错哦！', ms: 'Bagus!' },
@@ -919,6 +919,9 @@ export const dict: Dict = {
 
   'quiz.retry': { en: 'Try Again', zh: '再来一次', ms: 'Cuba lagi' },
   'quiz.aiEvaluation': { en: 'View AI Evaluation', zh: '查看 AI 评估', ms: 'Lihat Penilaian AI' },
+
+  "analysis.noFeedback": { en: "No AI Analysis available", zh: "没有Ai分析", ms: "Tiada Analisis Ai"
+  },
 
   // Chat
   'chat.title': { en: 'AI Learning Assistant', zh: 'AI 学习助手', ms: 'Pembantu Pembelajaran AI' },
