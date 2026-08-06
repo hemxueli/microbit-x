@@ -99,50 +99,70 @@ export default function StudentPage() {
     loadUser()
   }, [])
 
-    // 加载学生已加入的班级
+  // 加载学生已加入的班级
   async function loadClasses(user: any) {
-    const { data, error } = await supabase
+    // 先查学生的 class_id
+    const { data: student, error: studentError } = await supabase
       .from('students')
+      .select('class_id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (studentError) {
+      console.error("❌ 查询学生失败:", studentError)
+      setClasses([])
+      return
+    }
+
+    if (!student?.class_id) {
+      console.log("学生还没有加入班级")
+      setClasses([])
+      return
+    }
+
+    // 再查班级详情
+    const { data: cls, error: clsError } = await supabase
+      .from('classes')
       .select(`
-        class_id,
-        classes (
+        id,
+        name,
+        assignments (
           id,
-          name,
-          assignments (
+          title,
+          description,
+          file_url,
+          submissions (
             id,
-            title,
-            description,
             file_url,
-            submissions (
-              id,
-              file_url,
-              feedback,
-              created_at
-            )
+            feedback,
+            created_at
           )
         )
       `)
-      .eq('user_id', user.id)   // ⚠️ 确认 students 表里是 user_id
+      .eq('id', student.class_id)
 
-    console.log("Supabase返回:", data, error)
-
-    if (!error && data && data.length > 0) {
-      const formatted: StudentClass[] = data.map((row: any) => ({
-        id: row.classes.id,
-        name: row.classes.name,
-        assignments: row.classes.assignments.map((a: any) => ({
-          id: a.id,
-          title: a.title,
-          description: a.description,
-          file_url: a.file_url,
-          submissions: a.submissions || []
-        }))
-      }))
-      setClasses(formatted)
-    } else {
+    if (clsError) {
+      console.error("❌ 查询班级失败:", clsError)
       setClasses([])
+      return
     }
+
+    // 格式化结果
+    const formatted: StudentClass[] = (cls || []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      assignments: c.assignments.map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        description: a.description,
+        file_url: a.file_url,
+        submissions: a.submissions || []
+      }))
+    }))
+
+    setClasses(formatted)
   }
+
 
   // 加入班级逻辑
   async function joinClass() {
@@ -154,8 +174,8 @@ export default function StudentPage() {
     // 查询班级是否存在（用 join_code）
     const { data: cls, error: clsError } = await supabase
       .from('classes')
-      .select('id, name, created_at, join_code')
-      .eq('join_code', joinCode.trim().toUpperCase())
+      .select('id, name, join_code')
+      .eq('join_code', joinCode.trim()) // ✅ 保持大小写一致
       .maybeSingle()
 
     if (clsError || !cls) {
@@ -167,7 +187,7 @@ export default function StudentPage() {
     const { error } = await supabase
       .from('students')
       .update({ class_id: cls.id })
-      .eq('user_id', user.id)   // 假设 students 表里有 user_id 字段
+      .eq('user_id', user.id)   // ✅ students 表里确实有 user_id
 
     if (error) {
       alert(error.message)
@@ -175,7 +195,8 @@ export default function StudentPage() {
       alert(`${t('student.joinedClass')}: ${cls.name}`)
       setShowJoinClassModal(false)
       setJoinCode('')
-      await loadClasses(user) // 刷新班级列表
+      // ✅ 调用新的 loadClasses，刷新班级列表
+      await loadClasses(user)
     }
   }
 
