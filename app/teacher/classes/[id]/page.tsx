@@ -96,11 +96,15 @@ export default function ClassDetailPage({ user }: { user: any }) {
   async function createAssignment() {
     if (!newAssignmentTitle.trim()) return
 
-    let fileUrl: string | null = null   // ✅ 先声明
+    if (!currentUser?.id) {
+      alert("User not logged in")
+      return
+    }
+
+    let fileUrl: string | null = null
 
     if (newAssignmentFile) {
       const filePath = generateSafeFilePath(classId, newAssignmentFile)
-
       const { error: uploadError } = await supabase.storage
         .from('assignments')
         .upload(filePath, newAssignmentFile)
@@ -111,19 +115,19 @@ export default function ClassDetailPage({ user }: { user: any }) {
       }
 
       const { data } = supabase.storage.from('assignments').getPublicUrl(filePath)
-      fileUrl = data.publicUrl   // ✅ 赋值
+      fileUrl = data.publicUrl
     }
 
     if (newAssignmentLink.trim()) {
-      fileUrl = newAssignmentLink.trim()   // ✅ 如果是链接
+      fileUrl = newAssignmentLink.trim()
     }
 
     const { error } = await supabase.from('assignments').insert({
       class_id: classId,
       title: newAssignmentTitle,
       description: newAssignmentDesc,
-      file_url: fileUrl,   // ✅ 这里就不会红线了
-      teacher_user_id: user.id
+      file_url: fileUrl,
+      teacher_user_id: currentUser.id   // ✅ 用 currentUser.id
     })
 
     if (error) {
