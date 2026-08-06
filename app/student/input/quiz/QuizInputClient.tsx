@@ -133,7 +133,7 @@ export default function QuizInputPage() {
   return (
     <div className="p-8 min-h-screen bg-gradient-to-r from-teal-50 via-white to-teal-100 animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-teal-700 animate-bounce">🎛️ {t('quiz.title.input')}</h1>
+        <h1 className="text-3xl font-bold text-teal-700 animate-bounce">🎛️ {t('quiz.input')}</h1>
         <div className="flex gap-4">
           <button
             onClick={toggleMute}

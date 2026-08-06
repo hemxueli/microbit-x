@@ -138,32 +138,6 @@ export default function StudentAnalysisClient() {
         {/* Action buttons */}
         <div className="flex gap-4 mt-6">
           <Button
-            className="bg-teal-500 text-white"
-            onClick={async () => {
-              if (!analysis || !userId) return
-              const res = await fetch('/api/saveQuizResult', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  user_id: userId,
-                  quiz_theme: analysis.quiz_theme,
-                  score: analysis.score,
-                  details: analysis.details,
-                  analysis_feedback: analysis.ai_feedback || { en: '', zh: '', ms: '' },
-                }),
-              })
-              const data = await res.json()
-              if (data.success) {
-                window.location.href = '/student/analysis-list'
-              } else {
-                alert(data.error || t('analysis.saveFailed'))
-              }
-            }}
-          >
-            {t('analysis.save')}
-          </Button>
-
-          <Button
             className="bg-gray-400 text-white"
             onClick={() => (window.location.href = '/student')}
           >

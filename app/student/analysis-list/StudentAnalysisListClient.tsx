@@ -91,7 +91,7 @@ export default function StudentAnalysisListClient() {
               <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow relative">
                 {/* ✅ Quiz 标题三语言版本，分数固定 /10 */}
                 <h2 className="font-bold text-2xl text-teal-800">
-                  {t(`quiz.${r.quiz_theme}.${lang}`)} - {t('analysis.score')} {r.score}/10
+                  {t(`quiz.${r.quiz_theme}`)} - {t('analysis.score')} {r.score}/10
                 </h2>
 
                 {/* ✅ 翻译选择器放在右上角 */}
