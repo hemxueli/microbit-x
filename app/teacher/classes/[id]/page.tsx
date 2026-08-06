@@ -5,6 +5,7 @@ interface assignments {
   title: string
   description: string
   resources: string[]
+  teacher_user_id: string
   created_at: string
 }
 
