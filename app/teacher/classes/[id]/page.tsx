@@ -206,24 +206,19 @@ export default function ClassDetailPage({ user }: { user: any }) {
                         alt="avatar"
                         className="w-10 h-10 rounded-full border border-teal-300 mx-auto"
                       />
+                    </td>
+                    <td className="px-4 py-2 text-center font-medium">
+                      {s.name || s.user_id}
+                    </td>
                     <td className="px-4 py-2 text-center">
-  {a.resources && a.resources.length > 0 ? (
-    <ul className="space-y-1">
-      {a.resources.map((url: string, i: number) => (
-        <li key={i}>
-          <a href={url} target="_blank" className="text-teal-600 hover:underline">
-            {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')
-              ? `📄 ${url.split('/').pop()}`
-              : `🔗 Link ${i+1}`}
-          </a>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <span className="text-gray-400 italic">{t('teacher.noFile')}</span>
-  )}
-</td>
-
+                      <Button
+                        size="sm"
+                        className="bg-teal-500 hover:bg-teal-600 text-white"
+                        onClick={() => loadQuizResults(s.user_id)}
+                      >
+                        {t('teacher.viewResults')}
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -266,7 +261,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
                             <li key={i}>
                               <a href={url} target="_blank" className="text-teal-600 hover:underline">
                                 {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')
-                                  ? `📄 File ${i+1}`
+                                  ? `📄 ${url.split('/').pop()}`
                                   : `🔗 Link ${i+1}`}
                               </a>
                             </li>
