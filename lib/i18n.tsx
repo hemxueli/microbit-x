@@ -908,7 +908,7 @@ export const dict: Dict = {
   'quiz.music.q10.options': {
     en: 'To receive input from sensors, To display text and icons, To play sounds， tones， and melodies, To create LED patterns',
     zh: '接收传感器输入, 显示文字和图示, 播放声音、音调和旋律, 制作 LED 图案',
-    ms: 'Menerima input daripada sensor, Paparkan teks dan ikon, Mainkan bunyi, nada dan melodi, Cipta corak LED',
+    ms: 'Menerima input daripada sensor, Paparkan teks dan ikon, Mainkan bunyi， nada dan melodi, Cipta corak LED',
   },
   'quiz.music.q10.answer': { en: 'To play sounds, tones, and melodies', zh: '播放声音、音调和旋律', ms: 'Mainkan bunyi, nada dan melodi' },
   
