@@ -10,12 +10,21 @@ import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 
 type Lang = 'en' | 'zh' | 'ms'
 
+interface QuizDetail {
+  question_key: string
+  question_text: { en: string; zh: string; ms: string }
+  options: { en: string[]; zh: string[]; ms: string[] }
+  correctAnswer: { en: string; zh: string; ms: string }
+  selectedText: string | null
+  isCorrect: boolean
+}
+
 interface QuizResult {
   id: string
-  quiz_theme: 'basic' | 'music' | 'input' // ✅ 三语言 key
+  quiz_theme: 'basic' | 'music' | 'input'
   score: number
   created_at: string
-  answers: any[]
+  details: QuizDetail[]
   analysis_feedback: {
     en: string
     zh: string
@@ -92,7 +101,7 @@ export default function StudentAnalysisListClient() {
               <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow relative">
                 {/* ✅ Quiz 标题三语言版本，分数固定 /10 */}
                 <h2 className="font-bold text-2xl text-teal-800">
-                  {t(`quiz.${r.quiz_theme}`)} - {t('analysis.score')} {r.score}/10
+                  {t(`quiz.${r.quiz_theme}.${lang}`)} - {t('analysis.score')} {r.score}/10
                 </h2>
 
                 {/* ✅ 翻译选择器放在右上角 */}
@@ -109,11 +118,30 @@ export default function StudentAnalysisListClient() {
                   </select>
                 </div>
 
-
                 {/* AI feedback 三语言版本 */}
                 <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
                   {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
                 </p>
+
+                {/* ✅ 逐题分析 */}
+                <div className="mt-4 space-y-3">
+                  {r.details?.map((d, i) => (
+                    <div key={i} className="p-3 border rounded bg-white">
+                      <p className="font-semibold text-teal-700">
+                        {i + 1}. {d.question_text?.[lang]}
+                      </p>
+                      <p className="text-sm text-gray-700">
+                        {t('analysis.yourAnswer')}: {d.selectedText || t('analysis.noAnswer')}
+                      </p>
+                      <p className="text-sm text-gray-700">
+                        {t('analysis.correctAnswer')}: {d.correctAnswer?.[lang]}
+                      </p>
+                      <p className={`text-sm font-bold ${d.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                        {d.isCorrect ? t('analysis.correct') : t('analysis.wrong')}
+                      </p>
+                    </div>
+                  ))}
+                </div>
 
                 <p className="text-sm text-teal-600 mt-2">
                   {t('analysis.savedAt')}: {new Date(r.created_at).toLocaleString()}
