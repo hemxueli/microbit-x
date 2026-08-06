@@ -237,7 +237,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
                 <tr>
                   <th className="px-4 py-2 text-center">{t('teacher.title')}</th>
                   <th className="px-4 py-2 text-center">{t('teacher.description')}</th>
-                  <th className="px-4 py-2 text-center">{t('teacher.file')}</th>
+                  <th className="px-4 py-2 text-center">{t('teacher.files')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -251,7 +251,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
                           {a.resources.map((url: string, i: number) => (
                             <li key={i}>
                               <a href={url} target="_blank" className="text-teal-600 hover:underline">
-                                {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg')
+                                {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')
                                   ? `📄 File ${i+1}`
                                   : `🔗 Link ${i+1}`}
                               </a>
