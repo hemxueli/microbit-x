@@ -33,10 +33,16 @@ export default function ClassDetailPage({ user }: { user: any }) {
  // 加载班级数据 + 实时订阅
   useEffect(() => {
     async function loadData() {
-      const { data: studentData } = await supabase
+      const { data: studentData, error: studentError } = await supabase
         .from('students')
-        .select('user_id, name, avatar')
+        .select('id, user_id, class_id, name, avatar')
         .eq('class_id', classId)
+
+      if (studentError) {
+        console.error("❌ 查询学生失败:", studentError)
+      } else {
+        console.log("✅ 学生数据:", studentData)
+      }
 
       const { data: assignmentData } = await supabase
         .from('assignments')
