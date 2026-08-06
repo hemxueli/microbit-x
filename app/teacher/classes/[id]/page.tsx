@@ -227,9 +227,9 @@ export default function ClassDetailPage({ user }: { user: any }) {
         </section>
 
         {/* 作业区 */}
-        <section className="border border-teal-300 rounded-lg shadow-sm p-4 bg-white">
+        <section className="mt-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-teal-600">{t('teacher.assignments')}</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">{t('teacher.assignments')}</h2>
             <Button
               className="bg-teal-500 hover:bg-teal-600 text-white"
               onClick={() => setShowAssignmentModal(true)}
@@ -241,40 +241,48 @@ export default function ClassDetailPage({ user }: { user: any }) {
           {assignments.length === 0 ? (
             <p className="text-gray-500 italic">{t('teacher.noAssignments')}</p>
           ) : (
-            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
-              <thead className="bg-teal-100 text-teal-700">
-                <tr>
-                  <th className="px-4 py-2 text-center">{t('teacher.title')}</th>
-                  <th className="px-4 py-2 text-center">{t('teacher.description')}</th>
-                  <th className="px-4 py-2 text-center">{t('teacher.files')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {assignments.map((a, idx) => (
-                  <tr key={a.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
-                    <td className="px-4 py-2 text-center font-bold text-teal-700">{a.title}</td>
-                    <td className="px-4 py-2 text-center text-gray-600">{a.description}</td>
-                    <td className="px-4 py-2 text-center">
-                      {a.resources && a.resources.length > 0 ? (
-                        <ul className="space-y-1">
-                          {a.resources.map((url: string, i: number) => (
-                            <li key={i}>
-                              <a href={url} target="_blank" className="text-teal-600 hover:underline">
-                                {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')
-                                  ? `📄 ${url.split('/').pop()}`
-                                  : `🔗 Link ${i+1}`}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="text-gray-400 italic">{t('teacher.noFile')}</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="space-y-4">
+              {assignments.map((a, idx) => (
+                <div
+                  key={a.id}
+                  className={`rounded-lg shadow-md p-4 transition
+                    ${idx % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200'}
+                  `}
+                >
+                  {/* 标题 */}
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{a.title}</h3>
+
+                  {/* 描述 */}
+                  <p className="text-gray-700 mb-3">{a.description}</p>
+
+                  {/* 文件/链接区 */}
+                  {a.resources && a.resources.length > 0 ? (
+                    <ul className="space-y-1">
+                      {a.resources.map((url: string, i: number) => (
+                        <li key={i}>
+                          <a
+                            href={url}
+                            target="_blank"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')
+                              ? `📄 ${url.split('/').pop()}`
+                              : `🔗 Link ${i+1}`}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-400 italic">{t('teacher.noFile')}</span>
+                  )}
+
+                  {/* 时间 */}
+                  <p className="text-xs text-gray-500 mt-3">
+                    {new Date(a.created_at).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
           )}
         </section>
       </main>
