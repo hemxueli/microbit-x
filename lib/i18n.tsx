@@ -1184,7 +1184,16 @@ export const dict: Dict = {
     zh: '已复制加入码',
     ms: 'Kod sertai disalin',
   },
-
+  'teacher.noFile': {
+    en: 'No file available',
+    zh: '没有文件',
+    ms: 'Tiada fail',
+   },
+   'common.edit': {
+    en: 'Edit',
+    zh: '编辑',
+    ms: 'Sunting',
+  },
   'common.copy': {
     en: 'Copy',
     zh: '复制',

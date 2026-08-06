@@ -1,5 +1,14 @@
 'use client'
 
+interface assignments {
+  id: number
+  title: string
+  description: string
+  resources: string[]
+  teacher_user_id: string
+  created_at: string
+}
+
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
@@ -29,34 +38,58 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [newAssignmentFile, setNewAssignmentFile] = useState<File | null>(null)
   const [newAssignmentLink, setNewAssignmentLink] = useState('')
   const [joinCode, setJoinCode] = useState('')
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [editingAssignmentId, setEditingAssignmentId] = useState<number | null>(null)
+  
+  async function loadData() {
+  // 查询学生
+    const { data: studentData } = await supabase
+      .from('students')
+      .select('user_id, class_id, name, avatar')
+      .eq('class_id', classId)
 
-  // 加载班级数据 + 实时订阅
+    // 查询作业
+    const { data } = await supabase
+      .from('assignments')
+      .select('id, title, description, resources, created_at, teacher_user_id')
+      .eq('class_id', classId)
+
+    // ✅ 在这里断言类型
+    const assignmentData = (data ?? []) as assignments[]
+
+    // 设置学生
+    setStudents(studentData || [])
+
+    // 设置作业，确保 resources 是数组
+    setAssignments(
+      assignmentData.map(a => ({
+        ...a,
+        resources: Array.isArray(a.resources)
+          ? a.resources
+          : (typeof a.resources === 'string'
+              ? JSON.parse(a.resources)
+              : [])
+      }))
+    )
+
+    // 查询班级 join_code
+    const { data: classData } = await supabase
+      .from('classes')
+      .select('join_code')
+      .eq('id', classId)
+      .single()
+
+    setJoinCode(classData?.join_code || '')
+  }
+
   useEffect(() => {
-    async function loadData() {
-      const { data: studentData } = await supabase
-        .from('students')
-        .select('user_id, class_id, name, avatar')
-        .eq('class_id', classId)
-
-      const { data: assignmentData } = await supabase
-        .from('assignments')
-        .select('id, title, description, file_url, created_at')
-        .eq('class_id', classId)
-
-      const { data: classData } = await supabase
-        .from('classes')
-        .select('join_code')
-        .eq('id', classId)
-        .single()
-
-      setStudents(studentData || [])
-      setAssignments(assignmentData || [])
-      setJoinCode(classData?.join_code || '')
+    async function getUser() {
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUser(user)
     }
+    getUser()
 
     loadData()
-
-    // 订阅变化（略，保持你原来的）
   }, [classId, selectedStudent])
 
   // 查询学生成绩
@@ -85,61 +118,100 @@ export default function ClassDetailPage({ user }: { user: any }) {
     return `${classId}/${safeName}`
   }
 
+  function handleEditAssignment(assignment: assignments) {
+    setNewAssignmentTitle(assignment.title)
+    setNewAssignmentDesc(assignment.description)
+    setNewAssignmentFile(null) // file not directly editable, re-upload if needed
+    setNewAssignmentLink('')
+    setShowAssignmentModal(true) // open modal for editing
+    setEditingAssignmentId(assignment.id) // save editing ID
+  }
+
+  async function handleDeleteAssignment(id: number) {
+    if (!confirm("Are you sure you want to delete this assignment?")) return
+
+    const { error } = await supabase
+      .from('assignments')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      alert("Failed to delete assignment: " + error.message)
+    } else {
+      alert("Assignment deleted successfully.")
+      await loadData() // refresh assignments
+    }
+  }
+
   // 布置作业
   async function createAssignment() {
     if (!newAssignmentTitle.trim()) return
-    if (!user?.id) {
+    if (!currentUser?.id) {
       alert("User not logged in")
       return
     }
 
-    let fileUrl: string | null = null
-
+    const resources: string[] = []
     if (newAssignmentFile) {
       const filePath = generateSafeFilePath(classId, newAssignmentFile)
-
       const { error: uploadError } = await supabase.storage
         .from('assignments')
         .upload(filePath, newAssignmentFile)
 
       if (uploadError) {
-        console.error("❌ File upload failed:", uploadError)
         alert("File upload failed: " + uploadError.message)
         return
       }
 
       const { data } = supabase.storage.from('assignments').getPublicUrl(filePath)
-      fileUrl = data.publicUrl
+      resources.push(data.publicUrl)
     }
-
     if (newAssignmentLink.trim()) {
-      fileUrl = newAssignmentLink.trim()
+      resources.push(newAssignmentLink.trim())
     }
 
-    const { error } = await supabase.from('assignments').insert({
-      class_id: classId,
-      title: newAssignmentTitle,
-      description: newAssignmentDesc,
-      file_url: fileUrl,
-      original_name: newAssignmentFile?.name || null,
-      teacher_user_id: user.id
-    })
+    let error
+    if (editingAssignmentId) {
+      // ✅ Update existing assignment
+      const { error: updateError } = await supabase
+        .from('assignments')
+        .update({
+          title: newAssignmentTitle,
+          description: newAssignmentDesc,
+          resources,
+        })
+        .eq('id', editingAssignmentId)
+
+      error = updateError
+    } else {
+      // ✅ Insert new assignment
+      const { error: insertError } = await supabase
+        .from('assignments')
+        .insert({
+          class_id: classId,
+          title: newAssignmentTitle,
+          description: newAssignmentDesc,
+          resources,
+          teacher_user_id: currentUser.id,
+        })
+
+      error = insertError
+    }
 
     if (error) {
-      console.error("❌ Insert failed:", error)
-      alert("Save failed: " + error.message)
-      return
+      alert("Failed to save assignment: " + error.message)
+    } else {
+      alert(editingAssignmentId ? "Assignment updated successfully." : "Assignment created successfully.")
+      setShowAssignmentModal(false)
+      setNewAssignmentTitle('')
+      setNewAssignmentDesc('')
+      setNewAssignmentFile(null)
+      setNewAssignmentLink('')
+      setEditingAssignmentId(null)
+      await loadData() // ✅ Refresh after save
     }
-
-    alert("Assignment saved successfully")
-
-    setNewAssignmentTitle('')
-    setNewAssignmentDesc('')
-    setNewAssignmentFile(null)
-    setNewAssignmentLink('')
-    setShowAssignmentModal(false)
   }
-  
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       {/* 顶部导航栏 */}
@@ -216,9 +288,9 @@ export default function ClassDetailPage({ user }: { user: any }) {
         </section>
 
         {/* 作业区 */}
-        <section className="border border-teal-300 rounded-lg shadow-sm p-4 bg-white">
+        <section className="mt-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-teal-600">{t('teacher.assignments')}</h2>
+            <h2 className="text-2xl font-semibold text-teal-700">{t('teacher.assignments')}</h2>
             <Button
               className="bg-teal-500 hover:bg-teal-600 text-white"
               onClick={() => setShowAssignmentModal(true)}
@@ -230,32 +302,64 @@ export default function ClassDetailPage({ user }: { user: any }) {
           {assignments.length === 0 ? (
             <p className="text-gray-500 italic">{t('teacher.noAssignments')}</p>
           ) : (
-            <table className="w-full border-collapse border border-teal-200 rounded-lg shadow-sm">
-              <thead className="bg-teal-100 text-teal-700">
-                <tr>
-                  <th className="px-4 py-2 text-center">{t('teacher.title')}</th>
-                  <th className="px-4 py-2 text-center">{t('teacher.description')}</th>
-                  <th className="px-4 py-2 text-center">{t('teacher.file')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {assignments.map((a, idx) => (
-                  <tr key={a.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
-                    <td className="px-4 py-2 text-center font-bold text-teal-700">{a.title}</td>
-                    <td className="px-4 py-2 text-center text-gray-600">{a.description}</td>
-                    <td className="px-4 py-2 text-center">
-                      {a.file_url ? (
-                        <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
-                          {t('teacher.viewFile')}
-                        </a>
-                      ) : (
-                        <span className="text-gray-400 italic">{t('teacher.noFile')}</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="space-y-4">
+              {assignments.map((a, idx) => (
+                <div
+                  key={a.id}
+                  className={`rounded-lg shadow-md p-4 transition flex flex-col
+                    ${idx % 2 === 0 ? 'bg-teal-50' : 'bg-teal-100'}
+                  `}
+                >
+                  {/* 标题 + 操作区 */}
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-bold text-teal-800">{a.title}</h3>
+                    <div className="flex gap-2">
+                      <button
+                        className="text-sm text-blue-600 hover:underline"
+                        onClick={() => handleEditAssignment(a)}
+                      >
+                        ✏️ {t('common.edit')}
+                      </button>
+                      <button
+                        className="text-sm text-red-600 hover:underline"
+                        onClick={() => handleDeleteAssignment(a.id)}
+                      >
+                        🗑️ {t('common.delete')}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 描述 */}
+                  <p className="text-gray-700 mb-3">{a.description}</p>
+
+                  {/* 文件/链接区 */}
+                  {a.resources && a.resources.length > 0 ? (
+                    <ul className="space-y-1">
+                      {a.resources.map((url: string, i: number) => (
+                        <li key={i}>
+                          <a
+                            href={url}
+                            target="_blank"
+                            className="text-teal-600 hover:underline"
+                          >
+                            {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')
+                              ? `📄 ${url.split('/').pop()}`
+                              : `🔗 Link ${i+1}`}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-400 italic">{t('teacher.noFile')}</span>
+                  )}
+
+                  {/* 时间 */}
+                  <p className="text-xs text-gray-500 mt-3">
+                    {new Date(a.created_at).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
           )}
         </section>
       </main>
