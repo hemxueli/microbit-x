@@ -3,14 +3,16 @@
 import PdfPage from '@/components/ui/PdfPage'
 
 export default function Page({ params }: { params: { topic: string; lang: string } }) {
-  const { topic, lang } = params
+  const { topic } = params
 
   return (
     <PdfPage
-      title="Pelajaran Asas"
+      title="Pembelajaran Asas Micro:bit"
       subtitle="Belajar asas micro:bit"
       pdfPath={`/slides/basic-ms.pdf`}
-      lang={lang}
+      websitePath={`https://addjkahub.my.canva.site/makecode-micro-bit-pengenalan`}
+      videoPath={`/videos/video.basic.ms.mp4`}
+      lang="ms"
     />
   )
 }

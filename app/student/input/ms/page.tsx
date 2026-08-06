@@ -3,13 +3,16 @@
 import PdfPage from '@/components/ui/PdfPage'
 
 export default function Page({ params }: { params: { topic: string; lang: string } }) {
-  const { topic, lang } = params
+  const { topic } = params
+
   return (
     <PdfPage
-      title="Pelajaran Input"
+      title="Pembelajaran Input Micro:bit"
       subtitle="Belajar input micro:bit"
       pdfPath={`/slides/input-ms.pdf`}
-      lang={lang}
+      websitePath={`https://addjkahub.my.canva.site/pengenalan-makecode-untuk-micro-bit-input`}
+      videoPath={`/videos/video.input.ms.mp4`}
+      lang="ms"
     />
   )
 }

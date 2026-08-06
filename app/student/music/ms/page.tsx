@@ -3,13 +3,16 @@
 import PdfPage from '@/components/ui/PdfPage'
 
 export default function Page({ params }: { params: { topic: string; lang: string } }) {
-  const { topic, lang } = params
+  const { topic } = params
+
   return (
     <PdfPage
-      title="Pelajaran Muzik"
+      title="Pembelajaran Muzik Micro:bit"
       subtitle="Belajar muzik micro:bit"
       pdfPath={`/slides/music-ms.pdf`}
-      lang={lang}
+      websitePath={`https://addjkahub.my.canva.site/pengenalan-makecode-untuk-micro-bit-muzik`}
+      videoPath={`/videos/video.music.ms.mp4`}
+      lang="ms"
     />
   )
 }
