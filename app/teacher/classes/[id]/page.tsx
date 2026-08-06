@@ -39,7 +39,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [joinCode, setJoinCode] = useState('')
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [editingAssignmentId, setEditingAssignmentId] = useState<number | null>(null)
-
+  
   async function loadData() {
     const { data: studentData } = await supabase
       .from('students')
@@ -141,8 +141,6 @@ export default function ClassDetailPage({ user }: { user: any }) {
     }
 
     const resources: string[] = []
-
-    // upload file
     if (newAssignmentFile) {
       const filePath = generateSafeFilePath(classId, newAssignmentFile)
       const { error: uploadError } = await supabase.storage
@@ -157,15 +155,13 @@ export default function ClassDetailPage({ user }: { user: any }) {
       const { data } = supabase.storage.from('assignments').getPublicUrl(filePath)
       resources.push(data.publicUrl)
     }
-
-    // add link
     if (newAssignmentLink.trim()) {
       resources.push(newAssignmentLink.trim())
     }
 
     let error
     if (editingAssignmentId) {
-      // ✅ update existing assignment
+      // ✅ Update existing assignment
       const { error: updateError } = await supabase
         .from('assignments')
         .update({
@@ -177,7 +173,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
       error = updateError
     } else {
-      // ✅ insert new assignment
+      // ✅ Insert new assignment
       const { error: insertError } = await supabase
         .from('assignments')
         .insert({
@@ -200,8 +196,8 @@ export default function ClassDetailPage({ user }: { user: any }) {
       setNewAssignmentDesc('')
       setNewAssignmentFile(null)
       setNewAssignmentLink('')
-      setEditingAssignmentId(null) // reset editing state
-      await loadData()
+      setEditingAssignmentId(null)
+      await loadData() // ✅ Refresh after save
     }
   }
 
