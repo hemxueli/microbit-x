@@ -136,61 +136,69 @@ export default function ClassDetailPage({ user }: { user: any }) {
     }
   }
 
+  // 工具函数：生成安全的文件路径
+  function generateSafeFilePath(classId: string, file: File): string {
+    // 用 encodeURIComponent 转换文件名，保留中文但变成 URL 安全格式
+    const safeName = encodeURIComponent(file.name)
+    // 拼接 classId + 时间戳 + 文件名
+    return `${classId}/${Date.now()}-${safeName}`
+  }
+
   // 布置作业
   async function createAssignment() {
-  if (!newAssignmentTitle.trim()) return
+    if (!newAssignmentTitle.trim()) return
 
-  let fileUrl: string | null = null
+    let fileUrl: string | null = null
 
-  // 如果选择了文件，上传到 Supabase Storage
-  if (newAssignmentFile) {
-    const filePath = `${classId}/${Date.now()}-${newAssignmentFile.name}`
+    // 如果选择了文件，上传到 Supabase Storage
+    if (newAssignmentFile) {
+      const filePath = generateSafeFilePath(classId, newAssignmentFile)
 
-    const { error: uploadError } = await supabase.storage
-      .from('assignments') // bucket 名字
-      .upload(filePath, newAssignmentFile)
+      const { error: uploadError } = await supabase.storage
+        .from('assignments') // bucket 名字
+        .upload(filePath, newAssignmentFile)
 
-    if (uploadError) {
-      console.error("❌ 文件上传失败:", uploadError)
-      alert("文件上传失败: " + uploadError.message)
+      if (uploadError) {
+        console.error("❌ 文件上传失败:", uploadError)
+        alert("文件上传失败: " + uploadError.message)
+        return
+      }
+
+      // 获取公共 URL
+      const { data } = supabase.storage
+        .from('assignments')
+        .getPublicUrl(filePath)
+
+      fileUrl = data.publicUrl
+    }
+
+    // 如果是链接
+    if (newAssignmentLink.trim()) {
+      fileUrl = newAssignmentLink.trim()
+    }
+
+    // 插入数据库
+    const { error } = await supabase.from('assignments').insert({
+      class_id: classId,
+      title: newAssignmentTitle,
+      description: newAssignmentDesc,
+      file_url: fileUrl,
+    })
+
+    if (error) {
+      console.error("❌ 插入失败:", error)
+      alert("保存失败: " + error.message)
       return
     }
 
-    // 获取公共 URL
-    const { data } = supabase.storage
-      .from('assignments')
-      .getPublicUrl(filePath)
+    // 清空输入框
+    setNewAssignmentTitle('')
+    setNewAssignmentDesc('')
+    setNewAssignmentFile(null)
+    setNewAssignmentLink('')
+    setShowAssignmentModal(false)
 
-    fileUrl = data.publicUrl
   }
-
-  // 如果是链接
-  if (newAssignmentLink.trim()) {
-    fileUrl = newAssignmentLink.trim()
-  }
-
-  // 插入数据库
-  const { error } = await supabase.from('assignments').insert({
-    class_id: classId,
-    title: newAssignmentTitle,
-    description: newAssignmentDesc,
-    file_url: fileUrl,
-  })
-
-  if (error) {
-    console.error("❌ 插入失败:", error)
-    alert("保存失败: " + error.message)
-    return
-  }
-
-  // 清空输入框
-  setNewAssignmentTitle('')
-  setNewAssignmentDesc('')
-  setNewAssignmentFile(null)
-  setNewAssignmentLink('')
-  setShowAssignmentModal(false)
-
-  } 
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
