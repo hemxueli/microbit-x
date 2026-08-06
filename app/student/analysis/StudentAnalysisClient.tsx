@@ -61,11 +61,11 @@ export default function StudentAnalysisClient() {
       try {
         const res = await fetch(`/api/getQuizResults?user_id=${userId}&mode=detail`)
         const data = await res.json()
-        if (data.error || !data.results || data.results.length === 0) {
-          setError(data.error || 'NO_RESULTS')
+        if (data.error) {
+          setError(data.error)
           setAnalysis(null)
         } else {
-          setAnalysis(data.results[0]) // ✅ 最新一条
+          setAnalysis(data) // ✅ 直接用对象
           setError(null)
         }
       } catch {
@@ -148,7 +148,7 @@ export default function StudentAnalysisClient() {
                   user_id: userId,
                   quiz_theme: analysis.quiz_theme,
                   score: analysis.score,
-                  details: analysis.details, // ✅ 保存题目详情
+                  details: analysis.details,
                   analysis_feedback: analysis.ai_feedback || { en: '', zh: '', ms: '' },
                 }),
               })
@@ -183,7 +183,5 @@ export default function StudentAnalysisClient() {
       {/* AI Chatbox */}
       <AiChatWidget defaultLanguage={lang} />
     </div>
-
-    
   )
 }
