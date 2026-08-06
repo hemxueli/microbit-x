@@ -31,13 +31,13 @@ export async function POST(req: Request) {
     ]).select()
 
     if (error) {
-      console.error("Supabase insert error:", error)
+      console.error("❌ Supabase insert error:", error)
       return NextResponse.json({ success: false, error: "SAVE_FAILED" })
     }
 
     const inserted = data[0]
 
-    // 2. 生成 AI 分析
+    // 2. 调用 AI 分析
     let ai_feedback = { en: "", zh: "", ms: "" }
     try {
       const prompt = `
@@ -60,10 +60,14 @@ Format:
 }
 `
       const aiResult = await generateText({ model, prompt })
+
+      // 打印 AI 原始输出
+      console.log("🔎 AI raw output:", aiResult.text)
+
       try {
         ai_feedback = JSON.parse(aiResult.text)
       } catch {
-        console.error("AI output not JSON:", aiResult.text)
+        console.error("❌ AI output not JSON, fallback:", aiResult.text)
         ai_feedback = {
           en: aiResult.text || "No feedback available",
           zh: "暂无分析",
@@ -71,19 +75,25 @@ Format:
         }
       }
 
-      // 更新数据库，写入 analysis_feedback
-      await supabase
+      // 更新数据库
+      const { error: updateError } = await supabase
         .from("quiz_results")
         .update({ analysis_feedback: ai_feedback })
         .eq("id", inserted.id)
+
+      if (updateError) {
+        console.error("❌ Supabase update error:", updateError)
+      } else {
+        console.log("✅ Supabase update success:", ai_feedback)
+      }
     } catch (aiError) {
-      console.error("AI analysis error:", aiError)
+      console.error("❌ AI analysis error:", aiError)
     }
 
     // 3. 返回保存成功 + analysis_feedback
     return NextResponse.json({ success: true, id: inserted.id, analysis_feedback: ai_feedback })
   } catch (err) {
-    console.error("Server error:", err)
+    console.error("❌ Server error:", err)
     return NextResponse.json({ success: false, error: "SERVER_ERROR" })
   }
 }
