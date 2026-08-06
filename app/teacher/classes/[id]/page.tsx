@@ -43,10 +43,15 @@ export default function ClassDetailPage({ user }: { user: any }) {
   
   async function loadData() {
   // 查询学生
-    const { data: studentData } = await supabase
+    const { data: studentData, error } = await supabase
       .from('students')
-      .select('user_id, class_id, name, avatar')
+      .select('user_id, name, avatar, class_id')
       .eq('class_id', classId)
+
+    console.log("classId 参数:", classId)
+    console.log("学生数据:", studentData, error)
+
+    setStudents(studentData || [])
 
     // 查询作业
     const { data } = await supabase
