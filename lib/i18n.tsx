@@ -497,7 +497,7 @@ export const dict: Dict = {
       "zh": "输入测验",
       "ms": "Kuiz Input"
     },
-    "student.viewAnalysis": {
+    "student.analysis": {
       "en": "Analysis Record",
       "zh": "分析记录",
       "ms": "Rekod Analisis"
