@@ -12,11 +12,11 @@ const supabase = createClient(
 export async function POST(req: Request) {
   try {
     const { user_id } = await req.json()
+    if (!user_id) {
+      return NextResponse.json({ error: "MISSING_USER_ID" }, { status: 400 })
+    }
 
-    // Debug log
-    console.log("🔍 Received user_id:", user_id)
-
-    // 1. Get latest quiz result
+    // 1. 获取最新成绩
     const { data: quizResults, error: resultError } = await supabase
       .from("quiz_results")
       .select("id, user_id, quiz_theme, answers, score, created_at")
@@ -24,47 +24,38 @@ export async function POST(req: Request) {
       .order("created_at", { ascending: false })
       .limit(1)
 
-    console.log("📊 Supabase query error:", resultError)
-    console.log("📊 Supabase query results:", quizResults)
-
-    if (resultError) {
-      return NextResponse.json({ error: "DB_ERROR", details: resultError.message }, { status: 500 })
-    }
-
-    if (!quizResults || quizResults.length === 0) {
+    if (resultError || !quizResults || quizResults.length === 0) {
       return NextResponse.json({ error: "NO_QUIZ_DATA" }, { status: 404 })
     }
 
     const quizResult = quizResults[0]
 
-    // 2. Get questions
+    // 2. 获取题库（按顺序）
     const { data: questions, error: questionError } = await supabase
       .from("quiz_questions")
-      .select("id, question_text, options, correct_answer")
+      .select("id, question_key, question_text, options, correct_answer, order_index")
       .eq("quiz_theme", quizResult.quiz_theme)
-      .order("id")
-
-    console.log("📊 Questions query error:", questionError)
-    console.log("📊 Questions query results:", questions)
+      .order("order_index", { ascending: true })
 
     if (questionError || !questions || questions.length === 0) {
       return NextResponse.json({ error: "NO_QUESTIONS" }, { status: 404 })
     }
 
-    // 3. Build detailedAnswers
-    const detailedAnswers = questions.map((q, idx) => ({
-      question_id: q.id,
-      question_text: q.question_text,
-      options: q.options,
-      student_answer: quizResult.answers?.[idx],
-      student_answer_text:
-        quizResult.answers && quizResult.answers[idx] > 0
-          ? q.options[quizResult.answers[idx] - 1]
-          : null,
-      correct_answer: q.correct_answer,
-      correct_answer_text: q.options[q.correct_answer - 1],
-      is_correct: quizResult.answers?.[idx] === q.correct_answer,
-    }))
+    // 3. 构建详细答案
+    const detailedAnswers = questions.map((q, idx) => {
+      const studentIndex = quizResult.answers?.[idx]
+      return {
+        question_id: q.id,
+        question_key: q.question_key,
+        question_text: q.question_text,
+        options: q.options,
+        student_answer: studentIndex,
+        student_answer_text: studentIndex >= 0 ? q.options[studentIndex] : null,
+        correct_answer: q.correct_answer,
+        correct_answer_text: q.options[q.correct_answer],
+        is_correct: studentIndex === q.correct_answer
+      }
+    })
 
     // 4. AI Prompt
     const prompt = `
@@ -86,7 +77,7 @@ Output STRICT JSON format:
 }
 `
 
-    // 5. Call AI
+    // 5. 调用 AI
     const aiResult = await generateText({ model, prompt })
     const aiText = aiResult.text
     let ai_feedback
@@ -97,14 +88,20 @@ Output STRICT JSON format:
       ai_feedback = { en: aiText, zh: aiText, ms: aiText }
     }
 
-    // 6. Return response
+    // 6. 保存反馈
+    await supabase
+      .from("quiz_results")
+      .update({ analysis_feedback: ai_feedback })
+      .eq("id", quizResult.id)
+
+    // 7. 返回结果
     return NextResponse.json({
       quiz_theme: quizResult.quiz_theme,
       score: quizResult.score,
       total_questions: questions.length,
       created_at: quizResult.created_at,
       detailedAnswers,
-      ai_feedback,
+      ai_feedback
     })
   } catch (error) {
     console.error("❌ AI analysis error:", error)
