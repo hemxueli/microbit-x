@@ -1,5 +1,13 @@
 'use client'
 
+interface assignments {
+  id: number
+  title: string
+  description: string
+  resources: string[]
+  created_at: string
+}
+
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
@@ -30,6 +38,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [newAssignmentLink, setNewAssignmentLink] = useState('')
   const [joinCode, setJoinCode] = useState('')
   const [currentUser, setCurrentUser] = useState<any>(null)
+  const [editingAssignmentId, setEditingAssignmentId] = useState<number | null>(null)
 
   async function loadData() {
     const { data: studentData } = await supabase
@@ -98,6 +107,31 @@ export default function ClassDetailPage({ user }: { user: any }) {
     return `${classId}/${safeName}`
   }
 
+  function handleEditAssignment(assignment: assignments) {
+    setNewAssignmentTitle(assignment.title)
+    setNewAssignmentDesc(assignment.description)
+    setNewAssignmentFile(null) // file not directly editable, re-upload if needed
+    setNewAssignmentLink('')
+    setShowAssignmentModal(true) // open modal for editing
+    setEditingAssignmentId(assignment.id) // save editing ID
+  }
+
+  async function handleDeleteAssignment(id: number) {
+    if (!confirm("Are you sure you want to delete this assignment?")) return
+
+    const { error } = await supabase
+      .from('assignments')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      alert("Failed to delete assignment: " + error.message)
+    } else {
+      alert("Assignment deleted successfully.")
+      await loadData() // refresh assignments
+    }
+  }
+
   // 布置作业
   async function createAssignment() {
     if (!newAssignmentTitle.trim()) return
@@ -108,7 +142,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
     const resources: string[] = []
 
-    // 上传文件
+    // upload file
     if (newAssignmentFile) {
       const filePath = generateSafeFilePath(classId, newAssignmentFile)
       const { error: uploadError } = await supabase.storage
@@ -124,31 +158,51 @@ export default function ClassDetailPage({ user }: { user: any }) {
       resources.push(data.publicUrl)
     }
 
-    // 保存链接
+    // add link
     if (newAssignmentLink.trim()) {
       resources.push(newAssignmentLink.trim())
     }
 
-    const { error } = await supabase.from('assignments').insert({
-      class_id: classId,
-      title: newAssignmentTitle,
-      description: newAssignmentDesc,
-      resources,   // ✅ 存 JSON 数组
-      teacher_user_id: currentUser.id
-    })
+    let error
+    if (editingAssignmentId) {
+      // ✅ update existing assignment
+      const { error: updateError } = await supabase
+        .from('assignments')
+        .update({
+          title: newAssignmentTitle,
+          description: newAssignmentDesc,
+          resources,
+        })
+        .eq('id', editingAssignmentId)
+
+      error = updateError
+    } else {
+      // ✅ insert new assignment
+      const { error: insertError } = await supabase
+        .from('assignments')
+        .insert({
+          class_id: classId,
+          title: newAssignmentTitle,
+          description: newAssignmentDesc,
+          resources,
+          teacher_user_id: currentUser.id,
+        })
+
+      error = insertError
+    }
 
     if (error) {
-      alert("Save failed: " + error.message)
+      alert("Failed to save assignment: " + error.message)
     } else {
-      alert("Assignment saved successfully")
+      alert(editingAssignmentId ? "Assignment updated successfully." : "Assignment created successfully.")
       setShowAssignmentModal(false)
       setNewAssignmentTitle('')
       setNewAssignmentDesc('')
       setNewAssignmentFile(null)
       setNewAssignmentLink('')
+      setEditingAssignmentId(null) // reset editing state
       await loadData()
     }
-
   }
 
   return (
@@ -229,7 +283,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
         {/* 作业区 */}
         <section className="mt-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-gray-800">{t('teacher.assignments')}</h2>
+            <h2 className="text-2xl font-semibold text-teal-700">{t('teacher.assignments')}</h2>
             <Button
               className="bg-teal-500 hover:bg-teal-600 text-white"
               onClick={() => setShowAssignmentModal(true)}
@@ -245,12 +299,28 @@ export default function ClassDetailPage({ user }: { user: any }) {
               {assignments.map((a, idx) => (
                 <div
                   key={a.id}
-                  className={`rounded-lg shadow-md p-4 transition
-                    ${idx % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200'}
+                  className={`rounded-lg shadow-md p-4 transition flex flex-col
+                    ${idx % 2 === 0 ? 'bg-teal-50' : 'bg-teal-100'}
                   `}
                 >
-                  {/* 标题 */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{a.title}</h3>
+                  {/* 标题 + 操作区 */}
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-bold text-teal-800">{a.title}</h3>
+                    <div className="flex gap-2">
+                      <button
+                        className="text-sm text-blue-600 hover:underline"
+                        onClick={() => handleEditAssignment(a)}
+                      >
+                        ✏️ {t('common.edit')}
+                      </button>
+                      <button
+                        className="text-sm text-red-600 hover:underline"
+                        onClick={() => handleDeleteAssignment(a.id)}
+                      >
+                        🗑️ {t('common.delete')}
+                      </button>
+                    </div>
+                  </div>
 
                   {/* 描述 */}
                   <p className="text-gray-700 mb-3">{a.description}</p>
@@ -263,7 +333,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
                           <a
                             href={url}
                             target="_blank"
-                            className="text-blue-600 hover:underline"
+                            className="text-teal-600 hover:underline"
                           >
                             {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg') || url.endsWith('.jpeg')
                               ? `📄 ${url.split('/').pop()}`
