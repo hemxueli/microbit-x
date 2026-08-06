@@ -59,13 +59,18 @@ export default function StudentAnalysisClient() {
       }
       setLoading(true)
       try {
-        const res = await fetch(`/api/getQuizResults?user_id=${userId}&mode=detail`)
+        // ✅ 调用新的 analyzeQuiz API
+        const res = await fetch(`/api/analyzeQuiz`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: userId }),
+        })
         const data = await res.json()
         if (data.error) {
           setError(data.error)
           setAnalysis(null)
         } else {
-          setAnalysis(data) // ✅ 直接用对象
+          setAnalysis(data) // AI 分析结果
           setError(null)
         }
       } catch {

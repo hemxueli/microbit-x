@@ -19,13 +19,13 @@ interface QuizResult {
     en: string
     zh: string
     ms: string
-  }
+  } | null
+  lang?: Lang   // ✅ 新增字段
 }
 
 export default function StudentAnalysisListClient() {
   const { t } = useI18n()
   const [results, setResults] = useState<QuizResult[]>([])
-  const [lang, setLang] = useState<Lang>('en')
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState<string | null>(null)
 
@@ -47,7 +47,10 @@ export default function StudentAnalysisListClient() {
       setLoading(true)
       const res = await fetch(`/api/getQuizResults?user_id=${userId}`)
       const data = await res.json()
-      if (data.results) setResults(data.results)
+      if (data.results) {
+        // 默认语言设为 en
+        setResults(data.results.map((r: QuizResult) => ({ ...r, lang: 'en' })))
+      }
       setLoading(false)
     }
     if (userId) fetchResults()
@@ -89,16 +92,23 @@ export default function StudentAnalysisListClient() {
           <ul className="space-y-6">
             {results.map(r => (
               <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow relative">
-                {/* ✅ Quiz 标题三语言版本，分数固定 /10 */}
+                {/* Quiz 标题 */}
                 <h2 className="font-bold text-2xl text-teal-800">
                   {t(`quiz.${r.quiz_theme}`)} - {t('analysis.score')} {r.score}/10
                 </h2>
 
-                {/* ✅ 翻译选择器放在右上角 */}
+                {/* 每条记录独立语言选择器 */}
                 <div className="absolute top-4 right-4">
                   <select
-                    value={lang}
-                    onChange={(e) => setLang(e.target.value as Lang)}
+                    value={r.lang}
+                    onChange={(e) => {
+                      const newLang = e.target.value as Lang
+                      setResults(prev =>
+                        prev.map(item =>
+                          item.id === r.id ? { ...item, lang: newLang } : item
+                        )
+                      )
+                    }}
                     className="border border-teal-600 rounded p-2 text-white bg-teal-600 text-sm font-medium
                               focus:outline-none focus:ring-2 focus:ring-teal-500"
                   >
@@ -108,9 +118,11 @@ export default function StudentAnalysisListClient() {
                   </select>
                 </div>
 
-                {/* ✅ AI feedback 三语言版本 */}
+                {/* AI feedback */}
                 <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
-                  {r.analysis_feedback?.[lang] || t('analysis.noFeedback')}
+                  {r.analysis_feedback
+                    ? r.analysis_feedback[r.lang || 'en'] || t('analysis.noFeedback')
+                    : t('analysis.noFeedback')}
                 </p>
 
                 <p className="text-sm text-teal-600 mt-2">
@@ -137,8 +149,8 @@ export default function StudentAnalysisListClient() {
         </div>
       </footer>
 
-      {/* ✅ AI Chat Widget 在右下角 */}
-      <AiChatWidget defaultLanguage={lang} />
+      {/* AI Chat Widget */}
+      <AiChatWidget defaultLanguage="en" />
     </div>
   )
 }
