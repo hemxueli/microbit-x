@@ -38,9 +38,9 @@ export default function ClassDetailPage({ user }: { user: any }) {
       .eq('class_id', classId)
 
     const { data: assignmentData } = await supabase
-      .from('assignments')
-      .select('id, title, description, file_url, created_at')
-      .eq('class_id', classId)
+  .from('assignments')
+  .select('id, title, description, resources, created_at')
+  .eq('class_id', classId)
 
     const { data: classData } = await supabase
       .from('classes')
