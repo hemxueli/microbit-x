@@ -906,7 +906,7 @@ export const dict: Dict = {
     ms: 'Apakah tujuan utama kategori Music?',
   },
   'quiz.music.q10.options': {
-    en: 'To receive input from sensors, To display text and icons, To play sounds, tones, and melodies, To create LED patterns',
+    en: 'To receive input from sensors, To display text and icons, To play sounds， tones， and melodies, To create LED patterns',
     zh: '接收传感器输入, 显示文字和图示, 播放声音、音调和旋律, 制作 LED 图案',
     ms: 'Menerima input daripada sensor, Paparkan teks dan ikon, Mainkan bunyi, nada dan melodi, Cipta corak LED',
   },
