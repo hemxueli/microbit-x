@@ -85,6 +85,7 @@ export default function StudentPage() {
   ]
 
   // 加载用户并初始化
+  // 加载用户并初始化 + 实时订阅
   useEffect(() => {
     const loadUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -92,6 +93,66 @@ export default function StudentPage() {
         setUser(user)
         await ensureProfile(user)   // 👈 确保 profile 存在
         await loadClasses(user)     // 👈 加载班级
+
+        // ✅ 查学生的班级 ID
+        const { data: student } = await supabase
+          .from('students')
+          .select('class_id')
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        if (student?.class_id) {
+          // ✅ 订阅 assignments 表变化
+          const assignmentChannel = supabase
+            .channel('assignments-changes')
+            .on(
+              'postgres_changes',
+              {
+                event: '*',
+                schema: 'public',
+                table: 'assignments',
+                filter: `class_id=eq.${student.class_id}`,
+              },
+              () => loadClasses(user)
+            )
+            .subscribe()
+
+          // ✅ 订阅 submissions 表变化
+          const submissionChannel = supabase
+            .channel('submissions-changes')
+            .on(
+              'postgres_changes',
+              {
+                event: '*',
+                schema: 'public',
+                table: 'submissions',
+              },
+              () => loadClasses(user)
+            )
+            .subscribe()
+
+          // ✅ 订阅 quiz_results 表变化（测验成绩）
+          const quizChannel = supabase
+            .channel('quiz-results-changes')
+            .on(
+              'postgres_changes',
+              {
+                event: '*',
+                schema: 'public',
+                table: 'quiz_results',
+                filter: `student_id=eq.${user.id}`, // 只监听当前学生的成绩
+              },
+              () => loadClasses(user)
+            )
+            .subscribe()
+
+          // 清理订阅
+          return () => {
+            supabase.removeChannel(assignmentChannel)
+            supabase.removeChannel(submissionChannel)
+            supabase.removeChannel(quizChannel)
+          }
+        }
       } else {
         router.push("/sign-in")
       }
@@ -99,49 +160,52 @@ export default function StudentPage() {
     loadUser()
   }, [])
 
-    // 加载学生已加入的班级
+  // 加载学生已加入的班级
   async function loadClasses(user: any) {
-    const { data, error } = await supabase
+    const { data: student, error: studentError } = await supabase
       .from('students')
+      .select('class_id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (studentError || !student?.class_id) {
+      setClasses([])
+      return
+    }
+
+    const { data: cls } = await supabase
+      .from('classes')
       .select(`
-        class_id,
-        classes (
+        id,
+        name,
+        assignments (
           id,
-          name,
-          assignments (
+          title,
+          description,
+          file_url,
+          submissions (
             id,
-            title,
-            description,
             file_url,
-            submissions (
-              id,
-              file_url,
-              feedback,
-              created_at
-            )
+            feedback,
+            created_at
           )
         )
       `)
-      .eq('user_id', user.id)   // ⚠️ 确认 students 表里是 user_id
+      .eq('id', student.class_id)
 
-    console.log("Supabase返回:", data, error)
-
-    if (!error && data && data.length > 0) {
-      const formatted: StudentClass[] = data.map((row: any) => ({
-        id: row.classes.id,
-        name: row.classes.name,
-        assignments: row.classes.assignments.map((a: any) => ({
-          id: a.id,
-          title: a.title,
-          description: a.description,
-          file_url: a.file_url,
-          submissions: a.submissions || []
-        }))
+    const formatted: StudentClass[] = (cls || []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      assignments: c.assignments.map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        description: a.description,
+        file_url: a.file_url,
+        submissions: a.submissions || []
       }))
-      setClasses(formatted)
-    } else {
-      setClasses([])
-    }
+    }))
+
+    setClasses(formatted)
   }
 
   // 加入班级逻辑
@@ -151,23 +215,21 @@ export default function StudentPage() {
       return
     }
 
-    // 查询班级是否存在（用 join_code）
-    const { data: cls, error: clsError } = await supabase
+    const { data: cls } = await supabase
       .from('classes')
-      .select('id, name, created_at, join_code')
-      .eq('join_code', joinCode.trim().toUpperCase())
+      .select('id, name, join_code')
+      .eq('join_code', joinCode.trim())
       .maybeSingle()
 
-    if (clsError || !cls) {
+    if (!cls) {
       alert('Invalid class code.')
       return
     }
 
-    // 更新学生表，把 class_id 写进去
     const { error } = await supabase
       .from('students')
       .update({ class_id: cls.id })
-      .eq('user_id', user.id)   // 假设 students 表里有 user_id 字段
+      .eq('user_id', user.id)
 
     if (error) {
       alert(error.message)
@@ -175,7 +237,7 @@ export default function StudentPage() {
       alert(`${t('student.joinedClass')}: ${cls.name}`)
       setShowJoinClassModal(false)
       setJoinCode('')
-      await loadClasses(user) // 刷新班级列表
+      await loadClasses(user)
     }
   }
 
@@ -184,7 +246,7 @@ export default function StudentPage() {
     if (!selectedAssignment) return
     const { error } = await supabase.from('submissions').insert({
       assignment_id: selectedAssignment.id,
-      student_id: user.id, // ⚠️ 这里要替换成 students 表里的真实 student_id
+      student_id: user.id, // ⚠️ 如果你有 students 表里的真实 id，可以替换
       file_url: fileUrl,
       feedback: textContent
     })
@@ -205,11 +267,6 @@ export default function StudentPage() {
       .select('user_id, name, avatar')
       .eq('user_id', user.id)
       .single()
-
-    if (error && error.code !== 'PGRST116') {
-      alert('Error loading profile: ' + error.message)
-      return
-    }
 
     if (!data) {
       const defaultName = user.user_metadata?.name || user.email || user.id
@@ -233,16 +290,14 @@ export default function StudentPage() {
 
   // 更新名字或头像
   async function updateProfile(updates: { name?: string; avatar?: string }) {
-  if (!user) return
+    if (!user) return
     const payload = {
       user_id: user.id,
-      name: updates.name ?? name,   // 👈 保证 name 永远有值
+      name: updates.name ?? name,
       avatar: updates.avatar ?? avatar,
     }
     const { error } = await supabase.from('students').upsert(payload)
-    if (error) {
-      alert(error.message)
-    } else {
+    if (!error) {
       if (updates.name) {
         setName(updates.name)
         setTempName(updates.name)

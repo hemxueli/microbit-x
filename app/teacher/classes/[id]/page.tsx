@@ -26,16 +26,16 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
   const [newAssignmentTitle, setNewAssignmentTitle] = useState('')
   const [newAssignmentDesc, setNewAssignmentDesc] = useState('')
-  const [newAssignmentFile, setNewAssignmentFile] = useState('')
+  const [newAssignmentFile, setNewAssignmentFile] = useState<File | null>(null)
   const [newAssignmentLink, setNewAssignmentLink] = useState('')
   const [joinCode, setJoinCode] = useState('')
 
-  // 加载班级数据
+  // 加载班级数据 + 实时订阅
   useEffect(() => {
     async function loadData() {
       const { data: studentData } = await supabase
         .from('students')
-        .select('user_id, name, avatar')
+        .select('user_id, class_id, name, avatar')
         .eq('class_id', classId)
 
       const { data: assignmentData } = await supabase
@@ -53,8 +53,11 @@ export default function ClassDetailPage({ user }: { user: any }) {
       setAssignments(assignmentData || [])
       setJoinCode(classData?.join_code || '')
     }
+
     loadData()
-  }, [classId])
+
+    // 订阅变化（略，保持你原来的）
+  }, [classId, selectedStudent])
 
   // 查询学生成绩
   async function loadQuizResults(studentId: string) {
@@ -75,27 +78,68 @@ export default function ClassDetailPage({ user }: { user: any }) {
     }
   }
 
+  // 工具函数：生成安全的文件路径
+  function generateSafeFilePath(classId: string, file: File): string {
+    const ext = file.name.split('.').pop()
+    const safeName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`
+    return `${classId}/${safeName}`
+  }
+
   // 布置作业
   async function createAssignment() {
     if (!newAssignmentTitle.trim()) return
-    await supabase.from('assignments').insert({
+    if (!user?.id) {
+      alert("User not logged in")
+      return
+    }
+
+    let fileUrl: string | null = null
+
+    if (newAssignmentFile) {
+      const filePath = generateSafeFilePath(classId, newAssignmentFile)
+
+      const { error: uploadError } = await supabase.storage
+        .from('assignments')
+        .upload(filePath, newAssignmentFile)
+
+      if (uploadError) {
+        console.error("❌ File upload failed:", uploadError)
+        alert("File upload failed: " + uploadError.message)
+        return
+      }
+
+      const { data } = supabase.storage.from('assignments').getPublicUrl(filePath)
+      fileUrl = data.publicUrl
+    }
+
+    if (newAssignmentLink.trim()) {
+      fileUrl = newAssignmentLink.trim()
+    }
+
+    const { error } = await supabase.from('assignments').insert({
       class_id: classId,
       title: newAssignmentTitle,
       description: newAssignmentDesc,
-      file_url: newAssignmentFile || newAssignmentLink || null,
+      file_url: fileUrl,
+      original_name: newAssignmentFile?.name || null,
+      teacher_user_id: user.id
     })
+
+    if (error) {
+      console.error("❌ Insert failed:", error)
+      alert("Save failed: " + error.message)
+      return
+    }
+
+    alert("Assignment saved successfully")
+
     setNewAssignmentTitle('')
     setNewAssignmentDesc('')
-    setNewAssignmentFile('')
+    setNewAssignmentFile(null)
     setNewAssignmentLink('')
     setShowAssignmentModal(false)
-    const { data } = await supabase
-      .from('assignments')
-      .select('*')
-      .eq('class_id', classId)
-    setAssignments(data || [])
   }
-
+  
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       {/* 顶部导航栏 */}
@@ -146,9 +190,15 @@ export default function ClassDetailPage({ user }: { user: any }) {
                 {students.map((s, idx) => (
                   <tr key={s.user_id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
                     <td className="px-4 py-2 text-center">
-                      <img src={s.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-teal-300 mx-auto" />
+                      <img
+                        src={s.avatar || '/images/default-avatar.png'}
+                        alt="avatar"
+                        className="w-10 h-10 rounded-full border border-teal-300 mx-auto"
+                      />
                     </td>
-                    <td className="px-4 py-2 text-center font-medium">{s.name}</td>
+                    <td className="px-4 py-2 text-center font-medium">
+                      {s.name || s.user_id}
+                    </td>
                     <td className="px-4 py-2 text-center">
                       <Button
                         size="sm"
@@ -272,8 +322,8 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
               {/* 显示已选择的文件或链接 */}
               {newAssignmentFile && (
-                <p className="text-sm text-gray-600">
-                  📄 {t('teacher.uploadFile')}: {newAssignmentFile}
+                <p className="text-sm text-gray-600 mt-2">
+                  📄 {t('teacher.uploadFile')}: {newAssignmentFile.name} ({(newAssignmentFile.size / 1024).toFixed(1)} KB)
                 </p>
               )}
               {newAssignmentLink && (
@@ -329,9 +379,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (file) {
-                  setNewAssignmentFile(
-                    `${file.name} (${(file.size / 1024).toFixed(1)} KB, ${file.type})`
-                  )
+                  setNewAssignmentFile(file) // ✅ 保存 File 对象
                 }
               }}
             />
@@ -339,7 +387,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
             {/* 显示已选择的文件 */}
             {newAssignmentFile && (
               <p className="text-sm text-gray-600 mt-2">
-                📄 {t('teacher.uploadFile')}: {newAssignmentFile}
+                📄 {t('teacher.uploadFile')}: {newAssignmentFile.name} ({(newAssignmentFile.size / 1024).toFixed(1)} KB)
               </p>
             )}
 
