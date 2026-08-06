@@ -15,9 +15,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "MISSING_USER_ID" }, { status: 400 })
     }
 
+    // ✅ 只选择需要的字段，不再返回 details
     const { data, error } = await supabase
       .from("quiz_results")
-      .select("id, quiz_theme, score, created_at, analysis_feedback, details")
+      .select("id, quiz_theme, score, created_at, analysis_feedback")
       .eq("user_id", user_id)
       .order("created_at", { ascending: false })
 
@@ -25,14 +26,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "GET_RESULTS_FAILED" }, { status: 500 })
     }
 
+    // ✅ 解析 analysis_feedback JSON
     const parsedData = data.map(r => ({
       ...r,
       analysis_feedback: typeof r.analysis_feedback === "string"
         ? JSON.parse(r.analysis_feedback)
-        : r.analysis_feedback,
-      details: typeof r.details === "string"
-        ? JSON.parse(r.details)
-        : r.details
+        : r.analysis_feedback
     }))
 
     return NextResponse.json({ results: parsedData })

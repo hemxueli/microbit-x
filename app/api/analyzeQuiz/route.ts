@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
     const quizResult = quizResults[0]
 
-    // 2. 直接用 details，不再重新拼
+    // 2. 直接用 details
     const detailedAnswers =
       typeof quizResult.details === "string"
         ? JSON.parse(quizResult.details)
@@ -71,11 +71,15 @@ Output STRICT JSON format:
       ai_feedback = { en: aiText, zh: aiText, ms: aiText }
     }
 
-    // 5. 保存反馈
-    await supabase
+    // 5. 更新反馈（只 update，不 insert）
+    const { error: updateError } = await supabase
       .from("quiz_results")
       .update({ analysis_feedback: ai_feedback })
       .eq("id", quizResult.id)
+
+    if (updateError) {
+      return NextResponse.json({ error: "UPDATE_FAILED" }, { status: 500 })
+    }
 
     // 6. 返回结果
     return NextResponse.json({
@@ -83,7 +87,6 @@ Output STRICT JSON format:
       score: quizResult.score,
       total_questions: detailedAnswers.length,
       created_at: quizResult.created_at,
-      detailedAnswers,
       ai_feedback
     })
   } catch (error) {
