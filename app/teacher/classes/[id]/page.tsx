@@ -138,10 +138,11 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
   // 工具函数：生成安全的文件路径
   function generateSafeFilePath(classId: string, file: File): string {
-    // 用 encodeURIComponent 转换文件名，保留中文但变成 URL 安全格式
-    const safeName = encodeURIComponent(file.name)
-    // 拼接 classId + 时间戳 + 文件名
-    return `${classId}/${Date.now()}-${safeName}`
+  // 取文件扩展名
+    const ext = file.name.split('.').pop()
+    // 用时间戳 + 随机数生成安全名字
+    const safeName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`
+    return `${classId}/${safeName}`
   }
 
   // 布置作业
@@ -150,12 +151,11 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
     let fileUrl: string | null = null
 
-    // 如果选择了文件，上传到 Supabase Storage
     if (newAssignmentFile) {
       const filePath = generateSafeFilePath(classId, newAssignmentFile)
 
       const { error: uploadError } = await supabase.storage
-        .from('assignments') // bucket 名字
+        .from('assignments')
         .upload(filePath, newAssignmentFile)
 
       if (uploadError) {
@@ -164,25 +164,20 @@ export default function ClassDetailPage({ user }: { user: any }) {
         return
       }
 
-      // 获取公共 URL
-      const { data } = supabase.storage
-        .from('assignments')
-        .getPublicUrl(filePath)
-
+      const { data } = supabase.storage.from('assignments').getPublicUrl(filePath)
       fileUrl = data.publicUrl
     }
 
-    // 如果是链接
     if (newAssignmentLink.trim()) {
       fileUrl = newAssignmentLink.trim()
     }
 
-    // 插入数据库
     const { error } = await supabase.from('assignments').insert({
       class_id: classId,
       title: newAssignmentTitle,
       description: newAssignmentDesc,
       file_url: fileUrl,
+      original_name: newAssignmentFile?.name || null, // ✅ 可选：保存原始文件名
     })
 
     if (error) {
@@ -191,7 +186,6 @@ export default function ClassDetailPage({ user }: { user: any }) {
       return
     }
 
-    // 清空输入框
     setNewAssignmentTitle('')
     setNewAssignmentDesc('')
     setNewAssignmentFile(null)
