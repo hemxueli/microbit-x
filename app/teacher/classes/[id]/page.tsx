@@ -178,6 +178,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
       description: newAssignmentDesc,
       file_url: fileUrl,
       original_name: newAssignmentFile?.name || null, // ✅ 可选：保存原始文件名
+      teacher_id: user.id
     })
 
     if (error) {
