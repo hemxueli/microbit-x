@@ -30,62 +30,81 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [newAssignmentLink, setNewAssignmentLink] = useState('')
   const [joinCode, setJoinCode] = useState('')
 
-  
-  // ✅ 加载班级数据
-  async function loadData() {
-    // 查学生
-    const { data: studentData, error: studentError } = await supabase
-      .from('students')
-      .select('user_id, name, avatar, class_id')
-      .eq('class_id', classId)
-
-    if (studentError) {
-      console.error("❌ 查询学生失败:", studentError)
-    }
-
-    // 查作业
-    const { data: assignmentData, error: assignmentError } = await supabase
-      .from('assignments')
-      .select('id, title, description, file_url, created_at')
-      .eq('class_id', classId)
-
-    if (assignmentError) {
-      console.error("❌ 查询作业失败:", assignmentError)
-    }
-
-    // 查班级 join_code
-    const { data: classData, error: classError } = await supabase
-      .from('classes')
-      .select('join_code')
-      .eq('id', classId)
-      .single()
-
-    if (classError) {
-      console.error("❌ 查询班级失败:", classError)
-    }
-
-    console.log("学生数据:", studentData)
-    setStudents(studentData || [])
-    setAssignments(assignmentData || [])
-    setJoinCode(classData?.join_code || '')
-  }
-
+ // 加载班级数据 + 实时订阅
   useEffect(() => {
+    async function loadData() {
+      const { data: studentData } = await supabase
+        .from('students')
+        .select('user_id, name, avatar')
+        .eq('class_id', classId)
+
+      const { data: assignmentData } = await supabase
+        .from('assignments')
+        .select('id, title, description, file_url, created_at')
+        .eq('class_id', classId)
+
+      const { data: classData } = await supabase
+        .from('classes')
+        .select('join_code')
+        .eq('id', classId)
+        .single()
+
+      setStudents(studentData || [])
+      setAssignments(assignmentData || [])
+      setJoinCode(classData?.join_code || '')
+    }
+
     loadData()
+
+    // ✅ 订阅学生表变化
+    const studentChannel = supabase
+      .channel('students-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'students', filter: `class_id=eq.${classId}` },
+        () => loadData()
+      )
+      .subscribe()
+
+    // ✅ 订阅作业表变化
+    const assignmentChannel = supabase
+      .channel('assignments-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'assignments', filter: `class_id=eq.${classId}` },
+        () => loadData()
+      )
+      .subscribe()
+
+    // ✅ 订阅提交表变化
+    const submissionChannel = supabase
+      .channel('submissions-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'submissions' },
+        () => loadData()
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(studentChannel)
+      supabase.removeChannel(assignmentChannel)
+      supabase.removeChannel(submissionChannel)
+    }
   }, [classId])
 
-  // ✅ 查询学生成绩
+  // 查询学生成绩
   async function loadQuizResults(studentId: string) {
     const { data } = await supabase
       .from('quiz_results')
       .select('id, score, feedback, created_at')
       .eq('class_id', classId)
-      .eq('user_id', studentId) // ⚠️ 用 user_id 对应 students 表
+      .eq('student_id', studentId)
     setQuizResults(data || [])
     setSelectedStudent(studentId)
   }
 
-  // ✅ 保存评语
+  // 保存评语
   async function giveFeedback(resultId: string, feedback: string) {
     await supabase.from('quiz_results').update({ feedback }).eq('id', resultId)
     if (selectedStudent) {
@@ -93,7 +112,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
     }
   }
 
-  // ✅ 布置作业
+  // 布置作业
   async function createAssignment() {
     if (!newAssignmentTitle.trim()) return
     await supabase.from('assignments').insert({
@@ -107,54 +126,12 @@ export default function ClassDetailPage({ user }: { user: any }) {
     setNewAssignmentFile('')
     setNewAssignmentLink('')
     setShowAssignmentModal(false)
-    await loadData() // ✅ 刷新作业列表
+    const { data } = await supabase
+      .from('assignments')
+      .select('*')
+      .eq('class_id', classId)
+    setAssignments(data || [])
   }
-
-  return (
-    <div className="p-6">
-      <header className="flex justify-between items-center mb-6">
-        <Logo />
-        <LanguageSwitcher />
-      </header>
-
-      <h1 className="text-2xl font-bold mb-4">{t('class.detailTitle')}</h1>
-
-      {/* 学生列表 */}
-      <h2 className="text-xl font-semibold mb-2">{t('class.students')}</h2>
-      {students.length === 0 ? (
-        <p className="text-gray-500">{t('class.noStudents')}</p>
-      ) : (
-        <ul className="space-y-2">
-          {students.map((s) => (
-            <li key={s.user_id} className="flex items-center gap-3">
-              <img src={s.avatar} alt={s.name} className="w-10 h-10 rounded-full" />
-              <span>{s.name}</span>
-              <Button
-                className="ml-auto bg-teal-500 text-white"
-                onClick={() => loadQuizResults(s.user_id)}
-              >
-                {t('class.viewResults')}
-              </Button>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* 作业列表 */}
-      <h2 className="text-xl font-semibold mt-6 mb-2">{t('class.assignments')}</h2>
-      {assignments.length === 0 ? (
-        <p className="text-gray-500">{t('class.noAssignments')}</p>
-      ) : (
-        <ul className="space-y-2">
-          {assignments.map((a) => (
-            <li key={a.id}>
-              <strong>{a.title}</strong> - {a.description}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">

@@ -86,6 +86,7 @@ export default function StudentPage() {
 
   // 加载用户并初始化
   useEffect(() => {
+    
     const loadUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
