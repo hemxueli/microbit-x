@@ -207,9 +207,15 @@ export default function ClassDetailPage({ user }: { user: any }) {
                 {students.map((s, idx) => (
                   <tr key={s.user_id} className={idx % 2 === 0 ? 'bg-white' : 'bg-teal-50'}>
                     <td className="px-4 py-2 text-center">
-                      <img src={s.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-teal-300 mx-auto" />
+                      <img
+                        src={s.avatar || '/images/default-avatar.png'}
+                        alt="avatar"
+                        className="w-10 h-10 rounded-full border border-teal-300 mx-auto"
+                      />
                     </td>
-                    <td className="px-4 py-2 text-center font-medium">{s.name}</td>
+                    <td className="px-4 py-2 text-center font-medium">
+                      {s.name || s.user_id}
+                    </td>
                     <td className="px-4 py-2 text-center">
                       <Button
                         size="sm"
