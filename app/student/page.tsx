@@ -7,18 +7,19 @@ interface Submission {
   created_at: string;
 }
 
-interface Assignment {
-  id: string;
-  title: string;
-  description: string;
-  file_url: string | null;
-  submissions: Submission[];
+interface assignments {
+  id: number
+  title: string
+  description: string
+  resources: string[]
+  teacher_user_id: string
+  created_at: string
 }
 
 interface StudentClass {
   id: string;
   name: string;
-  assignments: Assignment[];
+  assignments: assignments[];
 }
 
 interface ClassesResponse {
