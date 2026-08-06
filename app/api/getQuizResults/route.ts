@@ -32,11 +32,18 @@ export async function GET(req: Request) {
         ? "id, quiz_theme, score, created_at, analysis_feedback, details"
         : "id, quiz_theme, score, created_at, analysis_feedback"
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("quiz_results")
       .select(fields)
       .eq("user_id", user_id)
       .order("created_at", { ascending: false })
+
+    // ✅ 如果是 detail，只取最新一条
+    if (mode === "detail") {
+      query = query.limit(1)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       return NextResponse.json({ error: "GET_RESULTS_FAILED" }, { status: 500 })
@@ -60,6 +67,12 @@ export async function GET(req: Request) {
           : undefined,
     }))
 
+    // ✅ 如果是 detail，直接返回对象而不是数组
+    if (mode === "detail") {
+      return NextResponse.json(parsedData[0] || { error: "NO_RESULTS" })
+    }
+
+    // ✅ 如果是 list，返回数组
     return NextResponse.json({ results: parsedData })
   } catch (err) {
     console.error("❌ GET results error:", err)
