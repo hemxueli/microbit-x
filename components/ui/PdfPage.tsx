@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import MakeCodeWidget from '@/components/ui/makecode-widget'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
-import { Logo } from '@/components/logo'   // ✅ 确保你有 Logo 组件
-
+import { Logo } from '@/components/logo'  
 export default function PdfPage({
   title,
   subtitle,
@@ -41,9 +40,9 @@ export default function PdfPage({
       </header>
 
       {/* Main content */}
-      <main className="flex flex-1 items-center justify-center p-6">
+      <main className="flex-1 p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* PDF 卡片 */}
+          {/* PDF Card */}
           <a
             href={pdfPath}
             target="_blank"
@@ -57,7 +56,7 @@ export default function PdfPage({
             </div>
           </a>
 
-          {/* Website 卡片 */}
+          {/* Website Card */}
           <a
             href={websitePath}
             target="_blank"
@@ -71,7 +70,7 @@ export default function PdfPage({
             </div>
           </a>
 
-          {/* Video 卡片 */}
+          {/* Video Card */}
           <a
             href={videoPath}
             target="_blank"
