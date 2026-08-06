@@ -35,7 +35,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
     async function loadData() {
       const { data: studentData, error: studentError } = await supabase
         .from('students')
-        .select('id, user_id, class_id, name, avatar')
+        .select('user_id, class_id, name, avatar') // ✅ 去掉 id
         .eq('class_id', classId)
 
       if (studentError) {
