@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
     const quizResult = quizResults[0]
 
-    // 2. 直接用 details
+    // 2. 解析 details
     const detailedAnswers =
       typeof quizResult.details === "string"
         ? JSON.parse(quizResult.details)
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "NO_DETAILS" }, { status: 404 })
     }
 
-    // 3. AI Prompt
+    // 3. AI Prompt —— 强制只输出 JSON
     const prompt = `
 The student scored ${quizResult.score}/${detailedAnswers.length} in the quiz on theme "${quizResult.quiz_theme}".
 Here are the answers:
@@ -52,7 +52,8 @@ Please provide analysis in THREE languages:
 2. Chinese (中文)
 3. Malay (Bahasa Melayu)
 
-Output STRICT JSON format:
+⚠️ IMPORTANT: Output ONLY valid JSON. Do not include any explanation, text, or formatting outside the JSON.
+Format:
 {
   "en": "English feedback here",
   "zh": "中文反馈在这里",
@@ -62,16 +63,19 @@ Output STRICT JSON format:
 
     // 4. 调用 AI
     const aiResult = await generateText({ model, prompt })
-    const aiText = aiResult.text
-    let ai_feedback
+    let ai_feedback: { en: string; zh: string; ms: string }
+
     try {
-      const match = aiText.match(/\{[\s\S]*\}/)
-      ai_feedback = match ? JSON.parse(match[0]) : { en: aiText, zh: aiText, ms: aiText }
+      ai_feedback = JSON.parse(aiResult.text)
     } catch {
-      ai_feedback = { en: aiText, zh: aiText, ms: aiText }
+      ai_feedback = {
+        en: aiResult.text || "No feedback available",
+        zh: "暂无分析",
+        ms: "Tiada maklum balas"
+      }
     }
 
-    // 5. 更新反馈（只 update，不 insert）
+    // 5. 更新数据库（只 update，不 insert）
     const { error: updateError } = await supabase
       .from("quiz_results")
       .update({ analysis_feedback: ai_feedback })
@@ -81,12 +85,13 @@ Output STRICT JSON format:
       return NextResponse.json({ error: "UPDATE_FAILED" }, { status: 500 })
     }
 
-    // 6. 返回结果
+    // 6. 返回结果（包含 details + ai_feedback）
     return NextResponse.json({
       quiz_theme: quizResult.quiz_theme,
       score: quizResult.score,
       total_questions: detailedAnswers.length,
       created_at: quizResult.created_at,
+      details: detailedAnswers,
       ai_feedback
     })
   } catch (error) {
