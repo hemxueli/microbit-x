@@ -95,12 +95,8 @@ export default function ClassDetailPage({ user }: { user: any }) {
   // 布置作业
   async function createAssignment() {
     if (!newAssignmentTitle.trim()) return
-    if (!user?.id) {
-      alert("User not logged in")
-      return
-    }
 
-    let fileUrl: string | null = null
+    let fileUrl: string | null = null   // ✅ 先声明
 
     if (newAssignmentFile) {
       const filePath = generateSafeFilePath(classId, newAssignmentFile)
@@ -110,41 +106,31 @@ export default function ClassDetailPage({ user }: { user: any }) {
         .upload(filePath, newAssignmentFile)
 
       if (uploadError) {
-        console.error("❌ File upload failed:", uploadError)
         alert("File upload failed: " + uploadError.message)
         return
       }
 
       const { data } = supabase.storage.from('assignments').getPublicUrl(filePath)
-      fileUrl = data.publicUrl
+      fileUrl = data.publicUrl   // ✅ 赋值
     }
 
     if (newAssignmentLink.trim()) {
-      fileUrl = newAssignmentLink.trim()
+      fileUrl = newAssignmentLink.trim()   // ✅ 如果是链接
     }
 
     const { error } = await supabase.from('assignments').insert({
       class_id: classId,
       title: newAssignmentTitle,
       description: newAssignmentDesc,
-      file_url: fileUrl,
-      original_name: newAssignmentFile?.name || null,
+      file_url: fileUrl,   // ✅ 这里就不会红线了
       teacher_user_id: user.id
     })
 
     if (error) {
-      console.error("❌ Insert failed:", error)
       alert("Save failed: " + error.message)
-      return
+    } else {
+      alert("Assignment saved successfully")
     }
-
-    alert("Assignment saved successfully")
-
-    setNewAssignmentTitle('')
-    setNewAssignmentDesc('')
-    setNewAssignmentFile(null)
-    setNewAssignmentLink('')
-    setShowAssignmentModal(false)
   }
 
   return (
