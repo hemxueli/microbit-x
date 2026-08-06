@@ -42,25 +42,27 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [editingAssignmentId, setEditingAssignmentId] = useState<number | null>(null)
   
   async function loadData() {
+  // 查询学生
     const { data: studentData } = await supabase
       .from('students')
       .select('user_id, class_id, name, avatar')
       .eq('class_id', classId)
 
-    const { data: assignmentData } = await supabase
+    // 查询作业
+    const { data } = await supabase
       .from('assignments')
-      .select('id, title, description, resources, created_at') // ✅ 记得选 resources
+      .select('id, title, description, resources, created_at, teacher_user_id')
       .eq('class_id', classId)
 
-    const { data: classData } = await supabase
-      .from('classes')
-      .select('join_code')
-      .eq('id', classId)
-      .single()
+    // ✅ 在这里断言类型
+    const assignmentData = (data ?? []) as assignments[]
 
+    // 设置学生
     setStudents(studentData || [])
+
+    // 设置作业，确保 resources 是数组
     setAssignments(
-      (assignmentData || []).map(a => ({
+      assignmentData.map(a => ({
         ...a,
         resources: Array.isArray(a.resources)
           ? a.resources
@@ -69,6 +71,14 @@ export default function ClassDetailPage({ user }: { user: any }) {
               : [])
       }))
     )
+
+    // 查询班级 join_code
+    const { data: classData } = await supabase
+      .from('classes')
+      .select('join_code')
+      .eq('id', classId)
+      .single()
+
     setJoinCode(classData?.join_code || '')
   }
 
