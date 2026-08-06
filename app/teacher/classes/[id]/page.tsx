@@ -26,7 +26,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
   const [newAssignmentTitle, setNewAssignmentTitle] = useState('')
   const [newAssignmentDesc, setNewAssignmentDesc] = useState('')
-  const [newAssignmentFile, setNewAssignmentFile] = useState('')
+  const [newAssignmentFile, setNewAssignmentFile] = useState<File | null>(null)
   const [newAssignmentLink, setNewAssignmentLink] = useState('')
   const [joinCode, setJoinCode] = useState('')
 
@@ -138,24 +138,59 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
   // 布置作业
   async function createAssignment() {
-    if (!newAssignmentTitle.trim()) return
-    await supabase.from('assignments').insert({
-      class_id: classId,
-      title: newAssignmentTitle,
-      description: newAssignmentDesc,
-      file_url: newAssignmentFile || newAssignmentLink || null,
-    })
-    setNewAssignmentTitle('')
-    setNewAssignmentDesc('')
-    setNewAssignmentFile('')
-    setNewAssignmentLink('')
-    setShowAssignmentModal(false)
-    const { data } = await supabase
+  if (!newAssignmentTitle.trim()) return
+
+  let fileUrl: string | null = null
+
+  // 如果选择了文件，上传到 Supabase Storage
+  if (newAssignmentFile) {
+    const filePath = `${classId}/${Date.now()}-${newAssignmentFile.name}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('assignments') // bucket 名字
+      .upload(filePath, newAssignmentFile)
+
+    if (uploadError) {
+      console.error("❌ 文件上传失败:", uploadError)
+      alert("文件上传失败: " + uploadError.message)
+      return
+    }
+
+    // 获取公共 URL
+    const { data } = supabase.storage
       .from('assignments')
-      .select('*')
-      .eq('class_id', classId)
-    setAssignments(data || [])
+      .getPublicUrl(filePath)
+
+    fileUrl = data.publicUrl
   }
+
+  // 如果是链接
+  if (newAssignmentLink.trim()) {
+    fileUrl = newAssignmentLink.trim()
+  }
+
+  // 插入数据库
+  const { error } = await supabase.from('assignments').insert({
+    class_id: classId,
+    title: newAssignmentTitle,
+    description: newAssignmentDesc,
+    file_url: fileUrl,
+  })
+
+  if (error) {
+    console.error("❌ 插入失败:", error)
+    alert("保存失败: " + error.message)
+    return
+  }
+
+  // 清空输入框
+  setNewAssignmentTitle('')
+  setNewAssignmentDesc('')
+  setNewAssignmentFile(null)
+  setNewAssignmentLink('')
+  setShowAssignmentModal(false)
+
+  } 
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
@@ -339,8 +374,8 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
               {/* 显示已选择的文件或链接 */}
               {newAssignmentFile && (
-                <p className="text-sm text-gray-600">
-                  📄 {t('teacher.uploadFile')}: {newAssignmentFile}
+                <p className="text-sm text-gray-600 mt-2">
+                  📄 {t('teacher.uploadFile')}: {newAssignmentFile.name} ({(newAssignmentFile.size / 1024).toFixed(1)} KB)
                 </p>
               )}
               {newAssignmentLink && (
@@ -396,9 +431,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (file) {
-                  setNewAssignmentFile(
-                    `${file.name} (${(file.size / 1024).toFixed(1)} KB, ${file.type})`
-                  )
+                  setNewAssignmentFile(file) // ✅ 保存 File 对象
                 }
               }}
             />
@@ -406,7 +439,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
             {/* 显示已选择的文件 */}
             {newAssignmentFile && (
               <p className="text-sm text-gray-600 mt-2">
-                📄 {t('teacher.uploadFile')}: {newAssignmentFile}
+                📄 {t('teacher.uploadFile')}: {newAssignmentFile.name} ({(newAssignmentFile.size / 1024).toFixed(1)} KB)
               </p>
             )}
 
