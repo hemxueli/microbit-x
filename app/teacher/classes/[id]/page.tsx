@@ -31,39 +31,36 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [joinCode, setJoinCode] = useState('')
   const [currentUser, setCurrentUser] = useState<any>(null)
 
-  // 加载班级数据 + 实时订阅
+  async function loadData() {
+    const { data: studentData } = await supabase
+      .from('students')
+      .select('user_id, class_id, name, avatar')
+      .eq('class_id', classId)
+
+    const { data: assignmentData } = await supabase
+      .from('assignments')
+      .select('id, title, description, file_url, created_at')
+      .eq('class_id', classId)
+
+    const { data: classData } = await supabase
+      .from('classes')
+      .select('join_code')
+      .eq('id', classId)
+      .single()
+
+    setStudents(studentData || [])
+    setAssignments(assignmentData || [])
+    setJoinCode(classData?.join_code || '')
+  }
+
   useEffect(() => {
     async function getUser() {
-    const { data: { user } } = await supabase.auth.getUser()
-    setCurrentUser(user)
-  }
-  getUser()
-
-  async function loadData() {
-      const { data: studentData } = await supabase
-        .from('students')
-        .select('user_id, class_id, name, avatar')
-        .eq('class_id', classId)
-
-      const { data: assignmentData } = await supabase
-        .from('assignments')
-        .select('id, title, description, file_url, created_at')
-        .eq('class_id', classId)
-
-      const { data: classData } = await supabase
-        .from('classes')
-        .select('join_code')
-        .eq('id', classId)
-        .single()
-
-      setStudents(studentData || [])
-      setAssignments(assignmentData || [])
-      setJoinCode(classData?.join_code || '')
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUser(user)
     }
+    getUser()
 
     loadData()
-
-    // 订阅变化（略，保持你原来的）
   }, [classId, selectedStudent])
 
   // 查询学生成绩
@@ -95,14 +92,14 @@ export default function ClassDetailPage({ user }: { user: any }) {
   // 布置作业
   async function createAssignment() {
     if (!newAssignmentTitle.trim()) return
-
     if (!currentUser?.id) {
       alert("User not logged in")
       return
     }
 
-    let fileUrl: string | null = null
+    const resources: string[] = []
 
+    // 上传文件
     if (newAssignmentFile) {
       const filePath = generateSafeFilePath(classId, newAssignmentFile)
       const { error: uploadError } = await supabase.storage
@@ -115,26 +112,34 @@ export default function ClassDetailPage({ user }: { user: any }) {
       }
 
       const { data } = supabase.storage.from('assignments').getPublicUrl(filePath)
-      fileUrl = data.publicUrl
+      resources.push(data.publicUrl)
     }
 
+    // 保存链接
     if (newAssignmentLink.trim()) {
-      fileUrl = newAssignmentLink.trim()
+      resources.push(newAssignmentLink.trim())
     }
 
     const { error } = await supabase.from('assignments').insert({
       class_id: classId,
       title: newAssignmentTitle,
       description: newAssignmentDesc,
-      file_url: fileUrl,
-      teacher_user_id: currentUser.id   // ✅ 用 currentUser.id
+      resources,   // ✅ 存 JSON 数组
+      teacher_user_id: currentUser.id
     })
 
     if (error) {
       alert("Save failed: " + error.message)
     } else {
       alert("Assignment saved successfully")
+      setShowAssignmentModal(false)
+      setNewAssignmentTitle('')
+      setNewAssignmentDesc('')
+      setNewAssignmentFile(null)
+      setNewAssignmentLink('')
+      await loadData()
     }
+
   }
 
   return (
@@ -241,10 +246,18 @@ export default function ClassDetailPage({ user }: { user: any }) {
                     <td className="px-4 py-2 text-center font-bold text-teal-700">{a.title}</td>
                     <td className="px-4 py-2 text-center text-gray-600">{a.description}</td>
                     <td className="px-4 py-2 text-center">
-                      {a.file_url ? (
-                        <a href={a.file_url} target="_blank" className="text-teal-600 hover:underline">
-                          {t('teacher.viewFile')}
-                        </a>
+                      {a.resources && a.resources.length > 0 ? (
+                        <ul className="space-y-1">
+                          {a.resources.map((url: string, i: number) => (
+                            <li key={i}>
+                              <a href={url} target="_blank" className="text-teal-600 hover:underline">
+                                {url.endsWith('.pdf') || url.endsWith('.png') || url.endsWith('.jpg')
+                                  ? `📄 File ${i+1}`
+                                  : `🔗 Link ${i+1}`}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
                       ) : (
                         <span className="text-gray-400 italic">{t('teacher.noFile')}</span>
                       )}
