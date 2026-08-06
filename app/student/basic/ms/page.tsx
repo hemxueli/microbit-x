@@ -10,7 +10,7 @@ export default function Page({ params }: { params: { topic: string; lang: string
       title="Pembelajaran Asas Micro:bit"
       subtitle="Belajar asas micro:bit"
       pdfPath={`/slides/basic-ms.pdf`}
-      websitePath={`https://example.com/basic/ms`}
+      websitePath={`https://addjkahub.my.canva.site/makecode-micro-bit-pengenalan`}
       videoPath={`/videos/video.basic.ms.mp4`}
       lang="ms"
     />

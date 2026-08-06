@@ -10,7 +10,7 @@ export default function Page({ params }: { params: { topic: string; lang: string
       title="Pembelajaran Muzik Micro:bit"
       subtitle="Belajar muzik micro:bit"
       pdfPath={`/slides/music-ms.pdf`}
-      websitePath={`https://example.com/music/ms`}
+      websitePath={`https://addjkahub.my.canva.site/pengenalan-makecode-untuk-micro-bit-muzik`}
       videoPath={`/videos/video.music.ms.mp4`}
       lang="ms"
     />
