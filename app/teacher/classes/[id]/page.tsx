@@ -86,12 +86,30 @@ export default function ClassDetailPage({ user }: { user: any }) {
       )
       .subscribe()
 
+    // ✅ 订阅测验成绩变化
+    const quizChannel = supabase
+      .channel('quiz-results-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'quiz_results', filter: `class_id=eq.${classId}` },
+        (payload) => {
+          console.log("测验成绩变化:", payload)
+          // 刷新学生成绩或班级数据
+          loadData()
+          if (selectedStudent) {
+            loadQuizResults(selectedStudent)
+          }
+        }
+      )
+      .subscribe()
+
     return () => {
       supabase.removeChannel(studentChannel)
       supabase.removeChannel(assignmentChannel)
       supabase.removeChannel(submissionChannel)
+      supabase.removeChannel(quizChannel)
     }
-  }, [classId])
+  }, [classId, selectedStudent])
 
   // 查询学生成绩
   async function loadQuizResults(studentId: string) {
