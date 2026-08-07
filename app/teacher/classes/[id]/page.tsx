@@ -423,69 +423,6 @@ export default function ClassDetailPage({ user }: { user: any }) {
           )}
         </section>
       </main>
-      
-      {showResultsModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-[700px] h-[500px] overflow-y-auto relative">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowResultsModal(false)}
-            >
-              ✖
-            </button>
-
-            <h2 className="text-xl font-bold mb-4 text-teal-700">
-              {t('teacher.quizResults')}
-            </h2>
-
-            {selectedResults.length === 0 ? (
-              <p className="text-gray-500 italic">{t('teacher.noResults')}</p>
-            ) : (
-              <ul className="space-y-6">
-                {selectedResults.map(r => (
-                  <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow relative">
-                    <h3 className="font-bold text-lg text-teal-800">
-                      {t(`quiz.${r.quiz_theme}`)} - {t('analysis.score')} {r.score}/10
-                    </h3>
-
-                    {/* 语言选择器 */}
-                    <div className="absolute top-4 right-4">
-                      <select
-                        value={r.lang}
-                        onChange={(e) => {
-                          const newLang = e.target.value as Lang
-                          setSelectedResults(prev =>
-                            prev.map(item =>
-                              item.id === r.id ? { ...item, lang: newLang } : item
-                            )
-                          )
-                        }}
-                        className="border border-teal-600 rounded p-2 text-white bg-teal-600 text-sm font-medium"
-                      >
-                        <option value="en">{t('common.english')}</option>
-                        <option value="zh">{t('common.chinese')}</option>
-                        <option value="ms">{t('common.malay')}</option>
-                      </select>
-                    </div>
-
-                    {/* AI 分析反馈 */}
-                    <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
-                      {r.analysis_feedback
-                        ? r.analysis_feedback[r.lang || 'en'] || t('analysis.noFeedback')
-                        : t('analysis.noFeedback')}
-                    </p>
-
-                    {/* 时间 */}
-                    <p className="text-sm text-teal-600 mt-2">
-                      {t('analysis.savedAt')}: {new Date(r.created_at).toLocaleString()}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* 作业弹窗 */}
       {showAssignmentModal && (
@@ -705,76 +642,152 @@ export default function ClassDetailPage({ user }: { user: any }) {
         </div>
       )}
 
-      {showSubmissionModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-[700px] h-[500px] overflow-y-auto relative">
-            {/* 关闭按钮 */}
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowSubmissionModal(false)}
-            >
-              ✖
-            </button>
+      {/* Quiz Results 弹窗 */}
+      {showResultsModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-hidden">
+          <div className="bg-white rounded-lg shadow-xl w-[700px] h-[500px] flex flex-col relative">
+            
+            {/* 固定头部 */}
+            <div className="flex justify-between items-center p-4 border-b">
+              <h2 className="text-xl font-bold text-teal-700">
+                {t('teacher.quizResults')}
+              </h2>
+              <button
+                className="text-gray-500 hover:text-gray-700"
+                onClick={() => setShowResultsModal(false)}
+              >
+                ✖
+              </button>
+            </div>
 
-            <h2 className="text-xl font-bold mb-4 text-teal-700">
-              {t('teacher.studentSubmissions')}
-            </h2>
+            {/* 可滚动内容区 */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {selectedResults.length === 0 ? (
+                <p className="text-gray-500 italic">{t('teacher.noResults')}</p>
+              ) : (
+                <ul className="space-y-6">
+                  {selectedResults.map(r => (
+                    <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow relative">
+                      <h3 className="font-bold text-lg text-teal-800">
+                        {t(`quiz.${r.quiz_theme}`)} - {t('analysis.score')} {r.score}/10
+                      </h3>
 
-            {submissions.length === 0 ? (
-              <p className="text-gray-500 italic">{t('teacher.noSubmissions')}</p>
-            ) : (
-              <div className="space-y-4">
-                {submissions.map((s) => (
-                  <div key={s.id} className="border rounded-lg p-4 bg-teal-50 shadow-sm">
-                    {/* 学生名字 */}
-                    <p className="font-semibold text-teal-800 mb-2">
-                      👤 {s.students?.name || t('teacher.unknownStudent')}
-                    </p>
-
-                    {/* 学生上传的文字 */}
-                    <p className="text-gray-700 mb-2">
-                      <strong>{t('teacher.studentText')}:</strong>{" "}
-                      {s.resources?.find((r: string) => !r.endsWith('.pdf')) || t('teacher.noText')}
-                    </p>
-
-                    {/* 学生上传的 PDF */}
-                    {s.resources && (s.resources as string[])
-                      .filter((r) => r.endsWith('.pdf'))
-                      .map((pdf, idx) => (
-                        <a
-                          key={idx}
-                          href={pdf}
-                          target="_blank"
-                          className="text-blue-600 underline block"
+                      {/* 语言选择器 */}
+                      <div className="absolute top-4 right-4">
+                        <select
+                          value={r.lang}
+                          onChange={(e) => {
+                            const newLang = e.target.value as Lang
+                            setSelectedResults(prev =>
+                              prev.map(item =>
+                                item.id === r.id ? { ...item, lang: newLang } : item
+                              )
+                            )
+                          }}
+                          className="border border-teal-600 rounded p-2 text-white bg-teal-600 text-sm font-medium"
                         >
-                          📄 {pdf.split('/').pop()}
-                        </a>
-                    ))}
+                          <option value="en">{t('common.english')}</option>
+                          <option value="zh">{t('common.chinese')}</option>
+                          <option value="ms">{t('common.malay')}</option>
+                        </select>
+                      </div>
 
-                    {/* 评论区 */}
-                    <div className="mt-3">
-                      <p className="text-sm text-gray-600">
-                        <strong>{t('teacher.comment')}:</strong>{" "}
-                        {s.feedback || t('teacher.noComment')}
+                      {/* AI 分析反馈 */}
+                      <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
+                        {r.analysis_feedback
+                          ? r.analysis_feedback[r.lang || 'en'] || t('analysis.noFeedback')
+                          : t('analysis.noFeedback')}
                       </p>
-                      <input
-                        type="text"
-                        placeholder={t('teacher.addComment')}
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        className="border rounded px-2 py-1 w-full mt-2"
-                      />
-                      <Button
-                        className="bg-teal-500 text-white mt-2"
-                        onClick={() => handleAddComment(s.id, newComment)}
-                      >
-                        💬 {t('teacher.saveComment')}
-                      </Button>
+
+                      {/* 时间 */}
+                      <p className="text-sm text-teal-600 mt-2">
+                        {t('analysis.savedAt')}: {new Date(r.created_at).toLocaleString()}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Student Submissions 弹窗 */}
+      {showSubmissionModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-hidden">
+          <div className="bg-white rounded-lg shadow-xl w-[700px] h-[500px] flex flex-col relative">
+            
+            {/* 固定头部 */}
+            <div className="flex justify-between items-center p-4 border-b">
+              <h2 className="text-xl font-bold text-teal-700">
+                {t('teacher.studentSubmissions')}
+              </h2>
+              <button
+                className="text-gray-500 hover:text-gray-700"
+                onClick={() => setShowSubmissionModal(false)}
+              >
+                ✖
+              </button>
+            </div>
+
+            {/* 可滚动内容区 */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {submissions.length === 0 ? (
+                <p className="text-gray-500 italic">{t('teacher.noSubmissions')}</p>
+              ) : (
+                <div className="space-y-4">
+                  {submissions.map((s) => (
+                    <div key={s.id} className="border rounded-lg p-4 bg-teal-50 shadow-sm">
+                      {/* 学生名字 */}
+                      <p className="font-semibold text-teal-800 mb-2">
+                        👤 {s.students?.name || t('teacher.unknownStudent')}
+                      </p>
+
+                      {/* 学生上传的文字 */}
+                      <p className="text-gray-700 mb-2">
+                        <strong>{t('teacher.studentText')}:</strong>{" "}
+                        {s.resources?.find((r: string) => !r.endsWith('.pdf')) || t('teacher.noText')}
+                      </p>
+
+                      {/* 学生上传的 PDF */}
+                      {s.resources && (s.resources as string[])
+                        .filter((r) => r.endsWith('.pdf'))
+                        .map((pdf, idx) => (
+                          <a
+                            key={idx}
+                            href={pdf}
+                            target="_blank"
+                            className="text-blue-600 underline block"
+                          >
+                            📄 {pdf.split('/').pop()}
+                          </a>
+                      ))}
+
+                      {/* 评论区 */}
+                      <div className="mt-3">
+                        <p className="text-sm text-gray-600">
+                          <strong>{t('teacher.comment')}:</strong>{" "}
+                          {s.feedback || t('teacher.noComment')}
+                        </p>
+                        <input
+                          type="text"
+                          placeholder={t('teacher.addComment')}
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          className="border rounded px-2 py-1 w-full mt-2"
+                        />
+                        <Button
+                          className="bg-teal-500 text-white mt-2"
+                          onClick={() => handleAddComment(s.id, newComment)}
+                        >
+                          💬 {t('teacher.saveComment')}
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
