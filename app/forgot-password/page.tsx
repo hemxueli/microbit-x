@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useI18n, dict } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,16 +13,20 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
-  const [message, setMessage] = useState('')
   const { lang } = useI18n()
+  const router = useRouter()
 
   async function handleSendEmail() {
-    setMessage('')
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`
     })
-    if (error) setMessage(error.message)
-    else setMessage(dict['forgot.success'][lang])
+    if (error) {
+      alert(error.message) // 出错时直接弹窗提示
+    } else {
+      // 成功时弹窗提示，按 OK 后跳转
+      alert(dict['forgot.success'][lang] || 'Check your email to reset your password.')
+      router.push('/login')
+    }
   }
 
   return (
@@ -54,9 +59,6 @@ export default function ForgotPasswordPage() {
               >
                 {dict['forgot.button'][lang]}
               </Button>
-              {message && (
-                <p className="mt-4 text-sm text-gray-700 text-center">{message}</p>
-              )}
             </div>
           </CardContent>
         </Card>
