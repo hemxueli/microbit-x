@@ -57,7 +57,7 @@ export default function StudentClass({ user }: { user: any }) {
 
     const { data: assignmentData } = await supabase
       .from('assignments')
-      .select('id, title, description, created_at')
+      .select('id, title, description, created_at, resources')
       .eq('class_id', cls.id)
     setAssignments(assignmentData || [])
 
@@ -85,9 +85,15 @@ export default function StudentClass({ user }: { user: any }) {
       return
     }
 
+    const studentName = user.user_metadata?.full_name || user.email || "Unknown"
+
     const { error: upsertError } = await supabase
       .from('students')
-      .upsert({ user_id: user.id, class_id: cls.id })
+      .upsert({
+        user_id: user.id,
+        class_id: cls.id,
+        name: studentName
+      })
 
     if (upsertError) {
       alert("Error: " + upsertError.message)
@@ -169,6 +175,36 @@ export default function StudentClass({ user }: { user: any }) {
                 >
                   <strong className="block text-teal-700">{a.title}</strong>
                   <p className="text-gray-700">{a.description}</p>
+
+                  {/* 显示 resources */}
+                  {a.resources && Array.isArray(a.resources) && (
+                    <div className="mt-2 space-y-2">
+                      {a.resources.map((res: string, idx: number) => (
+                        <div key={idx}>
+                          {res.endsWith('.jpg') || res.endsWith('.png') || res.endsWith('.jpeg') ? (
+                            <img
+                              src={res}
+                              alt={`Resource ${idx + 1}`}
+                              className="rounded-lg max-h-40 object-cover"
+                            />
+                          ) : (
+                            <a
+                              href={res}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 underline"
+                            >
+                              🔗 Resource {idx + 1}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="text-xs text-gray-400 mt-2">
+                    Created at: {new Date(a.created_at).toLocaleDateString()}
+                  </p>
                 </div>
               ))}
             </div>
@@ -185,6 +221,9 @@ export default function StudentClass({ user }: { user: any }) {
                   className="rounded-lg shadow-sm border p-3 bg-gray-50"
                 >
                   {c.content}
+                  <p className="text-xs text-gray-400 mt-1">
+                    {new Date(c.created_at).toLocaleDateString()}
+                  </p>
                 </div>
               ))}
             </div>
