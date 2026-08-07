@@ -23,6 +23,9 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const router = useRouter()
   const params = useParams()
   const classId = params.id as string
+  const [showSubmissionModal, setShowSubmissionModal] = useState(false)
+  const [submissions, setSubmissions] = useState<any[]>([])
+  const [newComment, setNewComment] = useState('')
 
   const [students, setStudents] = useState<any[]>([])
   const [selectedStudent, setSelectedStudent] = useState<any | null>(null)
@@ -108,11 +111,33 @@ export default function ClassDetailPage({ user }: { user: any }) {
     setSelectedStudent(studentId)
   }
 
-  // 保存评语
-  async function giveFeedback(resultId: string, feedback: string) {
-    await supabase.from('quiz_results').update({ feedback }).eq('id', resultId)
-    if (selectedStudent) {
-      loadQuizResults(selectedStudent)
+ // 查看学生作业
+async function handleViewSubmissions(assignmentId: number) {
+  const { data, error } = await supabase
+    .from('submissions')
+    .select('id, resources, feedback, student_id, students(name)')
+    .eq('assignment_id', assignmentId)
+
+  if (!error) {
+    setSubmissions(data || [])
+    setShowSubmissionModal(true)
+  }
+}
+
+  // 添加评论
+  async function handleAddComment(submissionId: number, feedback: string) {
+    const { error } = await supabase
+      .from('submissions')
+      .update({ feedback })
+      .eq('id', submissionId)
+
+    if (!error) {
+      setNewComment('')
+      // 刷新数据
+      const updated = submissions.map(s =>
+        s.id === submissionId ? { ...s, feedback } : s
+      )
+      setSubmissions(updated)
     }
   }
 
@@ -331,6 +356,12 @@ export default function ClassDetailPage({ user }: { user: any }) {
                       >
                         🗑️ {t('common.delete')}
                       </button>
+                      <button
+                        className="text-sm text-purple-600 hover:underline"
+                        onClick={() => handleViewSubmissions(a.id)}
+                      >
+                        👀 {t('teacher.viewSubmissions')}
+                      </button>
                     </div>
                   </div>
 
@@ -457,6 +488,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
           </div>
         </div>
       )}
+
       {/* 上传文件弹窗 */}
       {showFileModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -582,6 +614,80 @@ export default function ClassDetailPage({ user }: { user: any }) {
                 {t('common.copy')}
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showSubmissionModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-[700px] h-[500px] overflow-y-auto relative">
+            {/* 关闭按钮 */}
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowSubmissionModal(false)}
+            >
+              ✖
+            </button>
+
+            <h2 className="text-xl font-bold mb-4 text-teal-700">
+              {t('teacher.studentSubmissions')}
+            </h2>
+
+            {submissions.length === 0 ? (
+              <p className="text-gray-500 italic">{t('teacher.noSubmissions')}</p>
+            ) : (
+              <div className="space-y-4">
+                {submissions.map((s) => (
+                  <div key={s.id} className="border rounded-lg p-4 bg-teal-50 shadow-sm">
+                    {/* 学生名字 */}
+                    <p className="font-semibold text-teal-800 mb-2">
+                      👤 {s.students?.name || t('teacher.unknownStudent')}
+                    </p>
+
+                    {/* 学生上传的文字 */}
+                    <p className="text-gray-700 mb-2">
+                      <strong>{t('teacher.studentText')}:</strong>{" "}
+                      {s.resources?.find((r: string) => !r.endsWith('.pdf')) || t('teacher.noText')}
+                    </p>
+
+                    {/* 学生上传的 PDF */}
+                    {s.resources && (s.resources as string[])
+                      .filter((r) => r.endsWith('.pdf'))
+                      .map((pdf, idx) => (
+                        <a
+                          key={idx}
+                          href={pdf}
+                          target="_blank"
+                          className="text-blue-600 underline block"
+                        >
+                          📄 {pdf.split('/').pop()}
+                        </a>
+                    ))}
+
+                    {/* 评论区 */}
+                    <div className="mt-3">
+                      <p className="text-sm text-gray-600">
+                        <strong>{t('teacher.comment')}:</strong>{" "}
+                        {s.feedback || t('teacher.noComment')}
+                      </p>
+                      <input
+                        type="text"
+                        placeholder={t('teacher.addComment')}
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        className="border rounded px-2 py-1 w-full mt-2"
+                      />
+                      <Button
+                        className="bg-teal-500 text-white mt-2"
+                        onClick={() => handleAddComment(s.id, newComment)}
+                      >
+                        💬 {t('teacher.saveComment')}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
