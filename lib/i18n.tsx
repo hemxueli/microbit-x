@@ -1280,6 +1280,11 @@ export const dict: Dict = {
     zh: '已复制加入码',
     ms: 'Kod sertai disalin',
   },
+  'teacher.noComment': {
+    en: 'No comments yet',
+    zh: '目前还没有评论',
+    ms: 'Belum ada komen lagi',
+  },
   'teacher.noFile': {
     en: 'No file available',
     zh: '没有文件',
