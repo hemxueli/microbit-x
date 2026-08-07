@@ -15,6 +15,7 @@ export default function StudentClass({ user }: { user: any }) {
   const [showJoinModal, setShowJoinModal] = useState(false)
 
   const [showSubmissionModal, setShowSubmissionModal] = useState(false)
+  const [currentAssignmentId, setCurrentAssignmentId] = useState<number | null>(null)
   const [submissionText, setSubmissionText] = useState('')
   const [submissionFile, setSubmissionFile] = useState<File | null>(null)
 
@@ -290,10 +291,14 @@ export default function StudentClass({ user }: { user: any }) {
                   <div className="mt-4">
                     <Button
                       className="bg-teal-500 text-white w-full"
-                      onClick={() => setShowSubmissionModal(true)}
+                      onClick={() => {
+                        setCurrentAssignmentId(a.id)
+                        setShowSubmissionModal(true)
+                      }}
                     >
                       {t('student.upload')}
                     </Button>
+
 
                     {showSubmissionModal && (
                       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -355,11 +360,13 @@ export default function StudentClass({ user }: { user: any }) {
                             <Button
                               className="bg-teal-500 text-white w-full"
                               onClick={() => {
-                                submitAssignment(a.id)
+                                if (currentAssignmentId) {
+                                  submitAssignment(currentAssignmentId)
+                                }
                                 setShowSubmissionModal(false)
                               }}
                             >
-                              {t('student.submit')} {/* 这里可以翻译成 Hantar */}
+                              {t('student.submit')}
                             </Button>
                           </div>
                         </div>
