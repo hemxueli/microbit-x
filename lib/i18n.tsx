@@ -1032,6 +1032,17 @@ export const dict: Dict = {
     zh: '您还没有班级，请先创建一个',
     ms: 'Anda belum mempunyai kelas, sila cipta dahulu',
   },
+  'teacher.noAssignments': {
+    en: "You don't have any assignments yet",
+    zh: '您还没有布置作业',
+    ms: 'Anda belum mempunyai tugasan',
+  },
+
+  'teacher.addComment': {
+      en: "Add a comment",
+      zh: '添加评论',
+      ms: 'Tambah komen',
+    },
   'teacher.classesTable': {
     en: 'Class Management',
     zh: '班级管理',
@@ -1177,12 +1188,6 @@ export const dict: Dict = {
     en: 'Assignments',
     zh: '布置作业',
     ms: 'Tugasan',
-  },
-
-  'teacher.noAssignments': {
-    en: 'No assignments yet',
-    zh: '暂时没有布置任何作业',
-    ms: 'Tiada tugasan lagi',
   },
 
   'teacher.viewFile': {
