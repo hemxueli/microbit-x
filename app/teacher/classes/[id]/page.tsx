@@ -711,7 +711,6 @@ export default function ClassDetailPage({ user }: { user: any }) {
           </div>
         </div>
       )}
-
       {/* Student Submissions 弹窗 */}
       {showSubmissionModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-hidden">
@@ -744,10 +743,25 @@ export default function ClassDetailPage({ user }: { user: any }) {
                       </p>
 
                       {/* 学生上传的文字 */}
-                      <p className="text-gray-700 mb-2">
-                        <strong>{t('teacher.studentText')}:</strong>{" "}
-                        {s.resources?.find((r: string) => !r.endsWith('.pdf')) || t('teacher.noText')}
-                      </p>
+                      {s.resources && (s.resources as string[])
+                        .filter((r) => !r.endsWith('.pdf') && !r.match(/\.(jpg|jpeg|png|gif)$/i))
+                        .map((text, idx) => (
+                          <p key={idx} className="text-gray-700 mb-2">
+                            <strong>{t('teacher.studentText')}:</strong> {text}
+                          </p>
+                      ))}
+
+                      {/* 学生上传的图片 */}
+                      {s.resources && (s.resources as string[])
+                        .filter((r) => r.match(/\.(jpg|jpeg|png|gif)$/i))
+                        .map((img, idx) => (
+                          <img
+                            key={idx}
+                            src={img}
+                            alt={`Resource ${idx + 1}`}
+                            className="rounded-lg max-h-40 object-cover mb-2"
+                          />
+                      ))}
 
                       {/* 学生上传的 PDF */}
                       {s.resources && (s.resources as string[])
