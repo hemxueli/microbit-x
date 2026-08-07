@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
     } else {
       // 成功时弹窗提示，按 OK 后跳转
       alert(dict['forgot.success'][lang] || 'Check your email to reset your password.')
-      router.push('/login')
+      router.push('/sign-in')
     }
   }
 
