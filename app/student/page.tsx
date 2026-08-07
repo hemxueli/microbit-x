@@ -85,12 +85,12 @@ export default function StudentPage() {
   // 更新名字或头像
   async function updateProfile(updates: { name?: string; avatar?: string }) {
     if (!user) return
-    const payload = {
-      user_id: user.id,
-      name: updates.name ?? name,
-      avatar: updates.avatar ?? avatar,
-    }
-    const { error } = await supabase.from('students').upsert(payload)
+
+    const { error } = await supabase
+      .from('students')
+      .update(updates)   // 只更新传入的字段
+      .eq('user_id', user.id)
+
     if (!error) {
       if (updates.name) {
         setName(updates.name)
@@ -100,6 +100,8 @@ export default function StudentPage() {
         setAvatar(updates.avatar)
         setTempAvatar(updates.avatar)
       }
+    } else {
+      console.error('Update failed:', error.message)
     }
   }
 
