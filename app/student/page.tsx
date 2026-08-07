@@ -85,7 +85,6 @@ export default function StudentPage() {
     '/images/savatar6.png',
   ]
 
-  // 加载用户并初始化
   // 加载用户并初始化 + 实时订阅
   useEffect(() => {
     const loadUser = async () => {
