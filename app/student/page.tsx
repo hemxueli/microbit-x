@@ -33,9 +33,11 @@ interface Class {
   }
 }
 
-
 // ✅ students 表返回的数据结构
 interface StudentWithClass {
+  user_id: string
+  name: string
+  avatar: string
   class_id: string
   classes: Class
 }
@@ -65,7 +67,7 @@ export default function StudentPage() {
   const [fileUrl, setFileUrl] = useState('')
   const [textContent, setTextContent] = useState('')
 
-  // 名字和头像状态（保留你的 const）
+  // 名字和头像状态
   const [name, setName] = useState("")
   const [avatar, setAvatar] = useState("/images/default-avatar.png")
   const [menuOpen, setMenuOpen] = useState(false)
@@ -144,6 +146,9 @@ export default function StudentPage() {
     const { data, error } = await supabase
       .from('students')
       .select(`
+        user_id,
+        name,
+        avatar,
         class_id,
         classes (
           id,
@@ -178,34 +183,44 @@ export default function StudentPage() {
       return
     }
 
+    // ✅ 更新学生的名字和头像状态
+    setName(data.name)
+    setAvatar(data.avatar)
+    setTempName(data.name)
+    setTempAvatar(data.avatar)
+
     const formatted: Class[] = [{
       id: data.classes.id,
       user_id: data.classes.user_id,
       name: data.classes.name,
       created_at: data.classes.created_at,
-      assignments: (data.classes.assignments || []).map((a: any) => ({
-        id: a.id,
-        class_id: a.class_id,
-        title: a.title,
-        description: a.description,
-        resources: a.resources || [],
-        teacher_user_id: a.teacher_user_id,
-        created_at: a.created_at,
-        submissions: (a.submissions || []).map((s: any) => ({
-          id: s.id,
-          assignment_id: s.assignment_id,
-          student_id: s.student_id,
-          resources: s.resources || [],
-          feedback: s.feedback,
-          created_at: s.created_at
-        }))
-      }))
+      assignments: Array.isArray(data.classes.assignments)
+        ? data.classes.assignments.map((a: any) => ({
+            id: a.id,
+            class_id: a.class_id,
+            title: a.title,
+            description: a.description,
+            resources: a.resources || [],
+            teacher_user_id: a.teacher_user_id,
+            created_at: a.created_at,
+            submissions: Array.isArray(a.submissions)
+              ? a.submissions.map((s: any) => ({
+                  id: s.id,
+                  assignment_id: s.assignment_id,
+                  student_id: s.student_id,
+                  resources: s.resources || [],
+                  feedback: s.feedback,
+                  created_at: s.created_at
+                }))
+              : []
+          }))
+        : []
     }]
 
     setClasses(formatted)
   }
 
-  // ✅ 修复后的加入班级逻辑
+  // 加入班级逻辑
   const joinClass = async (): Promise<void> => {
     if (!joinCode.trim() || !user?.id) {
       alert("Please enter a class code.")
@@ -228,7 +243,6 @@ export default function StudentPage() {
       return
     }
 
-    // 用 upsert 保证学生能加入班级
     const { error } = await supabase
       .from('students')
       .upsert({ user_id: user.id, class_id: cls.id })
@@ -264,7 +278,7 @@ export default function StudentPage() {
 
   // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('students')
       .select('user_id, name, avatar')
       .eq('user_id', user.id)
@@ -287,29 +301,31 @@ export default function StudentPage() {
       setAvatar(data.avatar)
       setTempName(data.name)
       setTempAvatar(data.avatar)
-    }
-  }
+          }
+        }
 
-  // 更新名字或头像
-  async function updateProfile(updates: { name?: string; avatar?: string }) {
-    if (!user) return
-    const payload = {
-      user_id: user.id,
-      name: updates.name ?? name,
-      avatar: updates.avatar ?? avatar,
-    }
-    const { error } = await supabase.from('students').upsert(payload)
-    if (!error) {
-      if (updates.name) {
-        setName(updates.name)
-        setTempName(updates.name)
-      }
-      if (updates.avatar) {
-        setAvatar(updates.avatar)
-        setTempAvatar(updates.avatar)
-      }
-    }
-  }
+        // 更新名字或头像
+        async function updateProfile(updates: { name?: string; avatar?: string }) {
+          if (!user) return
+          const payload = {
+            user_id: user.id,
+            name: updates.name ?? name,
+            avatar: updates.avatar ?? avatar,
+          }
+          const { error } = await supabase.from('students').upsert(payload)
+          if (error) {
+            alert(error.message)
+          } else {
+            if (updates.name) {
+              setName(updates.name)
+              setTempName(updates.name)
+            }
+            if (updates.avatar) {
+              setAvatar(updates.avatar)
+              setTempAvatar(updates.avatar)
+            }
+          }
+        }
 
   return (
     <div className="flex min-h-screen flex-col">
