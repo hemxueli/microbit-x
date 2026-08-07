@@ -1047,7 +1047,7 @@ export const dict: Dict = {
     zh: '编辑用户名字',
     ms: 'Sunting Nama Pengguna',
   },
-    'teacher.classDetail': {
+  'teacher.classDetail': {
     en: 'Class Details',
     zh: '班级详情',
     ms: 'Butiran Kelas',

@@ -379,8 +379,8 @@ export default function StudentPage() {
               ))}
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>Cancel</Button>
-              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>Save</Button>
+              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>{t('common.cancel')}</Button>
+              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>{t('common.save')}</Button>
             </div>
           </div>
         </div>
@@ -398,8 +398,8 @@ export default function StudentPage() {
               className="border rounded px-2 py-1 w-full mb-4"
             />
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>Cancel</Button>
-              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>Save</Button>
+              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>{t('common.cancel')}</Button>
+              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>{t('common.save')}</Button>
             </div>
           </div>
         </div>
