@@ -1032,6 +1032,17 @@ export const dict: Dict = {
     zh: '您还没有班级，请先创建一个',
     ms: 'Anda belum mempunyai kelas, sila cipta dahulu',
   },
+  'teacher.noAssignments': {
+    en: "You don't have any assignments yet",
+    zh: '您还没有布置作业',
+    ms: 'Anda belum mempunyai tugasan',
+  },
+
+  'teacher.addComment': {
+      en: "Add a comment",
+      zh: '添加评论',
+      ms: 'Tambah komen',
+    },
   'teacher.classesTable': {
     en: 'Class Management',
     zh: '班级管理',
@@ -1057,15 +1068,46 @@ export const dict: Dict = {
     zh: '测验成绩',
     ms: 'Markah Kuiz',
   },
-  'teacher.evaluation': {
-    en: 'Evaluation',
-    zh: '评语',
-    ms: 'Penilaian',
+  'teacher.noResults': {
+  en: "No quiz results yet",
+  zh: '还没有测验成绩',
+  ms: 'Belum ada keputusan kuiz',
+},
+
+  'teacher.avatar': {
+    en: "Avatar",
+    zh: '头像',
+    ms: 'Avatar',
   },
-  'teacher.writeEvaluation': {
-    en: 'Write evaluation',
-    zh: '填写评语',
-    ms: 'Tulis penilaian',
+
+  'teacher.name': {
+    en: "Name",
+    zh: '姓名',
+    ms: 'Nama',
+  },
+
+  'teacher.actions': {
+    en: "Student Quiz Results",
+    zh: '学生测验结果',
+    ms: 'Keputusan Kuiz Pelajar',
+  },
+
+  'teacher.studentSubmissions': {
+    en: "Student Submissions",
+    zh: '学生提交',
+    ms: 'Penyerahan Pelajar',
+  },
+
+  'teacher.noSubmissions': {
+    en: "No student has submitted yet",
+    zh: '还没有学生提交',
+    ms: 'Belum ada pelajar menyerahkan tugasan',
+  },
+
+  'teacher.viewSubmissions': {
+    en: "View Submissions",
+    zh: '查看学生提交',
+    ms: 'Lihat Penyerahan',
   },
   'teacher.noStudents': {
     en: 'No students in this class yet',
@@ -1177,12 +1219,6 @@ export const dict: Dict = {
     en: 'Assignments',
     zh: '布置作业',
     ms: 'Tugasan',
-  },
-
-  'teacher.noAssignments': {
-    en: 'No assignments yet',
-    zh: '暂时没有布置任何作业',
-    ms: 'Tiada tugasan lagi',
   },
 
   'teacher.viewFile': {
