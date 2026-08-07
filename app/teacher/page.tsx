@@ -201,6 +201,28 @@ export default function TeacherPage() {
             >
               {t('nav.logout')}
             </Button>
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-40 bg-white border rounded shadow">
+                <button
+                  className="w-full text-left px-3 py-2 hover:bg-gray-100"
+                  onClick={() => {
+                    setEditAvatarOpen(true)
+                    setMenuOpen(false)
+                  }}
+                >
+                  {t('editAvatar')}
+                </button>
+                <button
+                  className="w-full text-left px-3 py-2 hover:bg-gray-100"
+                  onClick={() => {
+                    setEditNameOpen(true)
+                    setMenuOpen(false)
+                  }}
+                >
+                  {t('editUserName')}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
