@@ -1,4 +1,21 @@
 'use client'
+type Lang = 'en' | 'zh' | 'ms'
+
+interface QuizResult {
+  id: string
+  user_id: string
+  quiz_theme: 'basic' | 'music' | 'input'
+  answers: any
+  score: number
+  details: any
+  analysis_feedback: {
+    en: string
+    zh: string
+    ms: string
+  } | null
+  created_at: string
+  lang?: Lang
+}
 
 interface assignments {
   id: number
@@ -29,7 +46,8 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
   const [students, setStudents] = useState<any[]>([])
   const [selectedStudent, setSelectedStudent] = useState<any | null>(null)
-  const [quizResults, setQuizResults] = useState<any[]>([])
+  const [showResultsModal, setShowResultsModal] = useState(false)
+  const [selectedResults, setSelectedResults] = useState<QuizResult[]>([])
   const [assignments, setAssignments] = useState<any[]>([])
   const [showAssignmentModal, setShowAssignmentModal] = useState(false)
   const [showJoinCodeModal, setShowJoinCodeModal] = useState(false)
@@ -101,15 +119,21 @@ export default function ClassDetailPage({ user }: { user: any }) {
   }, [classId, selectedStudent])
 
   // 查询学生成绩
-  async function loadQuizResults(studentId: string) {
-    const { data } = await supabase
-      .from('quiz_results')
-      .select('id, score, feedback, created_at')
-      .eq('class_id', classId)
-      .eq('student_id', studentId)
-    setQuizResults(data || [])
-    setSelectedStudent(studentId)
+ async function loadQuizResults(userId: string) {
+  const { data, error } = await supabase
+    .from('quiz_results')
+    .select('id, user_id, quiz_theme, answers, score, details, analysis_feedback, created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+
+  if (!error) {
+    setSelectedResults(data.map(r => ({ ...r, lang: 'en' })))
+    setShowResultsModal(true)
+  } else {
+    console.error('Error loading quiz results:', error.message)
   }
+}
+
 
  // 查看学生作业
 async function handleViewSubmissions(assignmentId: number) {
@@ -399,6 +423,69 @@ async function handleViewSubmissions(assignmentId: number) {
           )}
         </section>
       </main>
+      
+      {showResultsModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-[700px] h-[500px] overflow-y-auto relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowResultsModal(false)}
+            >
+              ✖
+            </button>
+
+            <h2 className="text-xl font-bold mb-4 text-teal-700">
+              {t('teacher.quizResults')}
+            </h2>
+
+            {selectedResults.length === 0 ? (
+              <p className="text-gray-500 italic">{t('teacher.noResults')}</p>
+            ) : (
+              <ul className="space-y-6">
+                {selectedResults.map(r => (
+                  <li key={r.id} className="p-6 bg-teal-50 border border-teal-200 rounded-lg shadow relative">
+                    <h3 className="font-bold text-lg text-teal-800">
+                      {t(`quiz.${r.quiz_theme}`)} - {t('analysis.score')} {r.score}/10
+                    </h3>
+
+                    {/* 语言选择器 */}
+                    <div className="absolute top-4 right-4">
+                      <select
+                        value={r.lang}
+                        onChange={(e) => {
+                          const newLang = e.target.value as Lang
+                          setSelectedResults(prev =>
+                            prev.map(item =>
+                              item.id === r.id ? { ...item, lang: newLang } : item
+                            )
+                          )
+                        }}
+                        className="border border-teal-600 rounded p-2 text-white bg-teal-600 text-sm font-medium"
+                      >
+                        <option value="en">{t('common.english')}</option>
+                        <option value="zh">{t('common.chinese')}</option>
+                        <option value="ms">{t('common.malay')}</option>
+                      </select>
+                    </div>
+
+                    {/* AI 分析反馈 */}
+                    <p className="whitespace-pre-line mt-3 text-teal-700 text-lg">
+                      {r.analysis_feedback
+                        ? r.analysis_feedback[r.lang || 'en'] || t('analysis.noFeedback')
+                        : t('analysis.noFeedback')}
+                    </p>
+
+                    {/* 时间 */}
+                    <p className="text-sm text-teal-600 mt-2">
+                      {t('analysis.savedAt')}: {new Date(r.created_at).toLocaleString()}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* 作业弹窗 */}
       {showAssignmentModal && (

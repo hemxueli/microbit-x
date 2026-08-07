@@ -1068,6 +1068,30 @@ export const dict: Dict = {
     zh: '测验成绩',
     ms: 'Markah Kuiz',
   },
+  'teacher.noResults': {
+  en: "No quiz results yet",
+  zh: '还没有测验成绩',
+  ms: 'Belum ada keputusan kuiz',
+},
+
+  'teacher.avatar': {
+    en: "Avatar",
+    zh: '头像',
+    ms: 'Avatar',
+  },
+
+  'teacher.name': {
+    en: "Name",
+    zh: '姓名',
+    ms: 'Nama',
+  },
+
+  'teacher.actions': {
+    en: "Student Quiz Results",
+    zh: '学生测验结果',
+    ms: 'Keputusan Kuiz Pelajar',
+  },
+
   'teacher.studentSubmissions': {
     en: "Student Submissions",
     zh: '学生提交',
