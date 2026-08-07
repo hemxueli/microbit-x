@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useI18n } from '@/lib/i18n'
 
 export default function StudentClass({ user }: { user: any }) {
-  const { t } = useI18n()   // 使用 i18n hook
+  const { t } = useI18n()
   const [classInfo, setClassInfo] = useState<any | null>(null)
   const [teacherInfo, setTeacherInfo] = useState<any | null>(null)
   const [assignments, setAssignments] = useState<any[]>([])
@@ -64,6 +64,7 @@ export default function StudentClass({ user }: { user: any }) {
       .from('assignments')
       .select('id, title, description, created_at, resources, feedback')
       .eq('class_id', cls.id)
+
     setAssignments(assignmentData || [])
 
     for (const a of assignmentData || []) {
@@ -188,11 +189,8 @@ export default function StudentClass({ user }: { user: any }) {
       <h2 className="text-2xl font-bold mb-6">{t('student.myClass')}</h2>
 
       {!classInfo ? (
-        <div className="rounded-lg shadow-md bg-white p-6">
-          <div className="flex gap-2">
-            <Button onClick={() => setShowJoinModal(true)}>{t('student.joinClass')}</Button>
-            <Button variant="destructive" onClick={leaveClass}>{t('student.leaveClass')}</Button>
-          </div>
+        <div className="rounded-lg shadow-md bg-white p-6 flex justify-end">
+          <Button onClick={() => setShowJoinModal(true)}>{t('student.joinClass')}</Button>
 
           {showJoinModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black/50">
@@ -210,7 +208,7 @@ export default function StudentClass({ user }: { user: any }) {
           )}
         </div>
       ) : (
-        <div className="rounded-lg shadow-md bg-white p-6">
+        <div className="rounded-lg shadow-md bg-teal-50 p-6">
           <div className="flex justify-between items-center mb-4">
             <p className="text-xl font-semibold">{classInfo.name}</p>
             <Button variant="destructive" onClick={leaveClass}>{t('student.leaveClass')}</Button>
@@ -233,7 +231,7 @@ export default function StudentClass({ user }: { user: any }) {
           ) : (
             <div className="space-y-6">
               {assignments.map((a) => (
-                <div key={a.id} className="rounded-lg shadow-sm border p-4 bg-gray-50">
+                <div key={a.id} className="rounded-lg shadow-sm border p-4 bg-white">
                   <strong className="block text-teal-700">{a.title}</strong>
                   <p className="text-gray-700">{a.description}</p>
 
@@ -244,10 +242,10 @@ export default function StudentClass({ user }: { user: any }) {
                   )}
 
                   {submissions[a.id]?.map((s: any) => (
-                    <div key={s.id} className="mt-2 p-2 border rounded bg-gray-50">
+                                        <div key={s.id} className="mt-2 p-2 border rounded bg-gray-50">
                       <p><strong>{t('student.studentSubmission')}:</strong></p>
                       {s.resources?.map((res: string, idx: number) => (
-                                                <a key={idx} href={res} target="_blank" className="text-blue-600 underline">
+                        <a key={idx} href={res} target="_blank" className="text-blue-600 underline">
                           🔗 Resource {idx + 1}
                         </a>
                       ))}
