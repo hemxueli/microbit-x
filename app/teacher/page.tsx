@@ -24,6 +24,8 @@ export default function TeacherPage() {
   const [tempAvatar, setTempAvatar] = useState("/images/default-avatar.png")
   const [editClassId, setEditClassId] = useState<string | null>(null)
   const [editClassName, setEditClassName] = useState('')
+  const [showLangModal, setShowLangModal] = useState(false)
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
 
   const avatarOptions = [
     '/images/tavatar1.png',
@@ -232,6 +234,36 @@ export default function TeacherPage() {
         <h1 className="text-3xl font-bold mb-4 text-teal-700">{t('teacher.welcomeTitle')}</h1>
         <p className="text-gray-600 mb-6">{t('teacher.welcomeSubtitle')}</p>
 
+        {/* 学习内容卡片区 */}
+        <h2 className="text-2xl font-bold mb-6">{t('student.learningContent')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { key: 'basic', image: '/images/basic.png' },
+              { key: 'input', image: '/images/input.png' },
+              { key: 'music', image: '/images/music.png' },
+            ].map(({ key, image }) => (
+            <div
+              key={key}
+              className="relative h-[280px] rounded-lg shadow-md overflow-hidden cursor-pointer group"
+              style={{
+                backgroundImage: `url(${image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+              onClick={() => {
+                setSelectedTopic(key)      // 先记录点击的主题
+                setShowLangModal(true)     // 打开语言选择弹窗
+              }}
+            >
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <span className="text-white text-2xl font-bold group-hover:scale-110 transition">
+                   {t(`student.${key}`)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="flex items-center justify-between mt-8 mb-4">
           <h2 className="text-2xl font-semibold text-teal-700">{t('teacher.classesTable')}</h2>
           <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowCreateModal(true)}>
@@ -398,7 +430,48 @@ export default function TeacherPage() {
           </div>
         </div>
       )}
-
+      
+      {/* 语言选择弹窗 */}
+      {showLangModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative">
+            <button
+              onClick={() => setShowLangModal(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+            <h2 className="text-lg font-bold mb-4">{t('student.chooseLanguage')}</h2>
+            <div className="flex flex-col gap-3">
+              <Button
+                variant="default"
+                onClick={() => {
+                  window.location.href = `/student/${selectedTopic}/en`
+                }}
+              >
+                English
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  window.location.href = `/student/${selectedTopic}/ms`
+                }}
+              >
+                Bahasa Melayu
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  window.location.href = `/student/${selectedTopic}/zh`
+                }}
+              >
+                中文
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* 底部版权栏 */}
       <footer className="border-t border-teal-200 py-6 bg-teal-50">
         <div className="flex w-full items-center justify-between px-6 text-sm text-gray-600">
