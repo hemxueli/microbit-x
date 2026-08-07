@@ -235,7 +235,7 @@ export default function TeacherPage() {
         <p className="text-gray-600 mb-6">{t('teacher.welcomeSubtitle')}</p>
 
         {/* 学习内容卡片区 */}
-        <h2 className="text-2xl font-bold mb-6">{t('teacher.teachingContent')}</h2>
+        <h2 className="text-2xl font-bold text-teal-700 mb-6">{t('teacher.teachingContent')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { key: 'basic', image: '/images/basic.png' },
@@ -265,7 +265,7 @@ export default function TeacherPage() {
         </div>
 
         <div className="flex items-center justify-between mt-8 mb-4">
-          <h2 className="text-2xl font-semibold text-teal-700">{t('teacher.classesTable')}</h2>
+          <h2 className="text-2xl font-bold text-teal-700 mb-6">{t('teacher.classesTable')}</h2>
           <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowCreateModal(true)}>
             {t('teacher.createClass')}
           </Button>
