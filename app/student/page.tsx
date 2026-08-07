@@ -21,12 +21,18 @@ interface Assignment {
 }
 
 interface Class {
-  id: string        // ✅ 用 id
+  id: string
   user_id: string
   name: string
   created_at: string
   assignments: Assignment[]
+  teacher?: {
+    user_id: string
+    name: string
+    avatar: string
+  }
 }
+
 
 // ✅ students 表返回的数据结构
 interface StudentWithClass {
@@ -533,20 +539,20 @@ export default function StudentPage() {
               ) : (
                 classes.map((cls) => (
                   <div
-                    key={cls.id}   
+                    key={cls.id}
                     className="w-full rounded-lg shadow-lg bg-white p-6 flex flex-col space-y-6"
                   >
                     {/* 老师信息 */}
                     <div className="flex items-center space-x-4 border-b pb-4">
                       <Image
-                        src={cls.avatar}
+                        src={cls.teacher?.avatar || "/images/default-avatar.png"} // ✅ 改成 teacher.avatar
                         alt="Teacher Avatar"
                         width={64}
                         height={64}
                         className="rounded-full border"
                       />
                       <div>
-                        <h3 className="text-xl font-bold">{cls.name}</h3>
+                        <h3 className="text-xl font-bold">{cls.teacher?.name || t('student.unknownTeacher')}</h3>
                         <p className="text-gray-500">{t('student.teacher')}</p>
                       </div>
                     </div>
