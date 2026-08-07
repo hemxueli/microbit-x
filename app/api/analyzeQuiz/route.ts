@@ -37,24 +37,26 @@ export async function POST(req: Request) {
 
     // 2. AI Prompt
     const prompt = `
-The student scored ${quizResult.score}/${detailedAnswers.length} in the quiz on theme "${quizResult.quiz_theme}".
-Here are the answers:
+    The student scored ${quizResult.score}/${detailedAnswers.length} in the quiz on theme "${quizResult.quiz_theme}".
+    Here are the answers:
 
-${JSON.stringify(detailedAnswers, null, 2)}
+    ${JSON.stringify(detailedAnswers, null, 2)}
 
-Please provide analysis in THREE languages:
-1. English
-2. Chinese (中文)
-3. Malay (Bahasa Melayu)
+    Please provide analysis in THREE languages:
+    - English ("en")
+    - Chinese ("zh")
+    - Malay ("ms")
 
-⚠️ IMPORTANT: Output ONLY valid JSON.
-Format:
-{
-  "en": "English feedback here",
-  "zh": "中文反馈在这里",
-  "ms": "Maklum balas Bahasa Melayu di sini"
-}
-`
+    Return ONLY a valid JSON object. Do NOT include any extra text, explanation, or code block markers.
+    The output must look exactly like this:
+
+    {
+      "en": "English feedback here",
+      "zh": "中文反馈在这里",
+      "ms": "Maklum balas Bahasa Melayu di sini"
+    }
+    `
+
 
     // 3. 调用 AI
     const aiResult = await generateText({ model, prompt })
