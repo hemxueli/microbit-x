@@ -1364,6 +1364,11 @@ export const dict: Dict = {
     en: "Upload",
     zh: "上传",
     ms: "Muat naik",
+  },
+  'student.resources': {
+    en: "Materials",
+    zh: "资料",
+    ms: "Bahan",
   }
 }
 
