@@ -26,7 +26,7 @@ export default function StudentClass({ user }: { user: any }) {
     const { data: student } = await supabase
       .from('students')
       .select('class_id')
-      .eq('user_id', user.id)
+      .eq('user_id', user.id)   // user.id 是 Auth UID
       .single()
 
     if (!student?.class_id) {
@@ -74,7 +74,7 @@ export default function StudentClass({ user }: { user: any }) {
         .from('submissions')
         .select('id, resources, feedback, created_at')
         .eq('assignment_id', a.id)
-        .eq('student_id', user.id)
+        .eq('student_user_id', user.id)   // ✅ 改成 student_user_id
       setSubmissions(prev => ({ ...prev, [a.id]: subs || [] }))
     }
   }
@@ -101,7 +101,7 @@ export default function StudentClass({ user }: { user: any }) {
     const { error: upsertError } = await supabase
       .from('students')
       .upsert({
-        user_id: user.id,
+        user_id: user.id,   // ✅ 存 Auth UID
         class_id: cls.id,
         name: studentName
       })
@@ -123,7 +123,7 @@ export default function StudentClass({ user }: { user: any }) {
     const { error } = await supabase
       .from('students')
       .update({ class_id: null })
-      .eq('user_id', user.id)
+      .eq('user_id', user.id)   // ✅ Auth UID
 
     if (error) {
       alert("Error: " + error.message)
@@ -158,7 +158,7 @@ export default function StudentClass({ user }: { user: any }) {
 
     const { error } = await supabase.from('submissions').insert({
       assignment_id: assignmentId,
-      student_id: user.id,
+      student_user_id: user.id,   // ✅ 改成 student_user_id
       resources,
       feedback: null
     })
@@ -178,7 +178,7 @@ export default function StudentClass({ user }: { user: any }) {
       .from('submissions')
       .update({ feedback })
       .eq('id', submissionId)
-
+      .eq('student_user_id', user.id)   // ✅ 确保只能改自己的
     if (!error) {
       alert(t('student.studentComment'))
       setNewComment('')
