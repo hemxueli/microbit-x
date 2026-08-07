@@ -1,45 +1,45 @@
 'use client'
 
 interface Submission {
-  id: string
-  assignment_id: string
-  student_id: string
-  resources: string[]
-  feedback: string | null
-  created_at: string
+  id: string;
+  file_url: string;
+  feedback: string | null;
+  created_at: string;
 }
 
-interface Assignment {
-  id: string
-  class_id: string
+interface assignments {
+  id: number
   title: string
   description: string
   resources: string[]
   teacher_user_id: string
   created_at: string
-  submissions: Submission[]
 }
 
-interface Class {
-  id: string
-  user_id: string
-  name: string
-  created_at: string
-  assignments: Assignment[]
-  teacher?: {
-    user_id: string
-    name: string
-    avatar: string
-  }
+interface StudentClass {
+  id: string;
+  name: string;
+  assignments: assignments[];
 }
 
-// ✅ students 表返回的数据结构
-interface StudentWithClass {
-  user_id: string
-  name: string
-  avatar: string
-  class_id: string
-  classes: Class
+interface ClassesResponse {
+  class_id: string;
+  classes: {
+    id: string;
+    name: string;
+    assignments: {
+      id: string;
+      title: string;
+      description: string;
+      file_url: string | null;
+      submissions: {
+        id: string;
+        file_url: string;
+        feedback: string | null;
+        created_at: string;
+      }[];
+    }[];
+  };
 }
 
 import { useState, useEffect } from 'react'
@@ -60,14 +60,14 @@ export default function StudentPage() {
   const [user, setUser] = useState<any>(null)
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
-  const [classes, setClasses] = useState<Class[]>([])
+  const [classes, setClasses] = useState<StudentClass[]>([])
   const [showJoinClassModal, setShowJoinClassModal] = useState(false)
   const [joinCode, setJoinCode] = useState('')
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null)
   const [fileUrl, setFileUrl] = useState('')
   const [textContent, setTextContent] = useState('')
 
-  // 名字和头像状态
+  // 名字和头像状态（保留你的 const）
   const [name, setName] = useState("")
   const [avatar, setAvatar] = useState("/images/default-avatar.png")
   const [menuOpen, setMenuOpen] = useState(false)
@@ -85,15 +85,17 @@ export default function StudentPage() {
     '/images/savatar6.png',
   ]
 
+  // 加载用户并初始化
   // 加载用户并初始化 + 实时订阅
   useEffect(() => {
     const loadUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
-        await ensureProfile(user)
-        await loadClasses(user)
+        await ensureProfile(user)   // 👈 确保 profile 存在
+        await loadClasses(user)     // 👈 加载班级
 
+        // ✅ 查学生的班级 ID
         const { data: student } = await supabase
           .from('students')
           .select('class_id')
@@ -101,33 +103,51 @@ export default function StudentPage() {
           .maybeSingle()
 
         if (student?.class_id) {
+          // ✅ 订阅 assignments 表变化
           const assignmentChannel = supabase
             .channel('assignments-changes')
             .on(
               'postgres_changes',
-              { event: '*', schema: 'public', table: 'assignments', filter: `class_id=eq.${student.class_id}` },
+              {
+                event: '*',
+                schema: 'public',
+                table: 'assignments',
+                filter: `class_id=eq.${student.class_id}`,
+              },
               () => loadClasses(user)
             )
             .subscribe()
 
+          // ✅ 订阅 submissions 表变化
           const submissionChannel = supabase
             .channel('submissions-changes')
             .on(
               'postgres_changes',
-              { event: '*', schema: 'public', table: 'submissions' },
+              {
+                event: '*',
+                schema: 'public',
+                table: 'submissions',
+              },
               () => loadClasses(user)
             )
             .subscribe()
 
+          // ✅ 订阅 quiz_results 表变化（测验成绩）
           const quizChannel = supabase
             .channel('quiz-results-changes')
             .on(
               'postgres_changes',
-              { event: '*', schema: 'public', table: 'quiz_results', filter: `student_id=eq.${user.id}` },
+              {
+                event: '*',
+                schema: 'public',
+                table: 'quiz_results',
+                filter: `student_id=eq.${user.id}`, // 只监听当前学生的成绩
+              },
               () => loadClasses(user)
             )
             .subscribe()
 
+          // 清理订阅
           return () => {
             supabase.removeChannel(assignmentChannel)
             supabase.removeChannel(submissionChannel)
@@ -141,18 +161,113 @@ export default function StudentPage() {
     loadUser()
   }, [])
 
-  // 确保学生 profile 存在并加载
+  // 加载学生已加入的班级
+  async function loadClasses(user: any) {
+    const { data: student, error: studentError } = await supabase
+      .from('students')
+      .select('class_id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (studentError || !student?.class_id) {
+      setClasses([])
+      return
+    }
+
+    const { data: cls } = await supabase
+      .from('classes')
+      .select(`
+        id,
+        name,
+        assignments (
+          id,
+          title,
+          description,
+          file_url,
+          submissions (
+            id,
+            file_url,
+            feedback,
+            created_at
+          )
+        )
+      `)
+      .eq('id', student.class_id)
+
+    const formatted: StudentClass[] = (cls || []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      assignments: c.assignments.map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        description: a.description,
+        file_url: a.file_url,
+        submissions: a.submissions || []
+      }))
+    }))
+
+    setClasses(formatted)
+  }
+
+  // 加入班级逻辑
+  async function joinClass() {
+    if (!joinCode.trim() || !user?.id) {
+      alert("Please enter a class code.")
+      return
+    }
+
+    const { data: cls } = await supabase
+      .from('classes')
+      .select('id, name, join_code')
+      .eq('join_code', joinCode.trim())
+      .maybeSingle()
+
+    if (!cls) {
+      alert('Invalid class code.')
+      return
+    }
+
+    const { error } = await supabase
+      .from('students')
+      .update({ class_id: cls.id })
+      .eq('user_id', user.id)
+
+    if (error) {
+      alert(error.message)
+    } else {
+      alert(`${t('student.joinedClass')}: ${cls.name}`)
+      setShowJoinClassModal(false)
+      setJoinCode('')
+      await loadClasses(user)
+    }
+  }
+
+  // 学生提交作业
+  async function submitAssignment() {
+    if (!selectedAssignment) return
+    const { error } = await supabase.from('submissions').insert({
+      assignment_id: selectedAssignment.id,
+      student_id: user.id, // ⚠️ 如果你有 students 表里的真实 id，可以替换
+      file_url: fileUrl,
+      feedback: textContent
+    })
+    if (!error) {
+      alert("提交成功！")
+      setSelectedAssignment(null)
+      setFileUrl('')
+      setTextContent('')
+    } else {
+      alert("提交失败: " + error.message)
+    }
+  }
+
+  // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
     const { data, error } = await supabase
       .from('students')
-      .select('user_id, name, avatar, class_id')
+      .select('user_id, name, avatar')
       .eq('user_id', user.id)
       .single()
-
-    if (error && error.code !== 'PGRST116') {
-      alert('Error loading profile: ' + error.message)
-      return
-    }
 
     if (!data) {
       const defaultName = user.user_metadata?.name || user.email || user.id
@@ -174,137 +289,26 @@ export default function StudentPage() {
     }
   }
 
-  // 加载学生已加入的班级
-  async function loadClasses(user: any) {
-    // 先查学生的班级 ID
-    const { data: student, error: studentError } = await supabase
-      .from('students')
-      .select('class_id')
-      .eq('user_id', user.id)
-      .single()
-
-    if (studentError || !student?.class_id) {
-      console.error("No class found for student:", studentError)
-      setClasses([])
-      return
+  // 更新名字或头像
+  async function updateProfile(updates: { name?: string; avatar?: string }) {
+    if (!user) return
+    const payload = {
+      user_id: user.id,
+      name: updates.name ?? name,
+      avatar: updates.avatar ?? avatar,
     }
-
-    // 再查班级详情
-    const { data: classesData, error } = await supabase
-      .from('classes')
-      .select(`
-        id,
-        user_id,
-        name,
-        created_at,
-        assignments (
-          id,
-          class_id,
-          title,
-          description,
-          resources,
-          teacher_user_id,
-          created_at,
-          submissions (
-            id,
-            assignment_id,
-            student_id,
-            resources,
-            feedback,
-            created_at
-          )
-        )
-      `)
-      .eq('id', student.class_id)
-
-    if (error) {
-      console.error("loadClasses error:", error)
-      setClasses([])
-      return
-    }
-
-    setClasses(classesData || [])
-  }
-
-  // 加入班级逻辑
-  const joinClass = async (): Promise<void> => {
-    if (!joinCode.trim() || !user?.id) {
-      alert("Please enter a class code.")
-      return
-    }
-
-    const { data: cls, error: clsError } = await supabase
-      .from('classes')
-      .select('id, name, join_code')
-      .eq('join_code', joinCode.trim())
-      .maybeSingle()
-
-    if (clsError) {
-      alert("Error finding class: " + clsError.message)
-      return
-    }
-
-    if (!cls) {
-      alert('Invalid class code.')
-      return
-    }
-
-    const { error } = await supabase
-      .from('students')
-      .upsert({ user_id: user.id, class_id: cls.id })
-
-    if (error) {
-      alert(error.message)
-    } else {
-      alert(`${t('student.joinedClass')}: ${cls.name}`)
-      setShowJoinClassModal(false)
-      setJoinCode('')
-      await loadClasses(user)
-    }
-  }
-
-  // 学生提交作业
-  async function submitAssignment() {
-    if (!selectedAssignment) return
-    const { error } = await supabase.from('submissions').insert({
-      assignment_id: selectedAssignment.id,
-      student_id: user.id,
-      file_url: fileUrl,
-      feedback: textContent
-    })
+    const { error } = await supabase.from('students').upsert(payload)
     if (!error) {
-      alert("提交成功！")
-      setSelectedAssignment(null)
-      setFileUrl('')
-      setTextContent('')
-    } else {
-      alert("提交失败: " + error.message)
+      if (updates.name) {
+        setName(updates.name)
+        setTempName(updates.name)
+      }
+      if (updates.avatar) {
+        setAvatar(updates.avatar)
+        setTempAvatar(updates.avatar)
+      }
     }
   }
-
-
-        // 更新名字或头像
-        async function updateProfile(updates: { name?: string; avatar?: string }) {
-          if (!user) return
-          const payload = {
-            user_id: user.id,
-            name: updates.name ?? name,
-            avatar: updates.avatar ?? avatar,
-          }
-          const { error } = await supabase.from('students').upsert(payload)
-          if (error) {
-            alert(error.message)
-          } else {
-            if (updates.name) {
-              setName(updates.name)
-              setTempName(updates.name)
-            }
-            if (updates.avatar) {
-              setAvatar(updates.avatar)
-              setTempAvatar(updates.avatar)
-            }
-          }
-        }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -375,8 +379,8 @@ export default function StudentPage() {
               ))}
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>{t('common.cancel')}</Button>
-              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>{t('common.save')}</Button>
+              <Button variant="ghost" onClick={() => setEditAvatarOpen(false)}>Cancel</Button>
+              <Button onClick={() => { updateProfile({ avatar: tempAvatar }); setEditAvatarOpen(false); }}>Save</Button>
             </div>
           </div>
         </div>
@@ -394,8 +398,8 @@ export default function StudentPage() {
               className="border rounded px-2 py-1 w-full mb-4"
             />
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>{t('common.cancel')}</Button>
-              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>{t('common.save')}</Button>
+              <Button variant="ghost" onClick={() => setEditNameOpen(false)}>Cancel</Button>
+              <Button onClick={() => { updateProfile({ name: tempName }); setEditNameOpen(false); }}>Save</Button>
             </div>
           </div>
         </div>
@@ -514,7 +518,7 @@ export default function StudentPage() {
           </div>
           
           {/* Class 区块 */}
-          <div className="mt-12">
+          <div className="mt-12">  
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">{t('student.classes')}</h2>
               <Button
@@ -526,77 +530,31 @@ export default function StudentPage() {
             </div>
 
             {/* 班级卡片区 */}
-            <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {classes.length === 0 ? (
-                <div className="text-gray-500 italic text-center">
+                <div className="col-span-3 text-gray-500 italic text-center">
                   {t('student.noClasses')}
                 </div>
               ) : (
                 classes.map((cls) => (
                   <div
                     key={cls.id}
-                    className="w-full rounded-lg shadow-lg bg-white p-6 flex flex-col space-y-6"
+                    className="relative h-[280px] rounded-lg shadow-md overflow-hidden cursor-pointer group bg-teal-100"
                   >
-                    {/* 老师信息 */}
-                    <div className="flex items-center space-x-4 border-b pb-4">
-                      <Image
-                        src={cls.teacher?.avatar || "/images/default-avatar.png"} // ✅ 改成 teacher.avatar
-                        alt="Teacher Avatar"
-                        width={64}
-                        height={64}
-                        className="rounded-full border"
-                      />
-                      <div>
-                        <h3 className="text-xl font-bold">{cls.teacher?.name || t('student.unknownTeacher')}</h3>
-                        <p className="text-gray-500">{t('student.teacher')}</p>
-                      </div>
-                    </div>
-
-                    {/* 作业列表 */}
-                    <div className="space-y-4">
+                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4">
+                      <span className="text-white text-2xl font-bold mb-2 group-hover:scale-110 transition">
+                        {cls.name}
+                      </span>
                       {cls.assignments.length === 0 ? (
-                        <span className="text-gray-500 italic">{t('student.noAssignments')}</span>
+                        <span className="text-gray-200 italic">{t('student.noAssignments')}</span>
                       ) : (
-                        cls.assignments.map((a) => (
-                          <div
-                            key={a.id}
-                            className="border rounded-lg p-4 shadow-sm bg-teal-50 flex justify-between items-start"
-                          >
-                            <div className="flex-1">
-                              <h4 className="text-lg font-semibold">{a.title}</h4>
-                              <p className="text-gray-600">{a.description}</p>
-                            </div>
-
-                            {/* 上传 + 提交 + 评论区 */}
-                            <div className="flex flex-col items-end space-y-2 w-1/3">
-                              <input
-                                type="file"
-                                className="border rounded px-2 py-1 w-full"
-                                onChange={(e) => setFileUrl(e.target.value)}
-                              />
-                              <Button
-                                className="bg-teal-500 text-white w-full"
-                                onClick={() => setSelectedAssignment(a)}
-                              >
-                                {t('student.submit')}
-                              </Button>
-
-                              {/* 评论区 */}
-                              <div className="w-full border rounded p-2 bg-white">
-                                <h5 className="text-sm font-bold text-gray-700">{t('student.comment')}</h5>
-                                {a.submissions.length > 0 ? (
-                                  a.submissions.map((s) => (
-                                    <p key={s.id} className="text-gray-600 text-sm">
-                                      {s.feedback || t('student.noFeedback')}
-                                    </p>
-                                  ))
-                                ) : (
-                                  <p className="text-gray-400 italic text-sm">{t('student.noFeedback')}</p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))
+                        <ul className="text-white text-sm list-disc list-inside text-left">
+                          {cls.assignments.map((a) => (
+                            <li key={a.id}>
+                              <span className="font-semibold">{a.title}</span> – {a.description}
+                            </li>
+                          ))}
+                        </ul>
                       )}
                     </div>
                   </div>
