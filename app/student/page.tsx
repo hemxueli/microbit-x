@@ -21,7 +21,7 @@ interface Assignment {
 }
 
 interface Class {
-  class_id: string   // ✅ 用 class_id 代替 id
+  id: string        // ✅ 用 id
   user_id: string
   name: string
   avatar: string
@@ -29,7 +29,7 @@ interface Class {
   assignments: Assignment[]
 }
 
-// ✅ 新增接口：students 表返回的数据结构
+// ✅ students 表返回的数据结构
 interface StudentWithClass {
   class_id: string
   classes: Class
@@ -53,7 +53,7 @@ export default function StudentPage() {
   const [user, setUser] = useState<any>(null)
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
-  const [classes, setClasses] = useState<Class[]>([])   // ✅ 改成 Class[]
+  const [classes, setClasses] = useState<Class[]>([])
   const [showJoinClassModal, setShowJoinClassModal] = useState(false)
   const [joinCode, setJoinCode] = useState('')
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null)
@@ -84,10 +84,9 @@ export default function StudentPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         setUser(user)
-        await ensureProfile(user)   // 👈 确保 profile 存在
-        await loadClasses(user)     // 👈 加载班级
+        await ensureProfile(user)
+        await loadClasses(user)
 
-        // ✅ 查学生的班级 ID
         const { data: student } = await supabase
           .from('students')
           .select('class_id')
@@ -95,51 +94,33 @@ export default function StudentPage() {
           .maybeSingle()
 
         if (student?.class_id) {
-          // ✅ 订阅 assignments 表变化
           const assignmentChannel = supabase
             .channel('assignments-changes')
             .on(
               'postgres_changes',
-              {
-                event: '*',
-                schema: 'public',
-                table: 'assignments',
-                filter: `class_id=eq.${student.class_id}`,
-              },
+              { event: '*', schema: 'public', table: 'assignments', filter: `class_id=eq.${student.class_id}` },
               () => loadClasses(user)
             )
             .subscribe()
 
-          // ✅ 订阅 submissions 表变化
           const submissionChannel = supabase
             .channel('submissions-changes')
             .on(
               'postgres_changes',
-              {
-                event: '*',
-                schema: 'public',
-                table: 'submissions',
-              },
+              { event: '*', schema: 'public', table: 'submissions' },
               () => loadClasses(user)
             )
             .subscribe()
 
-          // ✅ 订阅 quiz_results 表变化（测验成绩）
           const quizChannel = supabase
             .channel('quiz-results-changes')
             .on(
               'postgres_changes',
-              {
-                event: '*',
-                schema: 'public',
-                table: 'quiz_results',
-                filter: `student_id=eq.${user.id}`, // 只监听当前学生的成绩
-              },
+              { event: '*', schema: 'public', table: 'quiz_results', filter: `student_id=eq.${user.id}` },
               () => loadClasses(user)
             )
             .subscribe()
 
-          // 清理订阅
           return () => {
             supabase.removeChannel(assignmentChannel)
             supabase.removeChannel(submissionChannel)
@@ -160,7 +141,7 @@ export default function StudentPage() {
       .select(`
         class_id,
         classes (
-          class_id,
+          id,
           user_id,
           name,
           avatar,
@@ -185,7 +166,7 @@ export default function StudentPage() {
         )
       `)
       .eq('user_id', user.id)
-      .maybeSingle<StudentWithClass>()   // ✅ 指定返回类型
+      .maybeSingle<StudentWithClass>()
 
     if (error || !data?.classes) {
       console.error("loadClasses error:", error)
@@ -194,7 +175,7 @@ export default function StudentPage() {
     }
 
     const formatted: Class[] = [{
-      class_id: data.classes.class_id,
+      id: data.classes.id,
       user_id: data.classes.user_id,
       name: data.classes.name,
       avatar: data.classes.avatar,
@@ -259,7 +240,7 @@ export default function StudentPage() {
     if (!selectedAssignment) return
     const { error } = await supabase.from('submissions').insert({
       assignment_id: selectedAssignment.id,
-      student_id: user.id, // ⚠️ 如果你有 students 表里的真实 id，可以替换
+      student_id: user.id,
       file_url: fileUrl,
       feedback: textContent
     })
@@ -550,7 +531,7 @@ export default function StudentPage() {
               ) : (
                 classes.map((cls) => (
                   <div
-                    key={cls.class_id}
+                    key={cls.id}   
                     className="w-full rounded-lg shadow-lg bg-white p-6 flex flex-col space-y-6"
                   >
                     {/* 老师信息 */}
