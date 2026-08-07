@@ -141,83 +141,89 @@ export default function StudentPage() {
     loadUser()
   }, [])
 
-  // 加载学生已加入的班级
-  async function loadClasses(user: any) {
+  // 确保学生 profile 存在并加载
+  async function ensureProfile(user: any) {
     const { data, error } = await supabase
       .from('students')
+      .select('user_id, name, avatar, class_id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (error && error.code !== 'PGRST116') {
+      alert('Error loading profile: ' + error.message)
+      return
+    }
+
+    if (!data) {
+      const defaultName = user.user_metadata?.name || user.email || user.id
+      const defaultAvatar = '/images/default-avatar.png'
+      await supabase.from('students').insert({
+        user_id: user.id,
+        name: defaultName,
+        avatar: defaultAvatar,
+      })
+      setName(defaultName)
+      setAvatar(defaultAvatar)
+      setTempName(defaultName)
+      setTempAvatar(defaultAvatar)
+    } else {
+      setName(data.name)
+      setAvatar(data.avatar)
+      setTempName(data.name)
+      setTempAvatar(data.avatar)
+    }
+  }
+
+  // 加载学生已加入的班级
+  async function loadClasses(user: any) {
+    // 先查学生的班级 ID
+    const { data: student, error: studentError } = await supabase
+      .from('students')
+      .select('class_id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (studentError || !student?.class_id) {
+      console.error("No class found for student:", studentError)
+      setClasses([])
+      return
+    }
+
+    // 再查班级详情
+    const { data: classesData, error } = await supabase
+      .from('classes')
       .select(`
+        id,
         user_id,
         name,
-        avatar,
-        class_id,
-        classes (
+        created_at,
+        assignments (
           id,
-          user_id,
-          name,
+          class_id,
+          title,
+          description,
+          resources,
+          teacher_user_id,
           created_at,
-          assignments (
+          submissions (
             id,
-            class_id,
-            title,
-            description,
+            assignment_id,
+            student_id,
             resources,
-            teacher_user_id,
-            created_at,
-            submissions (
-              id,
-              assignment_id,
-              student_id,
-              resources,
-              feedback,
-              created_at
-            )
+            feedback,
+            created_at
           )
         )
       `)
-      .eq('user_id', user.id)
-      .maybeSingle<StudentWithClass>()
+      .eq('id', student.class_id)
 
-    if (error || !data?.classes) {
+    if (error) {
       console.error("loadClasses error:", error)
       setClasses([])
       return
     }
 
-    // ✅ 更新学生的名字和头像状态
-    setName(data.name)
-    setAvatar(data.avatar)
-    setTempName(data.name)
-    setTempAvatar(data.avatar)
-
-    const formatted: Class[] = [{
-      id: data.classes.id,
-      user_id: data.classes.user_id,
-      name: data.classes.name,
-      created_at: data.classes.created_at,
-      assignments: Array.isArray(data.classes.assignments)
-        ? data.classes.assignments.map((a: any) => ({
-            id: a.id,
-            class_id: a.class_id,
-            title: a.title,
-            description: a.description,
-            resources: a.resources || [],
-            teacher_user_id: a.teacher_user_id,
-            created_at: a.created_at,
-            submissions: Array.isArray(a.submissions)
-              ? a.submissions.map((s: any) => ({
-                  id: s.id,
-                  assignment_id: s.assignment_id,
-                  student_id: s.student_id,
-                  resources: s.resources || [],
-                  feedback: s.feedback,
-                  created_at: s.created_at
-                }))
-              : []
-          }))
-        : []
-    }]
-
-    setClasses(formatted)
+    setClasses(classesData || [])
   }
 
   // 加入班级逻辑
@@ -276,33 +282,6 @@ export default function StudentPage() {
     }
   }
 
-  // 确保 profile 存在并加载
-  async function ensureProfile(user: any) {
-    const { data } = await supabase
-      .from('students')
-      .select('user_id, name, avatar')
-      .eq('user_id', user.id)
-      .single()
-
-    if (!data) {
-      const defaultName = user.user_metadata?.name || user.email || user.id
-      const defaultAvatar = '/images/default-avatar.png'
-      await supabase.from('students').insert({
-        user_id: user.id,
-        name: defaultName,
-        avatar: defaultAvatar,
-      })
-      setName(defaultName)
-      setAvatar(defaultAvatar)
-      setTempName(defaultName)
-      setTempAvatar(defaultAvatar)
-    } else {
-      setName(data.name)
-      setAvatar(data.avatar)
-      setTempName(data.name)
-      setTempAvatar(data.avatar)
-          }
-        }
 
         // 更新名字或头像
         async function updateProfile(updates: { name?: string; avatar?: string }) {
