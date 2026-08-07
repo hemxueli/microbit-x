@@ -235,7 +235,7 @@ export default function TeacherPage() {
         <div className="flex items-center justify-between mt-8 mb-4">
           <h2 className="text-2xl font-semibold text-teal-700">{t('teacher.classesTable')}</h2>
           <Button className="bg-teal-500 hover:bg-teal-600 text-white" onClick={() => setShowCreateModal(true)}>
-            {t('teacher.enterClass')}
+            {t('teacher.createClass')}
           </Button>
         </div>
 

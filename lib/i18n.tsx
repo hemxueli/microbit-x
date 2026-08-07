@@ -343,6 +343,66 @@ export const dict: Dict = {
   ms: 'Kemas kini Kata Laluan',
   },
 
+  'student.myClass': {
+  en: 'My Class',
+  zh: '我的班级',
+  ms: 'Kelas Saya',
+},
+
+'student.leaveClass': {
+  en: 'Leave Class',
+  zh: '退出班级',
+  ms: 'Keluar Kelas',
+},
+
+'student.teacher': {
+  en: 'Teacher',
+  zh: '老师',
+  ms: 'Cikgu',
+},
+
+'student.assignments': {
+  en: 'Assignments',
+  zh: '作业',
+  ms: 'Kerja Rumah',
+},
+
+'student.noAssignments': {
+  en: 'No assignments yet',
+  zh: '还没有作业',
+  ms: 'Belum ada kerja rumah',
+},
+
+'student.createdAt': {
+  en: 'Created at',
+  zh: '创建时间',
+  ms: 'Dibuat pada',
+},
+
+'student.submitAssignment': {
+  en: 'Submit Assignment',
+  zh: '提交作业',
+  ms: 'Hantar Kerja Rumah',
+},
+
+'student.inputTextOrLink': {
+  en: 'Enter text or link',
+  zh: '输入文字或链接',
+  ms: 'Masukkan teks atau pautan',
+},
+
+'student.commentsFromTeacher': {
+  en: 'Comments from Teacher',
+  zh: '老师的评语',
+  ms: 'Komen daripada Cikgu',
+},
+
+'student.noComments': {
+  en: 'No comments yet',
+  zh: '还没有评语',
+  ms: 'Belum ada komen',
+},
+
   // Common
   'common.back': { en: 'Back', zh: '返回', ms: 'Kembali' },
   'common.save': { en: 'Save', zh: '保存', ms: 'Simpan' },
@@ -1222,18 +1282,6 @@ export const dict: Dict = {
     ms: 'Nama Kelas',
   },
 
-  'student.assignments': {
-    en: 'Assignments',
-    zh: '作业',
-    ms: 'Kerja Rumah',
-  },
-
-  'student.noAssignments': {
-    en: 'No assignments yet',
-    zh: '暂无作业',
-    ms: 'Tiada kerja rumah lagi',
-  },
-
   'student.enterJoinCode': {
     en: 'Enter class code',
     zh: '输入班级代码',
@@ -1244,6 +1292,26 @@ export const dict: Dict = {
     en: 'Confirm Join',
     zh: '确认加入',
     ms: 'Sahkan Sertai',
+  },
+  'student.teacherFeedback': {
+    en: 'Teacher Feedback',
+    zh: '老师评语',
+    ms: 'Maklum Balas Cikgu',
+  },
+  'student.studentSubmission': {
+    en: 'My Submission',
+    zh: '我的提交',
+    ms: 'Hantaran Saya',
+  },
+  'student.studentComment': {
+    en: 'My Comment',
+    zh: '我的评论',
+    ms: 'Komen Saya',
+  },
+  'student.noComment': {
+    en: 'No comments yet',
+    zh: '还没有评论',
+    ms: 'Belum ada komen',
   }
 }
 
