@@ -1068,15 +1068,22 @@ export const dict: Dict = {
     zh: '测验成绩',
     ms: 'Markah Kuiz',
   },
-  'teacher.evaluation': {
-    en: 'Evaluation',
-    zh: '评语',
-    ms: 'Penilaian',
+  'teacher.studentSubmissions': {
+    en: "Student Submissions",
+    zh: '学生提交',
+    ms: 'Penyerahan Pelajar',
   },
-  'teacher.writeEvaluation': {
-    en: 'Write evaluation',
-    zh: '填写评语',
-    ms: 'Tulis penilaian',
+
+  'teacher.noSubmissions': {
+    en: "No student has submitted yet",
+    zh: '还没有学生提交',
+    ms: 'Belum ada pelajar menyerahkan tugasan',
+  },
+
+  'teacher.viewSubmissions': {
+    en: "View Submissions",
+    zh: '查看学生提交',
+    ms: 'Lihat Penyerahan',
   },
   'teacher.noStudents': {
     en: 'No students in this class yet',
