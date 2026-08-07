@@ -41,7 +41,7 @@ export default function ResetPasswordPage() {
       setMessage(dict['reset.success'][lang])
       // 延迟 1.5 秒后跳转到登录页
       setTimeout(() => {
-        router.push('/login')
+        router.push('/sign-in')
       }, 1500)
     }
   }
