@@ -1,47 +1,5 @@
 'use client'
 
-interface Submission {
-  id: string;
-  file_url: string;
-  feedback: string | null;
-  created_at: string;
-}
-
-interface assignments {
-  id: number
-  title: string
-  description: string
-  resources: string[]
-  teacher_user_id: string
-  created_at: string
-}
-
-interface StudentClass {
-  id: string;
-  name: string;
-  assignments: assignments[];
-}
-
-interface ClassesResponse {
-  class_id: string;
-  classes: {
-    id: string;
-    name: string;
-    assignments: {
-      id: string;
-      title: string;
-      description: string;
-      file_url: string | null;
-      submissions: {
-        id: string;
-        file_url: string;
-        feedback: string | null;
-        created_at: string;
-      }[];
-    }[];
-  };
-}
-
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -60,12 +18,6 @@ export default function StudentPage() {
   const [user, setUser] = useState<any>(null)
   const [showLangModal, setShowLangModal] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
-  const [classes, setClasses] = useState<StudentClass[]>([])
-  const [showJoinClassModal, setShowJoinClassModal] = useState(false)
-  const [joinCode, setJoinCode] = useState('')
-  const [selectedAssignment, setSelectedAssignment] = useState<any>(null)
-  const [fileUrl, setFileUrl] = useState('')
-  const [textContent, setTextContent] = useState('')
 
   // 名字和头像状态（保留你的 const）
   const [name, setName] = useState("")
@@ -85,7 +37,6 @@ export default function StudentPage() {
     '/images/savatar6.png',
   ]
 
-  // 加载用户并初始化
   // 加载用户并初始化 + 实时订阅
   useEffect(() => {
     const loadUser = async () => {
@@ -93,67 +44,7 @@ export default function StudentPage() {
       if (user) {
         setUser(user)
         await ensureProfile(user)   // 👈 确保 profile 存在
-        await loadClasses(user)     // 👈 加载班级
-
-        // ✅ 查学生的班级 ID
-        const { data: student } = await supabase
-          .from('students')
-          .select('class_id')
-          .eq('user_id', user.id)
-          .maybeSingle()
-
-        if (student?.class_id) {
-          // ✅ 订阅 assignments 表变化
-          const assignmentChannel = supabase
-            .channel('assignments-changes')
-            .on(
-              'postgres_changes',
-              {
-                event: '*',
-                schema: 'public',
-                table: 'assignments',
-                filter: `class_id=eq.${student.class_id}`,
-              },
-              () => loadClasses(user)
-            )
-            .subscribe()
-
-          // ✅ 订阅 submissions 表变化
-          const submissionChannel = supabase
-            .channel('submissions-changes')
-            .on(
-              'postgres_changes',
-              {
-                event: '*',
-                schema: 'public',
-                table: 'submissions',
-              },
-              () => loadClasses(user)
-            )
-            .subscribe()
-
-          // ✅ 订阅 quiz_results 表变化（测验成绩）
-          const quizChannel = supabase
-            .channel('quiz-results-changes')
-            .on(
-              'postgres_changes',
-              {
-                event: '*',
-                schema: 'public',
-                table: 'quiz_results',
-                filter: `student_id=eq.${user.id}`, // 只监听当前学生的成绩
-              },
-              () => loadClasses(user)
-            )
-            .subscribe()
-
-          // 清理订阅
-          return () => {
-            supabase.removeChannel(assignmentChannel)
-            supabase.removeChannel(submissionChannel)
-            supabase.removeChannel(quizChannel)
-          }
-        }
+        
       } else {
         router.push("/sign-in")
       }
@@ -161,105 +52,6 @@ export default function StudentPage() {
     loadUser()
   }, [])
 
-  // 加载学生已加入的班级
-  async function loadClasses(user: any) {
-    const { data: student, error: studentError } = await supabase
-      .from('students')
-      .select('class_id')
-      .eq('user_id', user.id)
-      .maybeSingle()
-
-    if (studentError || !student?.class_id) {
-      setClasses([])
-      return
-    }
-
-    const { data: cls } = await supabase
-      .from('classes')
-      .select(`
-        id,
-        name,
-        assignments (
-          id,
-          title,
-          description,
-          file_url,
-          submissions (
-            id,
-            file_url,
-            feedback,
-            created_at
-          )
-        )
-      `)
-      .eq('id', student.class_id)
-
-    const formatted: StudentClass[] = (cls || []).map((c: any) => ({
-      id: c.id,
-      name: c.name,
-      assignments: c.assignments.map((a: any) => ({
-        id: a.id,
-        title: a.title,
-        description: a.description,
-        file_url: a.file_url,
-        submissions: a.submissions || []
-      }))
-    }))
-
-    setClasses(formatted)
-  }
-
-  // 加入班级逻辑
-  async function joinClass() {
-    if (!joinCode.trim() || !user?.id) {
-      alert("Please enter a class code.")
-      return
-    }
-
-    const { data: cls } = await supabase
-      .from('classes')
-      .select('id, name, join_code')
-      .eq('join_code', joinCode.trim())
-      .maybeSingle()
-
-    if (!cls) {
-      alert('Invalid class code.')
-      return
-    }
-
-    const { error } = await supabase
-      .from('students')
-      .update({ class_id: cls.id })
-      .eq('user_id', user.id)
-
-    if (error) {
-      alert(error.message)
-    } else {
-      alert(`${t('student.joinedClass')}: ${cls.name}`)
-      setShowJoinClassModal(false)
-      setJoinCode('')
-      await loadClasses(user)
-    }
-  }
-
-  // 学生提交作业
-  async function submitAssignment() {
-    if (!selectedAssignment) return
-    const { error } = await supabase.from('submissions').insert({
-      assignment_id: selectedAssignment.id,
-      student_id: user.id, // ⚠️ 如果你有 students 表里的真实 id，可以替换
-      file_url: fileUrl,
-      feedback: textContent
-    })
-    if (!error) {
-      alert("提交成功！")
-      setSelectedAssignment(null)
-      setFileUrl('')
-      setTextContent('')
-    } else {
-      alert("提交失败: " + error.message)
-    }
-  }
 
   // 确保 profile 存在并加载
   async function ensureProfile(user: any) {
@@ -405,39 +197,6 @@ export default function StudentPage() {
         </div>
       )}
 
-      {/* 加入班级弹窗 */}
-      {showJoinClassModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl"
-              onClick={() => setShowJoinClassModal(false)}
-            >
-              ×
-            </button>
-            <h2 className="text-xl font-bold mb-4 text-teal-700">{t('student.enterJoinCode')}</h2>
-            <input
-              type="text"
-              value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value)}
-              placeholder="Enter class code"
-              className="border border-teal-300 rounded px-2 py-1 w-full mb-4"
-            />
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setShowJoinClassModal(false)}>
-                {t('common.cancel')}
-              </Button>
-              <Button
-                className="bg-teal-500 hover:bg-teal-600 text-white"
-                onClick={joinClass}
-              >
-                {t('student.confirmJoin')}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 页面主体 */}
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 py-12 md:py-20">
@@ -516,52 +275,6 @@ export default function StudentPage() {
               </div>
             ))}
           </div>
-          
-          {/* Class 区块 */}
-          <div className="mt-12">  
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">{t('student.classes')}</h2>
-              <Button
-                className="bg-teal-500 hover:bg-teal-600 text-white"
-                onClick={() => setShowJoinClassModal(true)}
-              >
-                {t('student.joinClass')}
-              </Button>
-            </div>
-
-            {/* 班级卡片区 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {classes.length === 0 ? (
-                <div className="col-span-3 text-gray-500 italic text-center">
-                  {t('student.noClasses')}
-                </div>
-              ) : (
-                classes.map((cls) => (
-                  <div
-                    key={cls.id}
-                    className="relative h-[280px] rounded-lg shadow-md overflow-hidden cursor-pointer group bg-teal-100"
-                  >
-                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4">
-                      <span className="text-white text-2xl font-bold mb-2 group-hover:scale-110 transition">
-                        {cls.name}
-                      </span>
-                      {cls.assignments.length === 0 ? (
-                        <span className="text-gray-200 italic">{t('student.noAssignments')}</span>
-                      ) : (
-                        <ul className="text-white text-sm list-disc list-inside text-left">
-                          {cls.assignments.map((a) => (
-                            <li key={a.id}>
-                              <span className="font-semibold">{a.title}</span> – {a.description}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
         </section>
       </main>
 
@@ -576,50 +289,6 @@ export default function StudentPage() {
       {/* AI Chatbot */}
       <AiChatWidget defaultLanguage="en"
       />
-
-      {/* 作业弹窗 */}
-      {selectedAssignment && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={() => setSelectedAssignment(null)}
-            >
-              ✕
-            </button>
-
-            <h2 className="text-xl font-bold mb-2">{selectedAssignment.title}</h2>
-            <p className="mb-2">{selectedAssignment.description}</p>
-            {selectedAssignment.file_url && (
-              <a
-                href={selectedAssignment.file_url}
-                target="_blank"
-                className="text-teal-600 underline mb-4 block"
-              >
-                下载老师文件
-              </a>
-            )}
-
-            {/* 学生提交区 */}
-            <input
-              type="text"
-              value={fileUrl}
-              onChange={(e) => setFileUrl(e.target.value)}
-              placeholder="上传文件路径"
-              className="border rounded px-2 py-1 w-full mb-3"
-            />
-            <textarea
-              value={textContent}
-              onChange={(e) => setTextContent(e.target.value)}
-              placeholder="输入文字内容"
-              className="border rounded px-2 py-1 w-full mb-3"
-            />
-            <Button className="bg-teal-500 text-white w-full" onClick={submitAssignment}>
-              提交作业
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* 语言选择弹窗 */}
       {showLangModal && (
