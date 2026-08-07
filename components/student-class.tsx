@@ -62,7 +62,7 @@ export default function StudentClass({ user }: { user: any }) {
 
     const { data: assignmentData } = await supabase
       .from('assignments')
-      .select('id, title, description, created_at, resources, feedback')
+      .select('id, title, description, created_at, resources')
       .eq('class_id', cls.id)
 
     setAssignments(assignmentData || [])
