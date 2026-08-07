@@ -24,7 +24,6 @@ interface Class {
   id: string        // ✅ 用 id
   user_id: string
   name: string
-  avatar: string
   created_at: string
   assignments: Assignment[]
 }
@@ -144,7 +143,6 @@ export default function StudentPage() {
           id,
           user_id,
           name,
-          avatar,
           created_at,
           assignments (
             id,
@@ -178,7 +176,6 @@ export default function StudentPage() {
       id: data.classes.id,
       user_id: data.classes.user_id,
       name: data.classes.name,
-      avatar: data.classes.avatar,
       created_at: data.classes.created_at,
       assignments: (data.classes.assignments || []).map((a: any) => ({
         id: a.id,
@@ -202,28 +199,33 @@ export default function StudentPage() {
     setClasses(formatted)
   }
 
-  // 加入班级逻辑
-  async function joinClass() {
+  // ✅ 修复后的加入班级逻辑
+  const joinClass = async (): Promise<void> => {
     if (!joinCode.trim() || !user?.id) {
       alert("Please enter a class code.")
       return
     }
 
-    const { data: cls } = await supabase
+    const { data: cls, error: clsError } = await supabase
       .from('classes')
       .select('id, name, join_code')
       .eq('join_code', joinCode.trim())
       .maybeSingle()
+
+    if (clsError) {
+      alert("Error finding class: " + clsError.message)
+      return
+    }
 
     if (!cls) {
       alert('Invalid class code.')
       return
     }
 
+    // 用 upsert 保证学生能加入班级
     const { error } = await supabase
       .from('students')
-      .update({ class_id: cls.id })
-      .eq('user_id', user.id)
+      .upsert({ user_id: user.id, class_id: cls.id })
 
     if (error) {
       alert(error.message)
