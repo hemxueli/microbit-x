@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useI18n, dict } from '@/lib/i18n'
 import { supabase } from '@/lib/supabaseClient'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,15 +17,14 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState('')
   const { lang } = useI18n()
+  const router = useRouter()
 
-  // 确认用户已通过邮件链接进入页面
   useEffect(() => {
     const url = new URL(window.location.href)
     const token = url.searchParams.get('token')
     const email = url.searchParams.get('email')
 
     if (token && email) {
-      // 验证 OTP，确保用户已登录上下文
       supabase.auth.verifyOtp({ email, token, type: 'recovery' })
         .then(({ error }) => {
           if (error) setMessage(error.message)
@@ -39,6 +39,10 @@ export default function ResetPasswordPage() {
       setMessage(error.message)
     } else {
       setMessage(dict['reset.success'][lang])
+      // 延迟 1.5 秒后跳转到登录页
+      setTimeout(() => {
+        router.push('/login')
+      }, 1500)
     }
   }
 
