@@ -11,6 +11,7 @@ import { useI18n } from '@/lib/i18n'
 import { AiChatWidget } from '@/components/ui/ai-chat-widget'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
+import StudentClass from '@/components/student-class'
 
 export default function StudentPage() {
   const { t } = useI18n()
@@ -274,6 +275,11 @@ export default function StudentPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* My Class 区域 */}
+          <div className="mt-12">
+            <StudentClass user={user} />
           </div>
         </section>
       </main>
