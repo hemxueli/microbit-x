@@ -136,17 +136,17 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
 
  // 查看学生作业
-async function handleViewSubmissions(assignmentId: number) {
-  const { data, error } = await supabase
-    .from('submissions')
-    .select('id, resources, feedback, student_id, students(name)')
-    .eq('assignment_id', assignmentId)
+  async function handleViewSubmissions(assignmentId: number) {
+    const { data, error } = await supabase
+      .from('submissions')
+      .select('id, resources, feedback, student_user_id, students(name)')
+      .eq('assignment_id', assignmentId)
 
-  if (!error) {
-    setSubmissions(data || [])
-    setShowSubmissionModal(true)
+    if (!error) {
+      setSubmissions(data || [])
+      setShowSubmissionModal(true)   // ✅ 打开弹窗
+    }
   }
-}
 
   // 添加评论
   async function handleAddComment(submissionId: number, feedback: string) {
@@ -157,7 +157,7 @@ async function handleViewSubmissions(assignmentId: number) {
 
     if (!error) {
       setNewComment('')
-      // 刷新数据
+      // 本地更新
       const updated = submissions.map(s =>
         s.id === submissionId ? { ...s, feedback } : s
       )
