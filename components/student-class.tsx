@@ -60,11 +60,13 @@ export default function StudentClass({ user }: { user: any }) {
       setTeacherInfo(teacher || null)
     }
 
-    const { data: assignmentData } = await supabase
+    const { data: assignmentData, error } = await supabase
       .from('assignments')
-      .select('id, title, description, created_at, resources')
+      .select('id, title, description, resources, created_at')
       .eq('class_id', cls.id)
+      .order('created_at', { ascending: false })
 
+    if (error) console.error(error)
     setAssignments(assignmentData || [])
 
     for (const a of assignmentData || []) {
