@@ -1348,6 +1348,22 @@ export const dict: Dict = {
     en: 'No comments yet',
     zh: '还没有评论',
     ms: 'Belum ada komen',
+  },
+  'student.submit': {
+    en: 'Submit',
+    zh: '提交',
+    ms: 'Hantar',
+  },
+  'student.uploadFile': {
+    en: "Upload File",
+    zh: "上传文件",
+    ms: "Muat naik fail",
+  },
+
+  'student.upload': {
+    en: "Upload",
+    zh: "上传",
+    ms: "Muat naik",
   }
 }
 

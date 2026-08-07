@@ -295,10 +295,10 @@ export default function StudentClass({ user }: { user: any }) {
                       {t('student.upload')}
                     </Button>
 
-                    {/* 上传弹窗 */}
                     {showSubmissionModal && (
                       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                        <div className="bg-white p-6 rounded-lg shadow-xl w-[500px] h-[400px] overflow-y-auto relative">
+                        <div className="bg-white p-6 rounded-lg shadow-xl w-[500px] h-[500px] flex flex-col relative">
+                          {/* 关闭按钮 */}
                           <button
                             className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                             onClick={() => setShowSubmissionModal(false)}
@@ -306,32 +306,62 @@ export default function StudentClass({ user }: { user: any }) {
                             ✖
                           </button>
 
+                          {/* 标题 */}
                           <h2 className="text-xl font-bold mb-4 text-teal-700">
                             {t('student.submitAssignment')}
                           </h2>
 
-                          <input
-                            type="text"
-                            placeholder={t('student.inputTextOrLink')}
-                            value={submissionText}
-                            onChange={(e) => setSubmissionText(e.target.value)}
-                            className="border rounded px-2 py-1 w-full mb-2"
-                          />
-                          <input
-                            type="file"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={(e) => setSubmissionFile(e.target.files?.[0] || null)}
-                            className="mb-2"
-                          />
-                          <Button
-                            className="bg-teal-500 text-white w-full"
-                            onClick={() => {
-                              submitAssignment(a.id)
-                              setShowSubmissionModal(false)
-                            }}
-                          >
-                            {t('student.submitAssignment')}
-                          </Button>
+                          {/* 内容区：自动拉长输入框 + 文件上传 */}
+                          <div className="flex-1 overflow-y-auto">
+                            {/* 自动拉长输入框 */}
+                            <textarea
+                              placeholder={t('student.inputTextOrLink')}
+                              value={submissionText}
+                              onChange={(e) => setSubmissionText(e.target.value)}
+                              onInput={(e) => {
+                                const target = e.target as HTMLTextAreaElement
+                                target.style.height = "auto"
+                                target.style.height = target.scrollHeight + "px"
+                              }}
+                              className="border rounded px-2 py-2 w-full mb-4 resize-none overflow-hidden min-h-[120px]"
+                              rows={3}
+                            />
+
+                            {/* 美化文件上传按钮 */}
+                            <div className="flex flex-col items-start mb-4">
+                              <label
+                                htmlFor="fileUpload"
+                                className="flex items-center justify-center px-4 py-2 border border-teal-300 rounded-lg cursor-pointer hover:bg-teal-50 text-teal-700 font-medium"
+                              >
+                                📂 {t('student.uploadFile')}
+                              </label>
+                              <input
+                                id="fileUpload"
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                className="hidden"
+                                onChange={(e) => setSubmissionFile(e.target.files?.[0] || null)}
+                              />
+                              {submissionFile && (
+                                <p className="text-sm text-gray-600 mt-2">
+                                  ✅ {submissionFile.name} ({(submissionFile.size / 1024).toFixed(1)} KB)
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 底部按钮固定 */}
+                          <div className="mt-4">
+                            <Button
+                              className="bg-teal-500 text-white w-full"
+                              onClick={() => {
+                                submitAssignment(a.id)
+                                setShowSubmissionModal(false)
+                              }}
+                            >
+                              {t('student.submit')} {/* 这里可以翻译成 Hantar */}
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     )}
