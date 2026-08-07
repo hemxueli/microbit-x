@@ -7,7 +7,7 @@ export default function Page({ params }: { params: { topic: string; lang: string
 
   return (
     <PdfPage
-      title="Pembelajaran Muzik Micro:bit"
+      title="Pengetahuan Muzik Micro:bit"
       subtitle="Belajar muzik micro:bit"
       pdfPath={`/slides/music-ms.pdf`}
       websitePath={`https://addjkahub.my.canva.site/pengenalan-makecode-untuk-micro-bit-muzik`}

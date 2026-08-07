@@ -179,8 +179,16 @@ export default function StudentClass({ user }: { user: any }) {
       <h2 className="text-2xl font-bold mb-6">{t('student.myClass')}</h2>
 
       {!classInfo ? (
-        <div className="rounded-lg shadow-md bg-white p-6 flex justify-end">
-          <Button onClick={() => setShowJoinModal(true)}>{t('student.joinClass')}</Button>
+      <div className="rounded-lg shadow-md bg-white p-6 flex justify-between items-center">
+        {/* 左边显示没有班级的提示 */}
+        <span className="text-gray-500 italic">
+          {t('student.noClasses')}
+        </span>
+
+        {/* 右边按钮 */}
+        <Button onClick={() => setShowJoinModal(true)}>
+          {t('student.joinClass')}
+        </Button>
 
           {showJoinModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black/50">

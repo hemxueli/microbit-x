@@ -1369,6 +1369,28 @@ export const dict: Dict = {
     en: "Materials",
     zh: "资料",
     ms: "Bahan",
+  },
+  'teacher.studentText': {
+    en: "Student Text",
+    zh: "学生内容",
+    ms: "Teks Pelajar",
+  },
+
+  'teacher.comment': {
+    en: "Your Comment",
+    zh: "您的评论",
+    ms: "Komen Anda",
+  },
+
+  'teacher.saveComment': {
+    en: "Send Comment",
+    zh: "发送评论",
+    ms: "Hantar Komen",
+  },
+  'teacher.teachingContent': {
+    en: "Teaching Content",
+    zh: "教学内容",
+    ms: "Kandungan Pengajaran",
   }
 }
 

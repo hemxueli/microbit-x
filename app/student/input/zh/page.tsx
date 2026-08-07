@@ -7,7 +7,7 @@ export default function Page({ params }: { params: { topic: string; lang: string
 
   return (
     <PdfPage
-      title="Micro:bit 输入学习"
+      title="Micro:bit 输入知识"
       subtitle="学习 micro:bit 输入"
       pdfPath={`/slides/input-zh.pdf`}
       websitePath={`https://addjkahub.my.canva.site/dahq2bz9ffo`}
