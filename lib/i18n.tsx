@@ -1386,6 +1386,11 @@ export const dict: Dict = {
     en: "Send Comment",
     zh: "发送评论",
     ms: "Hantar Komen",
+  },
+  'teacher.teachingContent': {
+    en: "Teaching Content",
+    zh: "教学内容",
+    ms: "Kandungan Pengajaran",
   }
 }
 

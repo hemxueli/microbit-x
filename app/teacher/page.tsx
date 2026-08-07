@@ -235,7 +235,7 @@ export default function TeacherPage() {
         <p className="text-gray-600 mb-6">{t('teacher.welcomeSubtitle')}</p>
 
         {/* 学习内容卡片区 */}
-        <h2 className="text-2xl font-bold mb-6">{t('student.learningContent')}</h2>
+        <h2 className="text-2xl font-bold mb-6">{t('teacher.teachingContent')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { key: 'basic', image: '/images/basic.png' },
@@ -471,7 +471,7 @@ export default function TeacherPage() {
           </div>
         </div>
       )}
-      
+
       {/* 底部版权栏 */}
       <footer className="border-t border-teal-200 py-6 bg-teal-50">
         <div className="flex w-full items-center justify-between px-6 text-sm text-gray-600">
