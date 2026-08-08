@@ -18,6 +18,7 @@ export default function StudentClass({ user }: { user: any }) {
   const [currentAssignmentId, setCurrentAssignmentId] = useState<number | null>(null)
   const [submissionText, setSubmissionText] = useState('')
   const [submissionFile, setSubmissionFile] = useState<File | null>(null)
+  const [submissionLink, setSubmissionLink] = useState('')
 
   useEffect(() => {
     if (user) loadClass(user)
@@ -137,12 +138,9 @@ export default function StudentClass({ user }: { user: any }) {
   }
 
   async function submitAssignment(assignmentId: number) {
-    const resources: string[] = []
+    const resources: { type: string; url: string; name?: string }[] = []
 
-    if (submissionText.trim()) {
-      resources.push(submissionText.trim())
-    }
-
+    // 如果有文件上传
     if (submissionFile) {
       const filePath = `submissions/${user.id}-${Date.now()}-${submissionFile.name}`
       const { error: uploadError } = await supabase.storage
@@ -150,26 +148,43 @@ export default function StudentClass({ user }: { user: any }) {
         .upload(filePath, submissionFile)
 
       if (uploadError) {
-        alert("文件上传失败: " + uploadError.message)
+        alert("File Upload Failed: " + uploadError.message)
         return
       }
+
       const { data } = supabase.storage.from('submissions').getPublicUrl(filePath)
-      resources.push(data.publicUrl)
+      resources.push({
+        type: "file",
+        url: data.publicUrl,
+        name: submissionFile.name
+      })
     }
 
+    // 如果有链接输入
+    if (submissionLink.trim()) {
+      resources.push({
+        type: "link",
+        url: submissionLink.trim(),
+        name: "参考链接"
+      })
+    }
+
+    // 插入数据库
     const { error } = await supabase.from('submissions').insert({
       assignment_id: assignmentId,
-      student_user_id: user.id,   // ✅ 改成 student_user_id
-      resources,
+      student_user_id: user.id,
+      text: submissionText.trim(),   // ✅ 文字单独放在 text
+      resources,                     // ✅ 文件和链接放在 resources(JSONB)
       feedback: null
     })
 
     if (error) {
-      alert("提交失败: " + error.message)
+      alert("Upload Failed: " + error.message)
     } else {
       alert(t('student.submitAssignment'))
       setSubmissionText('')
       setSubmissionFile(null)
+      setSubmissionLink('')
       await loadClass(user)
     }
   }
@@ -360,6 +375,19 @@ export default function StudentClass({ user }: { user: any }) {
                                   ✅ {submissionFile.name} ({(submissionFile.size / 1024).toFixed(1)} KB)
                                 </p>
                               )}
+                            </div>
+                            {/* 上传链接输入框 */}
+                            <div className="flex flex-col items-start mb-4">
+                              <label className="flex items-center justify-center px-4 py-2 border border-teal-300 rounded-lg cursor-pointer hover:bg-teal-50 text-teal-700 font-medium">
+                                🔗 {t('student.uploadLink')}
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="https://"
+                                value={submissionLink}
+                                onChange={(e) => setSubmissionLink(e.target.value)}
+                                className="border rounded px-2 py-2 w-full mt-2"
+                              />
                             </div>
                           </div>
 
