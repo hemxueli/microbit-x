@@ -19,6 +19,7 @@ export default function StudentClass({ user }: { user: any }) {
   const [submissionText, setSubmissionText] = useState('')
   const [submissionFile, setSubmissionFile] = useState<File | null>(null)
   const [submissionLink, setSubmissionLink] = useState('')
+  const [showLinkModal, setShowLinkModal] = useState(false)
 
   useEffect(() => {
     if (user) loadClass(user)
