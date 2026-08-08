@@ -18,6 +18,41 @@ export default function StudentClass({ user }: { user: any }) {
   const [currentAssignmentId, setCurrentAssignmentId] = useState<number | null>(null)
   const [submissionText, setSubmissionText] = useState('')
   const [submissionFile, setSubmissionFile] = useState<File | null>(null)
+  const [submissionLink, setSubmissionLink] = useState('')
+  const [showLinkModal, setShowLinkModal] = useState(false)
+
+  {showLinkModal && (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-[400px] flex flex-col relative">
+        {/* 关闭按钮 */}
+        <button
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+          onClick={() => setShowLinkModal(false)}
+        >
+          ✖
+        </button>
+
+        <h2 className="text-lg font-bold mb-4 text-teal-700">
+          {t('student.uploadLink')}
+        </h2>
+
+        <input
+          type="text"
+          placeholder="https://"
+          value={submissionLink}
+          onChange={(e) => setSubmissionLink(e.target.value)}
+          className="border rounded px-2 py-2 w-full mb-4"
+        />
+
+        <Button
+          className="bg-teal-500 text-white w-full"
+          onClick={() => setShowLinkModal(false)}
+        >
+          {t('student.confirm')}
+        </Button>
+      </div>
+    </div>
+  )}
 
   useEffect(() => {
     if (user) loadClass(user)
@@ -307,7 +342,6 @@ export default function StudentClass({ user }: { user: any }) {
                       {t('student.upload')}
                     </Button>
 
-
                     {showSubmissionModal && (
                       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                         <div className="bg-white p-6 rounded-lg shadow-xl w-[500px] h-[500px] flex flex-col relative">
@@ -328,7 +362,7 @@ export default function StudentClass({ user }: { user: any }) {
                           <div className="flex-1 overflow-y-auto">
                             {/* 自动拉长输入框 */}
                             <textarea
-                              placeholder={t('student.inputTextOrLink')}
+                              placeholder={t('student.inputText')}
                               value={submissionText}
                               onChange={(e) => setSubmissionText(e.target.value)}
                               onInput={(e) => {
@@ -340,7 +374,7 @@ export default function StudentClass({ user }: { user: any }) {
                               rows={3}
                             />
 
-                            {/* 美化文件上传按钮 */}
+                            {/* 文件上传按钮 */}
                             <div className="flex flex-col items-start mb-4">
                               <label
                                 htmlFor="fileUpload"
@@ -360,6 +394,16 @@ export default function StudentClass({ user }: { user: any }) {
                                   ✅ {submissionFile.name} ({(submissionFile.size / 1024).toFixed(1)} KB)
                                 </p>
                               )}
+                            </div>
+
+                            {/* 上传链接按钮 */}
+                            <div className="flex flex-col items-start mb-4">
+                              <button
+                                onClick={() => setShowLinkModal(true)}
+                                className="flex items-center justify-center px-4 py-2 border border-teal-300 rounded-lg cursor-pointer hover:bg-teal-50 text-teal-700 font-medium"
+                              >
+                                🔗 {t('student.uploadLink')}
+                              </button>
                             </div>
                           </div>
 
