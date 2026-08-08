@@ -138,14 +138,21 @@ export default function StudentClass({ user }: { user: any }) {
     }
   }
 
+  // 工具函数：清理文件名，避免 Supabase Invalid key 错误
+  function sanitizeFileName(name: string) {
+    return name.replace(/[^a-zA-Z0-9._-]/g, "_") // 非法字符替换成 _
+  }
+
   async function submitAssignment(assignmentId: number) {
     const resources: { type: string; url: string; name?: string }[] = []
 
     // 文件上传
     if (submissionFile) {
-      const filePath = `submissions/${user.id}-${Date.now()}-${submissionFile.name}`
+      const safeName = sanitizeFileName(submissionFile.name)
+      const filePath = `submissions/${user.id}-${Date.now()}-${safeName}`
+
       const { error: uploadError } = await supabase.storage
-        .from('submissions')
+        .from("submissions")
         .upload(filePath, submissionFile)
 
       if (uploadError) {
@@ -153,25 +160,25 @@ export default function StudentClass({ user }: { user: any }) {
         return
       }
 
-      const { data } = supabase.storage.from('submissions').getPublicUrl(filePath)
+      const { data } = supabase.storage.from("submissions").getPublicUrl(filePath)
       resources.push({
         type: "file",
         url: data.publicUrl,
-        name: submissionFile.name
+        name: submissionFile.name // 保留原始文件名给老师端显示
       })
     }
 
-    // 链接保存（保持原本的样子）
+    // 链接保存（保持原样）
     if (submissionLink.trim()) {
       resources.push({
         type: "link",
         url: submissionLink.trim(),
-        name: submissionLink.trim()   // ✅ 链接直接显示原样
+        name: submissionLink.trim() // ✅ 链接直接显示原样
       })
     }
 
     // 插入数据库
-    const { error } = await supabase.from('submissions').insert({
+    const { error } = await supabase.from("submissions").insert({
       assignment_id: assignmentId,
       student_user_id: user.id,
       text: submissionText.trim(),   // ✅ 文字单独存到 text
@@ -182,10 +189,10 @@ export default function StudentClass({ user }: { user: any }) {
     if (error) {
       alert("提交失败: " + error.message)
     } else {
-      alert(t('student.submitAssignment'))
-      setSubmissionText('')
+      alert(t("student.submitAssignment"))
+      setSubmissionText("")
       setSubmissionFile(null)
-      setSubmissionLink('')
+      setSubmissionLink("")
       await loadClass(user)
     }
   }
