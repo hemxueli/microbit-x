@@ -21,39 +21,6 @@ export default function StudentClass({ user }: { user: any }) {
   const [submissionLink, setSubmissionLink] = useState('')
   const [showLinkModal, setShowLinkModal] = useState(false)
 
-  {showLinkModal && (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-[400px] flex flex-col relative">
-        {/* 关闭按钮 */}
-        <button
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-          onClick={() => setShowLinkModal(false)}
-        >
-          ✖
-        </button>
-
-        <h2 className="text-lg font-bold mb-4 text-teal-700">
-          {t('student.uploadLink')}
-        </h2>
-
-        <input
-          type="text"
-          placeholder="https://"
-          value={submissionLink}
-          onChange={(e) => setSubmissionLink(e.target.value)}
-          className="border rounded px-2 py-2 w-full mb-4"
-        />
-
-        <Button
-          className="bg-teal-500 text-white w-full"
-          onClick={() => setShowLinkModal(false)}
-        >
-          {t('student.confirm')}
-        </Button>
-      </div>
-    </div>
-  )}
-
   useEffect(() => {
     if (user) loadClass(user)
   }, [user])
@@ -429,6 +396,39 @@ export default function StudentClass({ user }: { user: any }) {
               ))}
             </div>
           )}
+        </div>
+      )}
+      
+      {showLinkModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-[400px] flex flex-col relative">
+            {/* 关闭按钮 */}
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowLinkModal(false)}
+            >
+              ✖
+            </button>
+
+            <h2 className="text-lg font-bold mb-4 text-teal-700">
+              {t('student.uploadLink')}
+            </h2>
+
+            <input
+              type="text"
+              placeholder="https://"
+              value={submissionLink}
+              onChange={(e) => setSubmissionLink(e.target.value)}
+              className="border rounded px-2 py-2 w-full mb-4"
+            />
+
+            <Button
+              className="bg-teal-500 text-white w-full"
+              onClick={() => setShowLinkModal(false)}
+            >
+              {t('student.confirm')}
+            </Button>
+          </div>
         </div>
       )}
     </div>
