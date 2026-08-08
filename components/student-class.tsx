@@ -137,14 +137,10 @@ export default function StudentClass({ user }: { user: any }) {
       setAssignments([])
     }
   }
-
   async function submitAssignment(assignmentId: number) {
-    const resources: string[] = []
+    const resources: { type: string; url: string; name?: string }[] = []
 
-    if (submissionText.trim()) {
-      resources.push(submissionText.trim())
-    }
-
+    // 文件上传
     if (submissionFile) {
       const filePath = `submissions/${user.id}-${Date.now()}-${submissionFile.name}`
       const { error: uploadError } = await supabase.storage
@@ -152,17 +148,33 @@ export default function StudentClass({ user }: { user: any }) {
         .upload(filePath, submissionFile)
 
       if (uploadError) {
-        alert("文件上传失败: " + uploadError.message)
+        alert("File Upload Failed: " + uploadError.message)
         return
       }
+
       const { data } = supabase.storage.from('submissions').getPublicUrl(filePath)
-      resources.push(data.publicUrl)
+      resources.push({
+        type: "file",
+        url: data.publicUrl,
+        name: submissionFile.name
+      })
     }
 
+    // 链接保存
+    if (submissionLink.trim()) {
+      resources.push({
+        type: "link",
+        url: submissionLink.trim(),
+        name: "参考链接"
+      })
+    }
+
+    // 插入数据库
     const { error } = await supabase.from('submissions').insert({
       assignment_id: assignmentId,
-      student_user_id: user.id,   // ✅ 改成 student_user_id
-      resources,
+      student_user_id: user.id,
+      text: submissionText.trim(),   // ✅ 文字单独存到 text
+      resources,                     // ✅ 文件和链接存到 resources(JSONB)
       feedback: null
     })
 
@@ -172,6 +184,7 @@ export default function StudentClass({ user }: { user: any }) {
       alert(t('student.submitAssignment'))
       setSubmissionText('')
       setSubmissionFile(null)
+      setSubmissionLink('')
       await loadClass(user)
     }
   }
