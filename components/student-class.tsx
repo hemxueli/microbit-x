@@ -148,7 +148,7 @@ export default function StudentClass({ user }: { user: any }) {
         .upload(filePath, submissionFile)
 
       if (uploadError) {
-        alert("File Upload Failed: " + uploadError.message)
+        alert("文件上传失败: " + uploadError.message)
         return
       }
 
@@ -188,6 +188,7 @@ export default function StudentClass({ user }: { user: any }) {
       await loadClass(user)
     }
   }
+
 
   return (
     <div className="mt-12">
