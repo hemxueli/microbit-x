@@ -278,9 +278,9 @@ export const dict: Dict = {
   },
 
   'forgot.button': {
-    en: 'Send Reset Code',
-    zh: '发送验证码',
-    ms: 'Hantar Kod Reset',
+    en: 'Reset Password',
+    zh: '重置密码',
+    ms: 'Set Semula Kata Laluan',
   },
 
   'forgot.success': {
