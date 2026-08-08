@@ -75,7 +75,7 @@ export default function StudentClass({ user }: { user: any }) {
     for (const a of assignmentData || []) {
       const { data: subs } = await supabase
         .from('submissions')
-        .select('id, resources, feedback, created_at')
+        .select('id, text, resources, feedback, created_at')
         .eq('assignment_id', a.id)
         .eq('student_user_id', user.id)   // ✅ 改成 student_user_id
       setSubmissions(prev => ({ ...prev, [a.id]: subs || [] }))
@@ -137,6 +137,7 @@ export default function StudentClass({ user }: { user: any }) {
       setAssignments([])
     }
   }
+
   async function submitAssignment(assignmentId: number) {
     const resources: { type: string; url: string; name?: string }[] = []
 
@@ -160,12 +161,12 @@ export default function StudentClass({ user }: { user: any }) {
       })
     }
 
-    // 链接保存
+    // 链接保存（保持原本的样子）
     if (submissionLink.trim()) {
       resources.push({
         type: "link",
         url: submissionLink.trim(),
-        name: "参考链接"
+        name: submissionLink.trim()   // ✅ 链接直接显示原样
       })
     }
 
@@ -188,7 +189,6 @@ export default function StudentClass({ user }: { user: any }) {
       await loadClass(user)
     }
   }
-
 
   return (
     <div className="mt-12">
@@ -284,25 +284,52 @@ export default function StudentClass({ user }: { user: any }) {
                   {submissions[a.id]?.map((s: any) => (
                     <div key={s.id} className="mt-2 p-2 border rounded bg-gray-50">
                       <p><strong>{t('student.studentSubmission')}:</strong></p>
-                      {s.resources?.map((res: string, idx: number) => {
-                        const isImage = res.match(/\.(jpg|jpeg|png|gif)$/i)
-                        const isPdf = res.match(/\.pdf$/i)
+
+                      {/* 学生上传的文字说明 */}
+                      {s.text && (
+                        <p className="text-gray-700 mb-2">
+                          <strong>{t('teacher.studentText')}:</strong> {s.text}
+                        </p>
+                      )}
+
+                      {/* 学生上传的资源 */}
+                      {s.resources?.map((res: any, idx: number) => {
+                        const url = typeof res === "string" ? res : res.url
+                        const name = typeof res === "string" ? res : res.name
+
+                        const isImage = typeof url === "string" && url.match(/\.(jpg|jpeg|png|gif)$/i)
+                        const isPdf = typeof url === "string" && url.match(/\.pdf$/i)
+
                         return (
                           <div key={idx} className="mt-2">
                             {isImage ? (
-                              <img src={res} alt={`Submission ${idx + 1}`} className="w-full max-w-md rounded border" />
+                              <img
+                                src={url}
+                                alt={name || `Submission ${idx + 1}`}
+                                className="w-full max-w-md rounded border"
+                              />
                             ) : isPdf ? (
-                              <iframe src={res} className="w-full h-64 border rounded" />
+                              <iframe
+                                src={url}
+                                className="w-full h-64 border rounded"
+                              />
                             ) : (
-                              <a href={res} target="_blank" className="text-blue-600 underline block">
-                                🔗 {res}
+                              <a
+                                href={url}
+                                target="_blank"
+                                className="text-blue-600 underline block"
+                              >
+                                🔗 {name || url}
                               </a>
                             )}
                           </div>
                         )
                       })}
+
+                      {/* 教师反馈 */}
                       <p className="mt-2">
-                        <strong>{t('student.teacherFeedback')}:</strong> {s.feedback || t('student.noComment')}
+                        <strong>{t('student.teacherFeedback')}:</strong>{" "}
+                        {s.feedback || t('student.noComment')}
                       </p>
                     </div>
                   ))}
