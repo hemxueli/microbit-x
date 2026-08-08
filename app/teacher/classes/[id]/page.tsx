@@ -63,113 +63,164 @@ export default function ClassDetailPage({ user }: { user: any }) {
   const [editingAssignmentId, setEditingAssignmentId] = useState<number | null>(null)
   
   async function loadData() {
-  // 查询学生
-    const { data: studentData, error } = await supabase
-      .from('students')
-      .select('user_id, name, avatar, class_id')
-      .eq('class_id', classId)
+    try {
+      // 查询学生
+      const { data: studentData, error: studentError } = await supabase
+        .from('students')
+        .select('user_id, name, avatar, class_id')
+        .eq('class_id', classId)
 
-    console.log("classId 参数:", classId)
-    console.log("学生数据:", studentData, error)
+      if (studentError) {
+        console.error("❌ 学生查询失败:", studentError)
+        setStudents([])
+      } else {
+        setStudents(studentData || [])
+      }
 
-    setStudents(studentData || [])
+      // 查询作业
+      const { data: assignmentRaw, error: assignmentError } = await supabase
+        .from('assignments')
+        .select('id, title, description, resources, created_at, teacher_user_id')
+        .eq('class_id', classId)
 
-    // 查询作业
-    const { data } = await supabase
-      .from('assignments')
-      .select('id, title, description, resources, created_at, teacher_user_id')
-      .eq('class_id', classId)
+      if (assignmentError) {
+        console.error("❌ 作业查询失败:", assignmentError)
+        setAssignments([])
+      } else {
+        const assignmentData = (assignmentRaw ?? []) as any[]
 
-    // ✅ 在这里断言类型
-    const assignmentData = (data ?? []) as assignments[]
+        // 确保 resources 是数组
+        setAssignments(
+          assignmentData.map(a => ({
+            ...a,
+            resources: Array.isArray(a.resources)
+              ? a.resources
+              : (typeof a.resources === 'string'
+                  ? (() => {
+                      try {
+                        return JSON.parse(a.resources)
+                      } catch {
+                        return []
+                      }
+                    })()
+                  : [])
+          }))
+        )
+      }
 
-    // 设置学生
-    setStudents(studentData || [])
+      // 查询班级 join_code
+      const { data: classData, error: classError } = await supabase
+        .from('classes')
+        .select('join_code')
+        .eq('id', classId)
+        .single()
 
-    // 设置作业，确保 resources 是数组
-    setAssignments(
-      assignmentData.map(a => ({
-        ...a,
-        resources: Array.isArray(a.resources)
-          ? a.resources
-          : (typeof a.resources === 'string'
-              ? JSON.parse(a.resources)
-              : [])
-      }))
-    )
-
-    // 查询班级 join_code
-    const { data: classData } = await supabase
-      .from('classes')
-      .select('join_code')
-      .eq('id', classId)
-      .single()
-
-    setJoinCode(classData?.join_code || '')
+      if (classError) {
+        console.error("❌ 班级查询失败:", classError)
+        setJoinCode('')
+      } else {
+        setJoinCode(classData?.join_code || '')
+      }
+    } catch (err) {
+      console.error("❌ loadData 出错:", err)
+    }
   }
 
   useEffect(() => {
     async function getUser() {
-      const { data: { user } } = await supabase.auth.getUser()
-      setCurrentUser(user)
+      const { data: { user }, error } = await supabase.auth.getUser()
+      if (error) {
+        console.error("❌ 获取用户失败:", error)
+      } else {
+        setCurrentUser(user)
+      }
     }
     getUser()
-
     loadData()
   }, [classId, selectedStudent])
 
   // 查询学生成绩
- async function loadQuizResults(userId: string) {
-  const { data, error } = await supabase
-    .from('quiz_results')
-    .select('id, user_id, quiz_theme, answers, score, details, analysis_feedback, created_at')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-
-  if (!error) {
-    setSelectedResults(data.map(r => ({ ...r, lang: 'en' })))
-    setShowResultsModal(true)
-  } else {
-    console.error('Error loading quiz results:', error.message)
-  }
-}
-
-
- // 查看学生作业
-  async function handleViewSubmissions(assignmentId: number) {
+  async function loadQuizResults(userId: string) {
     const { data, error } = await supabase
-      .from('submissions')
-      .select('id, resources, feedback, student_user_id, students(name)')
-      .eq('assignment_id', assignmentId)
+      .from('quiz_results')
+      .select('id, user_id, quiz_theme, answers, score, details, analysis_feedback, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
 
     if (!error) {
-      setSubmissions(data || [])
+      setSelectedResults(data.map(r => ({ ...r, lang: 'en' })))
+      setShowResultsModal(true)
+    } else {
+      console.error('Error loading quiz results:', error.message)
+    }
+  }
+
+  // 查看学生作业
+  async function handleViewSubmissions(assignmentId: number) {
+    try {
+      const { data, error } = await supabase
+        .from('submissions')
+        .select('id, text, resources, feedback, student_user_id, students(name)')
+        .eq('assignment_id', assignmentId)
+
+      if (error) {
+        console.error("❌ 查询作业失败:", error)
+        setSubmissions([])
+        return
+      }
+
+      // 确保 resources 是数组
+      const safeData = (data ?? []).map(s => ({
+        ...s,
+        resources: Array.isArray(s.resources)
+          ? s.resources
+          : (typeof s.resources === 'string'
+              ? (() => {
+                  try {
+                    return JSON.parse(s.resources)
+                  } catch {
+                    return []
+                  }
+                })()
+              : [])
+      }))
+
+      setSubmissions(safeData)
       setShowSubmissionModal(true)   // ✅ 打开弹窗
+    } catch (err) {
+      console.error("❌ handleViewSubmissions 出错:", err)
     }
   }
 
   // 添加评论
   async function handleAddComment(submissionId: number, feedback: string) {
-    const { error } = await supabase
-      .from('submissions')
-      .update({ feedback })
-      .eq('id', submissionId)
+    try {
+      const { error } = await supabase
+        .from('submissions')
+        .update({ feedback })
+        .eq('id', submissionId)
 
-    if (!error) {
+      if (error) {
+        console.error("❌ 添加评论失败:", error)
+        return
+      }
+
       setNewComment('')
       // 本地更新
       const updated = submissions.map(s =>
         s.id === submissionId ? { ...s, feedback } : s
       )
       setSubmissions(updated)
+    } catch (err) {
+      console.error("❌ handleAddComment 出错:", err)
     }
   }
 
   // 工具函数：生成安全的文件路径
   function generateSafeFilePath(classId: string, file: File): string {
-    const ext = file.name.split('.').pop()
+    const ext = file.name.split('.').pop() || "dat"
     const safeName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`
-    return `${classId}/${safeName}`
+    return `submissions/${classId}/${safeName}`
   }
 
   function handleEditAssignment(assignment: assignments) {
@@ -742,40 +793,73 @@ export default function ClassDetailPage({ user }: { user: any }) {
                         👤 {s.students?.name || t('teacher.unknownStudent')}
                       </p>
 
-                      {/* 学生上传的文字 */}
-                      {s.resources && (s.resources as string[])
-                        .filter((r) => !r.endsWith('.pdf') && !r.match(/\.(jpg|jpeg|png|gif)$/i))
-                        .map((text, idx) => (
-                          <p key={idx} className="text-gray-700 mb-2">
-                            <strong>{t('teacher.studentText')}:</strong> {text}
-                          </p>
-                      ))}
+                      {/* 学生上传的文字说明 */}
+                      {s.text && (
+                        <p className="text-gray-700 mb-2">
+                          <strong>{t('teacher.studentText')}:</strong> {s.text}
+                        </p>
+                      )}
 
-                      {/* 学生上传的图片 */}
-                      {s.resources && (s.resources as string[])
-                        .filter((r) => r.match(/\.(jpg|jpeg|png|gif)$/i))
-                        .map((img, idx) => (
-                          <img
-                            key={idx}
-                            src={img}
-                            alt={`Resource ${idx + 1}`}
-                            className="rounded-lg max-h-40 object-cover mb-2"
-                          />
-                      ))}
+                      {/* 学生上传的资源 */}
+                      {s.resources?.map((res: any, idx: number) => {
+                        // 兼容旧数据（字符串）和新数据（对象）
+                        const url = typeof res === "string" ? res : res?.url || ""
+                        const name =
+                          typeof res === "string"
+                            ? res
+                            : (res?.name || (url ? url.split("/").pop() : "未知资源"))
 
-                      {/* 学生上传的 PDF */}
-                      {s.resources && (s.resources as string[])
-                        .filter((r) => r.endsWith('.pdf'))
-                        .map((pdf, idx) => (
-                          <a
-                            key={idx}
-                            href={pdf}
-                            target="_blank"
-                            className="text-blue-600 underline block"
-                          >
-                            📄 {pdf.split('/').pop()}
-                          </a>
-                      ))}
+                        if (!url) {
+                          return (
+                            <div key={idx} className="mt-2 text-red-500">
+                              ⚠️ 无效资源
+                            </div>
+                          )
+                        }
+
+                        if (res.type === "file") {
+                          const isImage = url.match(/\.(jpg|jpeg|png|gif)$/i)
+                          const isPdf = url.match(/\.pdf$/i)
+
+                          if (isImage) {
+                            return (
+                              <img
+                                key={idx}
+                                src={url}
+                                alt={name}
+                                className="rounded-lg max-h-40 object-cover mb-2"
+                              />
+                            )
+                          }
+                          if (isPdf) {
+                            return (
+                              <a
+                                key={idx}
+                                href={url}
+                                target="_blank"
+                                className="text-blue-600 underline block"
+                              >
+                                📄 {name}
+                              </a>
+                            )
+                          }
+                        }
+
+                        if (res.type === "link" || typeof res === "string") {
+                          return (
+                            <a
+                              key={idx}
+                              href={url}
+                              target="_blank"
+                              className="text-blue-600 underline block"
+                            >
+                              🔗 {name}
+                            </a>
+                          )
+                        }
+
+                        return null
+                      })}
 
                       {/* 评论区 */}
                       <div className="mt-3">

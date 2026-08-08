@@ -18,6 +18,8 @@ export default function StudentClass({ user }: { user: any }) {
   const [currentAssignmentId, setCurrentAssignmentId] = useState<number | null>(null)
   const [submissionText, setSubmissionText] = useState('')
   const [submissionFile, setSubmissionFile] = useState<File | null>(null)
+  const [submissionLink, setSubmissionLink] = useState('')
+  const [showLinkModal, setShowLinkModal] = useState(false)
 
   useEffect(() => {
     if (user) loadClass(user)
@@ -73,7 +75,7 @@ export default function StudentClass({ user }: { user: any }) {
     for (const a of assignmentData || []) {
       const { data: subs } = await supabase
         .from('submissions')
-        .select('id, resources, feedback, created_at')
+        .select('id, text, resources, feedback, created_at')
         .eq('assignment_id', a.id)
         .eq('student_user_id', user.id)   // ✅ 改成 student_user_id
       setSubmissions(prev => ({ ...prev, [a.id]: subs || [] }))
@@ -136,40 +138,61 @@ export default function StudentClass({ user }: { user: any }) {
     }
   }
 
+  // 工具函数：清理文件名，避免 Supabase Invalid key 错误
+  function sanitizeFileName(name: string) {
+    return name.replace(/[^a-zA-Z0-9._-]/g, "_") // 非法字符替换成 _
+  }
+
   async function submitAssignment(assignmentId: number) {
-    const resources: string[] = []
+    const resources: { type: string; url: string; name?: string }[] = []
 
-    if (submissionText.trim()) {
-      resources.push(submissionText.trim())
-    }
-
+    // 文件上传
     if (submissionFile) {
-      const filePath = `submissions/${user.id}-${Date.now()}-${submissionFile.name}`
+      const safeName = sanitizeFileName(submissionFile.name)
+      const filePath = `submissions/${user.id}-${Date.now()}-${safeName}`
+
       const { error: uploadError } = await supabase.storage
-        .from('submissions')
+        .from("submissions")
         .upload(filePath, submissionFile)
 
       if (uploadError) {
         alert("文件上传失败: " + uploadError.message)
         return
       }
-      const { data } = supabase.storage.from('submissions').getPublicUrl(filePath)
-      resources.push(data.publicUrl)
+
+      const { data } = supabase.storage.from("submissions").getPublicUrl(filePath)
+      resources.push({
+        type: "file",
+        url: data.publicUrl,
+        name: submissionFile.name // 保留原始文件名给老师端显示
+      })
     }
 
-    const { error } = await supabase.from('submissions').insert({
+    // 链接保存（保持原样）
+    if (submissionLink.trim()) {
+      resources.push({
+        type: "link",
+        url: submissionLink.trim(),
+        name: submissionLink.trim() // ✅ 链接直接显示原样
+      })
+    }
+
+    // 插入数据库
+    const { error } = await supabase.from("submissions").insert({
       assignment_id: assignmentId,
-      student_user_id: user.id,   // ✅ 改成 student_user_id
-      resources,
+      student_user_id: user.id,
+      text: submissionText.trim(),   // ✅ 文字单独存到 text
+      resources,                     // ✅ 文件和链接存到 resources(JSONB)
       feedback: null
     })
 
     if (error) {
       alert("提交失败: " + error.message)
     } else {
-      alert(t('student.submitAssignment'))
-      setSubmissionText('')
+      alert(t("student.submitAssignment"))
+      setSubmissionText("")
       setSubmissionFile(null)
+      setSubmissionLink("")
       await loadClass(user)
     }
   }
@@ -268,25 +291,52 @@ export default function StudentClass({ user }: { user: any }) {
                   {submissions[a.id]?.map((s: any) => (
                     <div key={s.id} className="mt-2 p-2 border rounded bg-gray-50">
                       <p><strong>{t('student.studentSubmission')}:</strong></p>
-                      {s.resources?.map((res: string, idx: number) => {
-                        const isImage = res.match(/\.(jpg|jpeg|png|gif)$/i)
-                        const isPdf = res.match(/\.pdf$/i)
+
+                      {/* 学生上传的文字说明 */}
+                      {s.text && (
+                        <p className="text-gray-700 mb-2">
+                          <strong>{t('teacher.studentText')}:</strong> {s.text}
+                        </p>
+                      )}
+
+                      {/* 学生上传的资源 */}
+                      {s.resources?.map((res: any, idx: number) => {
+                        const url = typeof res === "string" ? res : res.url
+                        const name = typeof res === "string" ? res : res.name
+
+                        const isImage = typeof url === "string" && url.match(/\.(jpg|jpeg|png|gif)$/i)
+                        const isPdf = typeof url === "string" && url.match(/\.pdf$/i)
+
                         return (
                           <div key={idx} className="mt-2">
                             {isImage ? (
-                              <img src={res} alt={`Submission ${idx + 1}`} className="w-full max-w-md rounded border" />
+                              <img
+                                src={url}
+                                alt={name || `Submission ${idx + 1}`}
+                                className="w-full max-w-md rounded border"
+                              />
                             ) : isPdf ? (
-                              <iframe src={res} className="w-full h-64 border rounded" />
+                              <iframe
+                                src={url}
+                                className="w-full h-64 border rounded"
+                              />
                             ) : (
-                              <a href={res} target="_blank" className="text-blue-600 underline block">
-                                🔗 {res}
+                              <a
+                                href={url}
+                                target="_blank"
+                                className="text-blue-600 underline block"
+                              >
+                                🔗 {name || url}
                               </a>
                             )}
                           </div>
                         )
                       })}
+
+                      {/* 教师反馈 */}
                       <p className="mt-2">
-                        <strong>{t('student.teacherFeedback')}:</strong> {s.feedback || t('student.noComment')}
+                        <strong>{t('student.teacherFeedback')}:</strong>{" "}
+                        {s.feedback || t('student.noComment')}
                       </p>
                     </div>
                   ))}
@@ -306,7 +356,6 @@ export default function StudentClass({ user }: { user: any }) {
                     >
                       {t('student.upload')}
                     </Button>
-
 
                     {showSubmissionModal && (
                       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -328,7 +377,7 @@ export default function StudentClass({ user }: { user: any }) {
                           <div className="flex-1 overflow-y-auto">
                             {/* 自动拉长输入框 */}
                             <textarea
-                              placeholder={t('student.inputTextOrLink')}
+                              placeholder={t('student.inputText')}
                               value={submissionText}
                               onChange={(e) => setSubmissionText(e.target.value)}
                               onInput={(e) => {
@@ -340,7 +389,7 @@ export default function StudentClass({ user }: { user: any }) {
                               rows={3}
                             />
 
-                            {/* 美化文件上传按钮 */}
+                            {/* 文件上传按钮 */}
                             <div className="flex flex-col items-start mb-4">
                               <label
                                 htmlFor="fileUpload"
@@ -358,6 +407,23 @@ export default function StudentClass({ user }: { user: any }) {
                               {submissionFile && (
                                 <p className="text-sm text-gray-600 mt-2">
                                   ✅ {submissionFile.name} ({(submissionFile.size / 1024).toFixed(1)} KB)
+                                </p>
+                              )}
+                            </div>
+
+                            {/* 上传链接按钮 */}
+                            <div className="flex flex-col items-start mb-4">
+                              <button
+                                onClick={() => setShowLinkModal(true)}
+                                className="flex items-center justify-center px-4 py-2 border border-teal-300 rounded-lg cursor-pointer hover:bg-teal-50 text-teal-700 font-medium"
+                              >
+                                🔗 {t('student.uploadLink')}
+                              </button>
+
+                              {/* 显示已上传的链接 */}
+                              {submissionLink && (
+                                <p className="text-sm text-gray-600 mt-2">
+                                  ✅ {submissionLink}
                                 </p>
                               )}
                             </div>
@@ -385,6 +451,39 @@ export default function StudentClass({ user }: { user: any }) {
               ))}
             </div>
           )}
+        </div>
+      )}
+      
+      {showLinkModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-[400px] flex flex-col relative">
+            {/* 关闭按钮 */}
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowLinkModal(false)}
+            >
+              ✖
+            </button>
+
+            <h2 className="text-lg font-bold mb-4 text-teal-700">
+              {t('student.uploadLink')}
+            </h2>
+
+            <input
+              type="text"
+              placeholder="https://"
+              value={submissionLink}
+              onChange={(e) => setSubmissionLink(e.target.value)}
+              className="border rounded px-2 py-2 w-full mb-4"
+            />
+
+            <Button
+              className="bg-teal-500 text-white w-full"
+              onClick={() => setShowLinkModal(false)}
+            >
+              {t('student.confirm')}
+            </Button>
+          </div>
         </div>
       )}
     </div>

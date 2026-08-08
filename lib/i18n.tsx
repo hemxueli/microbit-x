@@ -1375,6 +1375,16 @@ export const dict: Dict = {
     zh: "资料",
     ms: "Bahan",
   },
+  'student.uploadLink': {
+    en: 'Upload Link',
+    zh: '上传链接',
+    ms: 'Muat Naik Pautan',
+  },
+  'student.inputText': {
+    en: 'Enter your text',
+    zh: '输入文字内容',
+    ms: 'Masukkan teks anda',
+  },
   'teacher.studentText': {
     en: "Student Text",
     zh: "学生内容",
