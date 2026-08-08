@@ -371,6 +371,13 @@ export default function StudentClass({ user }: { user: any }) {
                               >
                                 🔗 {t('student.uploadLink')}
                               </button>
+
+                              {/* 显示已上传的链接 */}
+                              {submissionLink && (
+                                <p className="text-sm text-gray-600 mt-2">
+                                  ✅ {submissionLink}
+                                </p>
+                              )}
                             </div>
                           </div>
 
