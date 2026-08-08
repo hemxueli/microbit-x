@@ -802,8 +802,20 @@ export default function ClassDetailPage({ user }: { user: any }) {
 
                       {/* 学生上传的资源 */}
                       {s.resources?.map((res: any, idx: number) => {
-                        const url = res.url
-                        const name = res.name || url.split('/').pop()
+                        // 兼容旧数据（字符串）和新数据（对象）
+                        const url = typeof res === "string" ? res : res?.url || ""
+                        const name =
+                          typeof res === "string"
+                            ? res
+                            : (res?.name || (url ? url.split("/").pop() : "未知资源"))
+
+                        if (!url) {
+                          return (
+                            <div key={idx} className="mt-2 text-red-500">
+                              ⚠️ 无效资源
+                            </div>
+                          )
+                        }
 
                         if (res.type === "file") {
                           const isImage = url.match(/\.(jpg|jpeg|png|gif)$/i)
@@ -833,7 +845,7 @@ export default function ClassDetailPage({ user }: { user: any }) {
                           }
                         }
 
-                        if (res.type === "link") {
+                        if (res.type === "link" || typeof res === "string") {
                           return (
                             <a
                               key={idx}
